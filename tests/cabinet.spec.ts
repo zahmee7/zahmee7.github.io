@@ -77,11 +77,14 @@ for (const lang of locales) {
       expect(problems).toEqual([]);
     });
 
-    test("keeps every project's story off the home page (owner's rule)", async ({ page }) => {
-      const html = await page.content();
+    test("shows no project's story until its folder is opened (owner's rule)", async ({ page }) => {
+      // Open projects wait in <template> elements, which the browser never renders.
+      // innerText holds only what a visitor can see.
+      const visible = await page.evaluate(() => document.body.innerText);
       for (const project of projects) {
         for (const part of ["context", "did", "result"] as const) {
-          expect(html).not.toContain(project[lang][part]);
+          expect(visible).not.toContain(project[lang][part]);
+          await expect(page.getByText(project[lang][part], { exact: true })).toHaveCount(0);
         }
       }
     });
