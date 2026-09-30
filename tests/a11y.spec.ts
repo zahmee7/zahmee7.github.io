@@ -1,6 +1,9 @@
 import { test, expect, type Page } from "@playwright/test";
 import AxeBuilder from "@axe-core/playwright";
+import projects from "../content/projects.json" with { type: "json" };
 import { axeTags, locales, skipEntrance } from "./helpers";
+
+const firstOpen = [...projects].sort((a, b) => a.order - b.order).find((project) => project.mvp)!.id;
 
 async function violations(page: Page): Promise<string[]> {
   const results = await new AxeBuilder({ page }).withTags(axeTags).analyze();
@@ -34,6 +37,13 @@ for (const lang of locales) {
       await expect(page.locator("dialog#file .file__title")).toBeFocused();
       // let the content finish rising, so contrast is measured at full opacity
       await expect(page.locator("dialog#file [data-rise]").last()).toHaveCSS("opacity", "1");
+      expect(await violations(page)).toEqual([]);
+    });
+
+    test("a project page has no violations", async ({ page }) => {
+      await page.goto(`/${lang}/projects/${firstOpen}/`);
+      await page.evaluate(() => document.fonts.ready);
+      await expect(page.locator("[data-rise]").last()).toHaveCSS("opacity", "1");
       expect(await violations(page)).toEqual([]);
     });
 

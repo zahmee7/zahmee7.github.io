@@ -3,7 +3,7 @@ import { locales } from "./helpers";
 
 // Review screenshots for the owner (ship-check step 5). Saved, not compared: baselines come
 // once the owner approves a set. Output: test-results/review/
-// States: home closed and a file open, desktop 1440 and mobile 390, ar and en.
+// States: home closed, a file open and a project page, desktop 1440 and mobile 390, ar and en.
 test("review screenshots of the home page, closed and with a file open", async ({ browser }, testInfo) => {
   test.skip(testInfo.project.name !== "desktop", "One set per run");
 
@@ -31,6 +31,15 @@ test("review screenshots of the home page, closed and with a file open", async (
       await expect(page.locator("dialog#file [data-rise]").last()).toHaveCSS("opacity", "1");
       await page.evaluate(() => document.fonts.ready);
       await page.screenshot({ path: `test-results/review/file-${lang}-${name}.png`, animations: "disabled" });
+
+      // the open file's address is its project page: a reload shows that page
+      await page.reload();
+      await page.evaluate(() => document.fonts.ready);
+      await page.screenshot({
+        path: `test-results/review/project-${lang}-${name}.png`,
+        fullPage: true,
+        animations: "disabled",
+      });
       await context.close();
     }
   }

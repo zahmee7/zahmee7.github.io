@@ -64,6 +64,27 @@ for (const lang of locales) {
       expect(page.url()).toBe(url);
     });
 
+    test("the address bar and tab title follow the open file", async ({ page }) => {
+      await openFile(page, first!.id);
+      await expect(page).toHaveURL(new RegExp(`/${lang}/projects/${first!.id}/$`));
+      await expect(page).toHaveTitle(`${first![lang].title} · ${copy.name}`);
+
+      await page.getByRole("button", { name: copy.file.next }).click();
+      await expect(page.locator(`#file-title-${second!.id}`)).toBeFocused();
+      await expect(page).toHaveURL(new RegExp(`/${lang}/projects/${second!.id}/$`));
+
+      await page.keyboard.press("Escape");
+      await expectClosedOn(page, second!.id);
+      await expect(page).toHaveURL(new RegExp(`/${lang}/$`));
+      await expect(page).toHaveTitle(copy.meta.title);
+
+      // forward brings the file back, and a reload lands on its own page
+      await page.goForward();
+      await expect(page.locator(`#file-title-${second!.id}`)).toBeFocused();
+      await page.reload();
+      await expect(page.getByRole("heading", { level: 1 })).toHaveText(second![lang].title);
+    });
+
     test("previous and next move between open projects", async ({ page }) => {
       const prev = page.getByRole("button", { name: copy.file.prev });
       const next = page.getByRole("button", { name: copy.file.next });
