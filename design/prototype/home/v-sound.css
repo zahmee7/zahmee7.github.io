@@ -1,0 +1,22 @@
+/* Variant · the switch for the drawer sounds (v-sound.js), a square button beside the language switch */
+html body .sound-toggle {
+  padding-inline: 0;
+  inline-size: var(--tap);
+}
+html body .sound-toggle[aria-pressed="true"] .sound-toggle__off,
+html body .sound-toggle[aria-pressed="false"] .sound-toggle__on {
+  display: none;
+}
+html body .sound-toggle[aria-pressed="false"] {
+  color: var(--c-mist-2);
+}
+/* on phones it sits at the end of the kicker line (v-sound.js moves it there) */
+html body .hero__grid > .sound-toggle {
+  grid-row: 1;
+  grid-column: 1 / -1;
+  justify-self: end;
+  align-self: center;
+}
+html body .hero__grid > .hero__kicker {
+  grid-row: 1;
+}

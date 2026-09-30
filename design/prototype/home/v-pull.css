@@ -1,0 +1,229 @@
+/* Variant · the closed drawer, pulled like a real one (v-pull.js runs the motion).
+   Closed: the drawer front sits under the cabinet's top edge, more drawers below it; the drawer box is
+   inside the cabinet, out of sight. Pulled: the front and the box travel out together, the box appears
+   from under the top edge (its front end first, the back wall last) and covers the drawers below, the
+   drawer hits its stop and rebounds, the hanging folders sway and settle, then the lamp comes on.
+   Stands alone: use ?v=pull, not together with ?v=closed. */
+
+/* The cabinet's own entrance is replaced by the pull */
+html body .drawer,
+html body .drawer .folder {
+  animation: none !important;
+}
+
+html body .drawer {
+  isolation: isolate;
+  --side: var(--gutter); /* the drawer is a .container: its sides are the gutter, 6 px on phones */
+}
+@media (max-width: 899px) {
+  html body .drawer {
+    --side: 6px;
+  }
+}
+
+/* ---------- Closed: the box is inside, above the top edge; only the front shows ---------- */
+html:not(.drawer-opened) body .drawer {
+  overflow: visible clip; /* the top edge of the cabinet: the box appears from under it */
+}
+html:not(.drawer-opened) body .drawer .drawer__cabinet {
+  z-index: 1;
+  transform: translateY(calc(-1 * var(--shift, 0px)));
+}
+html:not(.drawer-opened) body .drawer .drawer__front {
+  transform: translateY(calc(-1 * var(--shift, 0px)));
+}
+/* the lamp is off until the drawer is out */
+html body .drawer .drawer__cabinet::after {
+  transition: opacity 900ms var(--ease-paper);
+}
+html:not(.drawer-lit) body .drawer .drawer__cabinet::after {
+  opacity: 0;
+}
+
+/* The cabinet body under the top drawer: more drawers, each with an empty label holder and a pull,
+   dimmer the further they are from the lamp */
+html body .drawer__body {
+  position: absolute;
+  z-index: 0;
+  inset-inline: var(--side);
+  inset-block: calc(var(--front-h, 144px) - 4px) 0;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 16px 0 0;
+  overflow: clip;
+  pointer-events: none;
+  background: linear-gradient(
+    180deg,
+    color-mix(in srgb, var(--c-night), black 30%),
+    color-mix(in srgb, var(--c-night), black 55%)
+  );
+  transition: opacity 360ms var(--ease-paper) 120ms;
+}
+html body .drawer__below {
+  flex: none;
+  block-size: var(--front-h, 144px);
+  display: grid;
+  place-content: center;
+  justify-items: center;
+  gap: var(--s-5);
+  border-radius: 6px;
+  background: linear-gradient(
+    180deg,
+    color-mix(in srgb, var(--c-drawer-edge), white 8%) 0,
+    var(--c-drawer-edge) 2px,
+    var(--c-drawer) 14px,
+    color-mix(in srgb, var(--c-drawer), black 30%) 100%
+  );
+  box-shadow:
+    0 10px 18px rgb(0 0 0 / 0.45),
+    inset 0 -8px 16px rgb(0 0 0 / 0.3);
+  filter: brightness(0.84);
+}
+html body .drawer__below:nth-child(2) {
+  filter: brightness(0.7);
+}
+html body .drawer__below:nth-child(n + 3) {
+  filter: brightness(0.58);
+}
+html body .drawer__below-label {
+  inline-size: 128px;
+  block-size: 30px;
+  border-radius: 3px;
+  background: color-mix(in srgb, var(--c-paper), var(--c-drawer) 55%);
+  box-shadow:
+    0 0 0 5px color-mix(in srgb, var(--c-mist), var(--c-drawer) 45%),
+    0 0 0 6px rgb(0 0 0 / 0.45),
+    inset 0 1px 3px rgb(var(--c-ink-rgb) / 0.3);
+}
+html body .drawer__below-pull {
+  inline-size: 170px;
+  block-size: 18px;
+  border-radius: var(--r-pill);
+  background: linear-gradient(
+    180deg,
+    color-mix(in srgb, var(--c-mist), white 20%),
+    var(--c-mist-2) 55%,
+    color-mix(in srgb, var(--c-mist-2), black 40%)
+  );
+  box-shadow:
+    0 5px 10px rgb(0 0 0 / 0.55),
+    inset 0 1px 0 rgb(255 255 255 / 0.5);
+}
+
+/* The cabinet's top edge, and the shadow it throws into the box as the box comes out */
+html body .drawer__shade {
+  position: absolute;
+  z-index: 2;
+  inset-inline: var(--side);
+  inset-block-start: 0;
+  block-size: 110px;
+  pointer-events: none;
+  background: linear-gradient(180deg, rgb(0 0 0 / 0.62), rgb(0 0 0 / 0.24) 40%, transparent);
+  transition: opacity 800ms var(--ease-paper) 100ms;
+}
+html body .drawer__lip {
+  position: absolute;
+  z-index: 13; /* over the drawer front's top edge: the front sits under it */
+  inset-inline: calc(var(--side) - 6px);
+  inset-block-start: 0;
+  block-size: 9px;
+  border-radius: 0 0 3px 3px;
+  pointer-events: none;
+  background: linear-gradient(
+    180deg,
+    color-mix(in srgb, var(--c-drawer-edge), white 24%),
+    var(--c-drawer-edge) 3px,
+    color-mix(in srgb, var(--c-drawer), black 45%)
+  );
+  box-shadow: 0 4px 8px rgb(0 0 0 / 0.5);
+  transition: opacity 600ms var(--ease-paper) 200ms;
+}
+@media (max-width: 899px) {
+  html body .drawer__lip {
+    inset-inline: 0;
+  }
+  html body .drawer__below-label {
+    inline-size: 104px;
+    block-size: 26px;
+  }
+  html body .drawer__below-pull {
+    inline-size: 140px;
+    block-size: 16px;
+  }
+}
+html.drawer-lit body .drawer__body,
+html.drawer-lit body .drawer__shade,
+html.drawer-lit body .drawer__lip {
+  opacity: 0;
+}
+
+/* ---------- The front invites a pull ---------- */
+@media (prefers-reduced-motion: no-preference) {
+  @keyframes front-nudge {
+    0%,
+    62%,
+    100% {
+      translate: 0 0;
+    }
+    70% {
+      translate: 0 7px;
+    }
+    78% {
+      translate: 0 1px;
+    }
+    84% {
+      translate: 0 4px;
+    }
+  }
+  html:not(.drawer-pulling):not(.drawer-opened) body .drawer .drawer__front {
+    animation: front-nudge 3.2s var(--ease-paper) 900ms infinite;
+  }
+}
+html body .drawer__opener {
+  position: absolute;
+  z-index: 2;
+  inset: 0;
+  border: 0;
+  border-radius: inherit;
+  background: transparent;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+html body .drawer__opener:focus-visible {
+  outline: 3px solid var(--c-signal);
+  outline-offset: 4px;
+}
+html body .drawer .drawer__front {
+  transition: scale var(--d-press) var(--ease-paper);
+}
+html body .drawer .drawer__handle {
+  transition:
+    translate var(--d-press) var(--ease-paper),
+    box-shadow 200ms var(--ease-paper);
+}
+/* pressed: the front gives a little and the pull is gripped */
+html body .drawer .drawer__front.is-pressed {
+  scale: 0.992;
+}
+html body .drawer .drawer__front.is-pressed .drawer__handle {
+  translate: 0 2px;
+}
+@media (hover: hover) {
+  html:not(.drawer-pulling):not(.drawer-opened) body .drawer .drawer__front:hover .drawer__handle {
+    box-shadow:
+      0 5px 10px rgb(0 0 0 / 0.55),
+      inset 0 1px 0 rgb(255 255 255 / 0.7),
+      0 0 18px rgb(var(--c-lamp-rgb) / 0.45);
+  }
+}
+
+/* ---------- Reduced motion: no travel, the open drawer fades in ---------- */
+@keyframes drawer-fade-in {
+  from {
+    opacity: 0;
+  }
+}
+html.drawer-faded body .drawer .drawer__cabinet {
+  animation: drawer-fade-in var(--d-fade) linear both !important;
+}
