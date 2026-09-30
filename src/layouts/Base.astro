@@ -44,6 +44,7 @@ const twin = new URL(`/${other}/${path}`, Astro.site);
     <Font cssVariable="--font-thmanyah-display" preload />
     <Font cssVariable="--font-thmanyah-sans" preload />
     <Font cssVariable="--font-thmanyah-text" />
+    <slot name="head" />
   </head>
   <body>
     <slot />

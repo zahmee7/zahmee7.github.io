@@ -1,0 +1,42 @@
+---
+// The red ink stamp: "Coming soon" on locked folders, later "Sample data" on demos (DESIGN.md > Tags, stamp and badges).
+interface Props {
+  text: string;
+  /** Hide from assistive tech when the same words are already announced elsewhere. */
+  decorative?: boolean;
+  class?: string;
+}
+
+const { text, decorative = false, class: className } = Astro.props;
+---
+
+<span class:list={["stamp", className]} aria-hidden={decorative ? "true" : undefined}>
+  {text}
+</span>
+
+<style>
+  .stamp {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 10px;
+    border: 1.5px solid currentColor;
+    border-radius: 6px;
+    color: var(--c-stamp);
+    font: var(--fw-ui) var(--fs-kicker) / 1.2 var(--font-ui);
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    white-space: nowrap;
+    rotate: -3deg;
+    mix-blend-mode: multiply;
+    user-select: none;
+  }
+  :global(:root:lang(ar)) .stamp {
+    letter-spacing: 0;
+    text-transform: none;
+    font-size: var(--fs-meta);
+  }
+  :global([dir="rtl"]) .stamp {
+    rotate: 3deg;
+  }
+</style>

@@ -159,6 +159,16 @@ html:has(dialog[open]) {
   }
 }
 
+/* Inline SVG icons (src/components/ui/Icon.astro) */
+svg.icon {
+  inline-size: 18px;
+  block-size: 18px;
+  flex: none;
+}
+[dir="rtl"] svg.icon--dir {
+  scale: -1 1;
+}
+
 /* Kicker label */
 .kicker {
   margin: 0 0 var(--s-3);

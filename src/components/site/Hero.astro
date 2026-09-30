@@ -1,0 +1,95 @@
+---
+// Kicker, display H1 and lead (DESIGN.md > Page anatomy, Layout).
+import { t, type Locale } from "../../i18n/utils";
+
+interface Props {
+  lang: Locale;
+}
+
+const { lang } = Astro.props;
+const copy = t(lang);
+---
+
+<section class="container hero" aria-labelledby="hero-title">
+  <div class="hero__grid">
+    <p class="kicker hero__kicker">{copy.hero.kicker}</p>
+    <h1 class="hero__title" id="hero-title">
+      {copy.hero.h1}
+    </h1>
+    <p class="hero__lead">{copy.hero.lead}</p>
+  </div>
+</section>
+
+<style>
+  .hero {
+    padding-block: clamp(24px, 4vw, 48px) var(--s-5);
+  }
+  .hero__grid {
+    display: grid;
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+    column-gap: clamp(16px, 2vw, 32px);
+  }
+  .hero__kicker,
+  .hero__title {
+    grid-column: 1 / span 9;
+  }
+  .hero__title {
+    margin: 0 0 var(--s-5);
+    font: var(--fw-display) var(--fs-display) / var(--lh-display) var(--font-display);
+    letter-spacing: var(--ls-display);
+    text-wrap: balance;
+  }
+  .hero__lead {
+    grid-column: 1 / span 6;
+    max-inline-size: 46ch;
+    margin: 0;
+    color: var(--c-mist);
+    font-size: var(--fs-lead);
+    line-height: var(--lh-lead);
+    text-wrap: pretty;
+  }
+
+  /* First load, once per session (design/MOTION.md sequence 1) */
+  @keyframes rise {
+    from {
+      opacity: 0;
+      translate: 0 var(--m-rise);
+    }
+    to {
+      opacity: 1;
+      translate: 0 0;
+    }
+  }
+  :global(.is-entering) .hero__kicker,
+  :global(.is-entering) .hero__title,
+  :global(.is-entering) .hero__lead {
+    animation: rise 700ms var(--ease-paper) backwards;
+  }
+  :global(.is-entering) .hero__title {
+    animation-delay: 100ms;
+  }
+  :global(.is-entering) .hero__lead {
+    animation-delay: 200ms;
+  }
+
+  @media (max-width: 899px) {
+    .hero {
+      padding-block: var(--s-4) var(--s-5);
+    }
+    .hero__grid {
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+    .hero__kicker,
+    .hero__title,
+    .hero__lead {
+      grid-column: 1 / -1;
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    :global(.is-entering) .hero__kicker,
+    :global(.is-entering) .hero__title,
+    :global(.is-entering) .hero__lead {
+      animation: none;
+    }
+  }
+</style>
