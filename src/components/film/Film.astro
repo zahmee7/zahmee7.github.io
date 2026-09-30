@@ -1,0 +1,247 @@
+---
+// The film frame of a file (DESIGN.md > Film frame, MOTION.md sequence 7), with its text underneath.
+// Web files come from src/assets/films/<id>/ (made by `npm run films` from the masters in films/<id>/).
+// Until they exist, the frame shows the lit tiles and Play says "Coming soon".
+// With files: a silent loop plays while half the frame is in view, and Play swaps in the full film with
+// captions in both languages. film.ts runs both; nothing loads before it is needed (preload="none").
+import type { CollectionEntry } from "astro:content";
+import Icon from "../ui/Icon.astro";
+import { languages } from "../../i18n/ui";
+import { locales, t, type Locale } from "../../i18n/utils";
+
+interface Props {
+  project: CollectionEntry<"projects">["data"];
+  lang: Locale;
+}
+
+const { project, lang } = Astro.props;
+const copy = t(lang);
+
+// Only files that exist are in this map, so a missing film simply leaves the tiles in place
+const files = import.meta.glob<string>("/src/assets/films/*/*.{mp4,avif}", {
+  query: "?url&no-inline",
+  import: "default",
+  eager: true,
+});
+const file = (name: string): string | undefined => files[`/src/assets/films/${project.id}/${name}`];
+const film = { av1: file(`film-av1-${lang}.mp4`), h264: file(`film-${lang}.mp4`) };
+const loop = { av1: file("loop-av1.mp4"), h264: file("loop.mp4") };
+const poster = file("poster.avif");
+const ready = Boolean(film.h264 && loop.h264 && poster);
+
+const scenes = project.film.scenes ?? [];
+const tiles = Array.from({ length: 14 }, (_, index) => (index % 7) + Math.floor(index / 7));
+// Page language first, so it is the default caption track
+const tracks = [lang, ...locales.filter((item) => item !== lang)];
+---
+
+<div class="film" data-film={ready ? "" : undefined}>
+  {ready ? (
+    <>
+      <video
+        class="film__loop"
+        muted
+        playsinline
+        loop
+        preload="none"
+        poster={poster}
+        disablepictureinpicture
+        aria-hidden="true"
+      >
+        {loop.av1 && <source src={loop.av1} type='video/mp4; codecs="av01.0.05M.08"' />}
+        <source src={loop.h264} type="video/mp4" />
+      </video>
+      <video
+        class="film__full"
+        controls
+        playsinline
+        preload="none"
+        poster={poster}
+        aria-label={copy.file.film}
+        hidden
+      >
+        {film.av1 && <source src={film.av1} type='video/mp4; codecs="av01.0.08M.08"' />}
+        <source src={film.h264} type="video/mp4" />
+        {tracks.map((track) => (
+          <track
+            kind="captions"
+            srclang={track}
+            label={languages[track]}
+            src={`${project.film.dir}captions.${track}.vtt`}
+            default={track === lang}
+          />
+        ))}
+      </video>
+    </>
+  ) : (
+    <div class="film__tiles" aria-hidden="true">
+      {tiles.map((delay) => (
+        <i class="film__tile" style={`--t: ${delay};`} />
+      ))}
+    </div>
+  )}
+  <button
+    class="film__play"
+    type="button"
+    aria-label={copy.file.playFilm}
+    data-play
+    data-soon={ready ? undefined : ""}
+  >
+    <Icon name="play" />
+  </button>
+</div>
+
+{scenes.length > 0 && (
+  <details class="film__text">
+    <summary>{copy.file.transcript}</summary>
+    <ol class="film__scenes">
+      {scenes.map((scene) => (
+        <li>
+          {scene[lang].split(" · ").map((line) => (
+            <span>{line}</span>
+          ))}
+        </li>
+      ))}
+    </ol>
+  </details>
+)}
+
+<style>
+  .film {
+    position: relative;
+    aspect-ratio: 16 / 9;
+    overflow: hidden;
+    display: grid;
+    place-items: center;
+    border-radius: 12px;
+    background: var(--c-film);
+  }
+  .film video {
+    position: absolute;
+    inset: 0;
+    display: block;
+    inline-size: 100%;
+    block-size: 100%;
+    object-fit: cover;
+  }
+  .film video[hidden] {
+    display: none;
+  }
+  .film .film__full {
+    object-fit: contain;
+    background: var(--c-film);
+  }
+
+  /* Tile placeholder until the film arrives */
+  .film__tiles {
+    position: absolute;
+    inset: 14%;
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 8px;
+  }
+  .film__tile {
+    border-radius: 4px;
+    background: var(--c-film-tile);
+  }
+  @keyframes tile {
+    0%,
+    100% {
+      background: var(--c-film-tile);
+    }
+    40% {
+      background: var(--c-film-lit);
+    }
+    60% {
+      background: var(--c-film-tile);
+    }
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    :global(dialog[open]) .film__tile,
+    :global(.leaf--page) .film__tile {
+      animation: tile 4.2s ease-in-out infinite;
+      animation-delay: calc(var(--t) * 0.3s);
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .film__tile:nth-child(3n) {
+      background: var(--c-film-lit);
+    }
+  }
+
+  .film__play {
+    position: relative;
+    display: grid;
+    place-items: center;
+    inline-size: 64px;
+    block-size: 64px;
+    border: 0;
+    border-radius: 50%;
+    background: var(--c-paper);
+    color: var(--c-ink);
+    cursor: pointer;
+    transition:
+      scale var(--d-press) var(--ease-paper),
+      background-color 200ms var(--ease-paper);
+  }
+  .film__play[hidden] {
+    display: none;
+  }
+  .film__play :global(svg) {
+    inline-size: 22px;
+    block-size: 22px;
+  }
+  .film__play:active {
+    scale: 0.96;
+  }
+  .film__play:focus-visible {
+    outline: 3px solid var(--c-signal);
+    outline-offset: 3px;
+  }
+  @media (hover: hover) {
+    .film__play:hover {
+      background: var(--c-paper-hi);
+    }
+  }
+
+  /* The film as text: the on-screen lines of each scene, for anyone not watching */
+  .film__text {
+    margin-block-start: var(--s-3);
+    color: var(--c-ink-muted);
+    font-size: var(--fs-meta);
+  }
+  .film__text summary {
+    display: inline-flex;
+    align-items: center;
+    min-block-size: var(--tap);
+    text-decoration-line: underline;
+    text-decoration-thickness: 1px;
+    text-underline-offset: 0.25em;
+    text-decoration-color: color-mix(in srgb, currentColor 40%, transparent);
+    cursor: pointer;
+    list-style: none;
+  }
+  .film__text summary::-webkit-details-marker {
+    display: none;
+  }
+  @media (hover: hover) {
+    .film__text summary:hover {
+      text-decoration-color: currentColor;
+    }
+  }
+  .film__scenes {
+    display: grid;
+    gap: var(--s-3);
+    margin: var(--s-2) 0 0;
+    padding-inline-start: 1.5em;
+    color: var(--c-ink-2);
+    font-size: var(--fs-ui);
+    line-height: 1.6;
+  }
+  :global(:root:lang(ar)) .film__scenes {
+    list-style-type: arabic-indic;
+  }
+  .film__scenes span {
+    display: block;
+  }
+</style>

@@ -5,6 +5,7 @@
 // and a reload lands on that page.
 import { gsap } from "gsap";
 import { CustomEase } from "gsap/CustomEase";
+import { setUpFilms } from "../film/film";
 
 gsap.registerPlugin(CustomEase);
 CustomEase.create("paper", "0.2,0.7,0.2,1");
@@ -40,6 +41,7 @@ export function createFileSheet(dialog: HTMLDialogElement, drawer: HTMLElement):
   let current: { id: string; folder: HTMLElement } | null = null;
   let busy = false;
   let pendingClose = false;
+  let stopFilms: (() => void) | undefined;
 
   // In the order set by --rise (FileLeaf.astro), which follows the layout rather than the DOM
   const rise = (element: HTMLElement): number => Number(element.style.getPropertyValue("--rise"));
@@ -60,7 +62,9 @@ export function createFileSheet(dialog: HTMLDialogElement, drawer: HTMLElement):
   function fill(id: string): string {
     const template = templates.find((item) => item.dataset.file === id);
     if (!template) return home.url;
+    stopFilms?.();
     body.replaceChildren(template.content.cloneNode(true));
+    stopFilms = setUpFilms(body);
     document.title = template.dataset.pageTitle ?? home.title;
     folioLine.textContent = template.dataset.folioText ?? "";
     dialog.setAttribute("aria-labelledby", `file-title-${id}`);
@@ -151,6 +155,8 @@ export function createFileSheet(dialog: HTMLDialogElement, drawer: HTMLElement):
       dialog.close();
       document.documentElement.style.removeProperty("--scroll-gap");
       gsap.set(leaf, { clearProps: "transform,opacity,visibility" });
+      stopFilms?.();
+      stopFilms = undefined;
       body.replaceChildren();
       markActive(folder, false);
       delete drawer.dataset.open;

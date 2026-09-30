@@ -85,8 +85,12 @@ const path = `projects/${project.id}/`;
 </Base>
 
 <script>
+  import { setUpFilms } from "../../../components/film/film";
   import { bindSoon } from "../../../components/ui/soon";
 
   const page = document.querySelector<HTMLElement>("[data-project-page]");
-  if (page) bindSoon(page, page.dataset.soonText ?? "");
+  if (page) {
+    bindSoon(page, page.dataset.soonText ?? "");
+    setUpFilms(page);
+  }
 </script>

@@ -3,9 +3,10 @@
 // film, the demo and download under them, then the story across the page in three columns. Phones: one column.
 // In the DOM the story comes before the actions, so it is read first; the grid places them.
 // Used in the home page's closed templates (FileSheet.astro) and on the project page.
-// Parts not built yet (film, demo, download) carry data-soon: a click shows "Coming soon".
+// Parts not built yet (demo, download, a film without its files) carry data-soon: a click shows "Coming soon".
 // --rise orders the blocks for the project page's entrance (global.css); the dialog animates them with GSAP.
 import type { CollectionEntry } from "astro:content";
+import Film from "../film/Film.astro";
 import Icon from "../ui/Icon.astro";
 import { t, type Locale } from "../../i18n/utils";
 
@@ -23,7 +24,6 @@ const copy = t(lang);
 const text = project[lang];
 const download = project.downloads[0];
 const storyParts = ["context", "did", "result"] as const;
-const tiles = Array.from({ length: 14 }, (_, index) => (index % 7) + Math.floor(index / 7));
 ---
 
 <div class="container leaf__body">
@@ -40,21 +40,7 @@ const tiles = Array.from({ length: 14 }, (_, index) => (index % 7) + Math.floor(
   </div>
 
   <div class="file__film" data-rise style="--rise: 3;">
-    <div class="film">
-      <div class="film__tiles" aria-hidden="true">
-        {tiles.map((delay) => (
-          <i class="film__tile" style={`--t: ${delay};`} />
-        ))}
-      </div>
-      <button class="film__play" type="button" aria-label={copy.file.playFilm} data-soon>
-        <Icon name="play" />
-      </button>
-    </div>
-    <p class="film__summary">
-      <a class="link" href={`/${lang}/projects/${project.id}/`} data-soon>
-        {copy.file.transcript}
-      </a>
-    </p>
+    <Film project={project} lang={lang} />
   </div>
 
   <div class="story">
@@ -138,94 +124,12 @@ const tiles = Array.from({ length: 14 }, (_, index) => (index % 7) + Math.floor(
     outline-offset: 4px;
   }
 
-  /* Film frame: tile placeholder until the films arrive (Phase 5) */
-  .film {
-    position: relative;
-    aspect-ratio: 16 / 9;
-    overflow: hidden;
-    display: grid;
-    place-items: center;
-    border-radius: 12px;
-    background: var(--c-film);
-  }
-  .film__tiles {
-    position: absolute;
-    inset: 14%;
-    display: grid;
-    grid-template-columns: repeat(7, 1fr);
-    gap: 8px;
-  }
-  .film__tile {
-    border-radius: 4px;
-    background: var(--c-film-tile);
-  }
-  @keyframes tile {
-    0%,
-    100% {
-      background: var(--c-film-tile);
-    }
-    40% {
-      background: var(--c-film-lit);
-    }
-    60% {
-      background: var(--c-film-tile);
-    }
-  }
-  @media (prefers-reduced-motion: no-preference) {
-    :global(dialog[open]) .film__tile,
-    :global(.leaf--page) .film__tile {
-      animation: tile 4.2s ease-in-out infinite;
-      animation-delay: calc(var(--t) * 0.3s);
-    }
-  }
-  @media (prefers-reduced-motion: reduce) {
-    .film__tile:nth-child(3n) {
-      background: var(--c-film-lit);
-    }
-  }
-  .film__play {
-    position: relative;
-    display: grid;
-    place-items: center;
-    inline-size: 64px;
-    block-size: 64px;
-    border: 0;
-    border-radius: 50%;
-    background: var(--c-paper);
-    color: var(--c-ink);
-    cursor: pointer;
-    transition:
-      scale var(--d-press) var(--ease-paper),
-      background-color 200ms var(--ease-paper);
-  }
-  .film__play :global(svg) {
-    inline-size: 22px;
-    block-size: 22px;
-  }
-  .film__play:active {
-    scale: 0.96;
-  }
-  .film__play:focus-visible {
-    outline: 3px solid var(--c-signal);
-    outline-offset: 3px;
-  }
-  @media (hover: hover) {
-    .film__play:hover {
-      background: var(--c-paper-hi);
-    }
-  }
   .file__lead {
     max-inline-size: 30em;
     margin: 0;
     color: var(--c-ink-2);
     font: var(--fw-ui) var(--fs-lead) / 1.6 var(--font-ui);
     text-wrap: pretty;
-  }
-
-  .film__summary {
-    margin: var(--s-3) 0 0;
-    color: var(--c-ink-muted);
-    font-size: var(--fs-meta);
   }
 
   /* The story across the page: three columns under an ink rule, split by hairlines */
