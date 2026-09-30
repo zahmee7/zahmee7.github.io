@@ -4,7 +4,10 @@ import { locales } from "./helpers";
 // Review screenshots for the owner (ship-check step 5). Saved, not compared: baselines come
 // once the owner approves a set. Output: test-results/review/
 // States: home closed, a file open and a project page, desktop 1440 and mobile 390, ar and en.
-test("review screenshots of the home page, closed and with a file open", async ({ browser }, testInfo) => {
+test("review screenshots of the home page, closed and with a file open", async ({
+  browser,
+  baseURL,
+}, testInfo) => {
   test.skip(testInfo.project.name !== "desktop", "One set per run");
 
   const sizes = [
@@ -14,7 +17,7 @@ test("review screenshots of the home page, closed and with a file open", async (
 
   for (const [name, options] of sizes) {
     for (const lang of locales) {
-      const context = await browser.newContext({ ...options, baseURL: "http://localhost:4321" });
+      const context = await browser.newContext({ ...options, baseURL });
       await context.addInitScript(() => sessionStorage.setItem("entered", "1"));
       const page = await context.newPage();
       await page.goto(`/${lang}/`);

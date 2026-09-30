@@ -42,7 +42,7 @@ for (const lang of locales) {
         await expect(page.locator("html")).toHaveAttribute("dir", lang === "ar" ? "rtl" : "ltr");
         await expect(page).toHaveTitle(`${text.title} · ${copy.name}`);
         await expect(page.getByRole("heading", { level: 1 })).toHaveText(text.title);
-        for (const part of [text.tag, text.context, text.did, text.result, text.demoLabel]) {
+        for (const part of [text.tag, text.summary, text.context, text.did, text.result, text.demoLabel]) {
           await expect(page.getByText(part, { exact: true })).toBeVisible();
         }
 

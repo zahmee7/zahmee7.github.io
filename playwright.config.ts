@@ -13,7 +13,7 @@ export default defineConfig({
   retries: CI ? 1 : 0,
   reporter: CI ? [["list"], ["html", { open: "never" }]] : [["list"]],
   use: {
-    baseURL: "http://localhost:4321",
+    baseURL: "http://127.0.0.1:4330",
     trace: "retain-on-failure",
   },
   projects: [
@@ -21,9 +21,10 @@ export default defineConfig({
     { name: "pixel", use: { ...devices["Pixel 7"] } },
     { name: "iphone", use: { ...devices["iPhone 15"] } },
   ],
+  // A GitHub Pages–like server on its own port (scripts/serve.mjs), apart from the owner's `npm run preview`
   webServer: {
-    command: "npm run build && npm run preview -- --port 4321",
-    url: "http://localhost:4321/ar/",
+    command: "npm run build && node scripts/serve.mjs 4330",
+    url: "http://127.0.0.1:4330/ar/",
     reuseExistingServer: !CI,
     timeout: 180_000,
   },

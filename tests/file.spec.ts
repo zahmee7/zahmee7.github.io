@@ -41,7 +41,7 @@ for (const lang of locales) {
         await expect(page.locator("dialog#file")).toHaveAccessibleName(text.title);
         await expect(page.locator(".leaf__folio")).toContainText(copy.hero.kicker);
         await expect(page.locator("[data-folio]")).toHaveText(/^\S+ \/ \S+$/);
-        for (const part of [text.tag, text.context, text.did, text.result, text.demoLabel]) {
+        for (const part of [text.tag, text.summary, text.context, text.did, text.result, text.demoLabel]) {
           await expect(page.locator("dialog#file").getByText(part, { exact: true })).toBeVisible();
         }
 
