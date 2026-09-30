@@ -5,7 +5,20 @@
     "mvp": true,
     "tone": "#F1EDE4",
     "demo": { "type": "readiness-tracker", "status": "planned" },
-    "film": { "dir": "/films/ndi-readiness/", "status": "planned", "lengthSec": 60 },
+    "film": {
+      "dir": "/films/ndi-readiness/",
+      "status": "planned",
+      "lengthSec": 60,
+      "loopScene": 3,
+      "scenes": [
+        { "start": 0, "end": 6, "en": "Evidence everywhere.", "ar": "أدلة في كل مكان." },
+        { "start": 6, "end": 14, "en": "First, map every piece to its domain.", "ar": "أولاً: ربط كل دليل بمجاله." },
+        { "start": 14, "end": 24, "en": "Then see where the gaps are.", "ar": "ثم رؤية مواضع الفجوات." },
+        { "start": 24, "end": 36, "en": "Rank them by impact and effort.", "ar": "ترتيبها حسب الأثر والجهد." },
+        { "start": 36, "end": 48, "en": "Turn the list into a plan the team can work through.", "ar": "تحويلها إلى خطة يعمل عليها الفريق." },
+        { "start": 48, "end": 60, "en": "One readiness picture. · Try the readiness tracker", "ar": "صورة جاهزية واحدة. · جرّب متتبع الجاهزية" }
+      ]
+    },
     "downloads": [
       { "file": "/downloads/ndi-readiness-tracker.xlsx", "kind": "xlsx", "status": "planned" }
     ],
@@ -38,7 +51,20 @@
     "mvp": true,
     "tone": "#E8E1D3",
     "demo": { "type": "classification-helper", "status": "planned" },
-    "film": { "dir": "/films/data-classification/", "status": "planned", "lengthSec": 60 },
+    "film": {
+      "dir": "/films/data-classification/",
+      "status": "planned",
+      "lengthSec": 60,
+      "loopScene": 3,
+      "scenes": [
+        { "start": 0, "end": 7, "en": "Every dataset needs a label. Which one?", "ar": "كل مجموعة بيانات تحتاج تصنيفاً. أيّها؟" },
+        { "start": 7, "end": 18, "en": "Who is affected if it leaks? · How badly? · Is it already public?", "ar": "من يتأثر لو تسربت؟ · إلى أي حد؟ · هل هي منشورة أصلاً؟" },
+        { "start": 18, "end": 30, "en": "Answer the impact questions, and the level follows.", "ar": "أجب عن أسئلة الأثر، والتصنيف يتبعها." },
+        { "start": 30, "end": 42, "en": "Each level comes with clear handling rules.", "ar": "ولكل مستوى قواعد تعامل واضحة." },
+        { "start": 42, "end": 52, "en": "One practical guide for every department.", "ar": "دليل عملي واحد لكل الإدارات." },
+        { "start": 52, "end": 60, "en": "Try the classification helper", "ar": "جرّب مساعد التصنيف" }
+      ]
+    },
     "downloads": [
       { "file": "/downloads/data-classification-guide.pdf", "kind": "pdf", "status": "planned" }
     ],
@@ -71,7 +97,20 @@
     "mvp": true,
     "tone": "#EFE8DA",
     "demo": { "type": "executive-dashboard", "status": "planned" },
-    "film": { "dir": "/films/executive-dashboard/", "status": "planned", "lengthSec": 60 },
+    "film": {
+      "dir": "/films/executive-dashboard/",
+      "status": "planned",
+      "lengthSec": 60,
+      "loopScene": 3,
+      "scenes": [
+        { "start": 0, "end": 7, "en": "Progress lived in separate spreadsheets.", "ar": "كان التقدم موزعاً على ملفات منفصلة." },
+        { "start": 7, "end": 18, "en": "Bring them into one model.", "ar": "جمعها في نموذج واحد." },
+        { "start": 18, "end": 32, "en": "Operational excellence · Maturity · Compliance", "ar": "التميز التشغيلي · النضج · الامتثال" },
+        { "start": 32, "end": 44, "en": "One view, up to date, easy to filter.", "ar": "صورة واحدة محدّثة وسهلة التصفية." },
+        { "start": 44, "end": 52, "en": "The view management uses to follow the office.", "ar": "الصورة التي تتابع بها الإدارة المكتب." },
+        { "start": 52, "end": 60, "en": "Open the sample dashboard", "ar": "افتح اللوحة التجريبية" }
+      ]
+    },
     "downloads": [
       { "file": "/downloads/dmo-dashboard-template.pbit", "kind": "pbit", "status": "planned" }
     ],

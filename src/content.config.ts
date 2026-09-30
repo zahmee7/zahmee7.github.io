@@ -7,6 +7,15 @@ import { z } from "astro/zod";
 
 const status = z.enum(["planned", "later", "ready"]);
 
+// One scene of a film: its on-screen text in both languages. The same lines are the captions
+// (src/pages/films/[id]/captions.[lang].vtt.ts) and the text under the film. " · " splits a scene's lines.
+const scene = z.object({
+  start: z.number().min(0),
+  end: z.number().positive(),
+  en: z.string().min(1),
+  ar: z.string().min(1),
+});
+
 const copy = z.object({
   short: z.string().min(1),
   tag: z.string().min(1),
@@ -27,11 +36,23 @@ const projects = defineCollection({
     mvp: z.boolean(),
     tone: z.string().regex(/^#[0-9A-Fa-f]{6}$/),
     demo: z.object({ type: z.string().min(1), status }),
-    film: z.object({
-      dir: z.string().startsWith("/films/"),
-      status,
-      lengthSec: z.number().int().positive(),
-    }),
+    film: z
+      .object({
+        dir: z.string().startsWith("/films/"),
+        status,
+        lengthSec: z.number().int().positive(),
+        /** The scene the silent loop is cut from (1-based). */
+        loopScene: z.number().int().min(1).optional(),
+        scenes: z.array(scene).optional(),
+      })
+      .refine(
+        (film) =>
+          (film.scenes ?? []).every(
+            (item, index, all) =>
+              item.end > item.start && item.end <= film.lengthSec && item.start >= (all[index - 1]?.end ?? 0),
+          ),
+        { message: "Film scenes must be in order, not overlap, and end within lengthSec." },
+      ),
     downloads: z.array(
       z.object({
         file: z.string().startsWith("/downloads/"),
