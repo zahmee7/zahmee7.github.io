@@ -1,0 +1,137 @@
+/* Variant · the drawer starts closed. Its front sits under the title, the rest of the cabinet below it
+   with a second, locked drawer; the folders wait inside. Pressing the front pulls the drawer out: the
+   front and the folders slide down together, the cabinet body falls away behind them, and the lamp
+   lights the folders. v-closed.js measures the travel (--shift) and runs the open. */
+
+/* The cabinet's own entrance is replaced by the open */
+html body .drawer,
+html body .drawer .folder {
+  animation: none !important;
+}
+
+/* ---------- Closed ---------- */
+html:not(.drawer-opened) body .drawer .drawer__cabinet,
+html.drawer-opening body .drawer .drawer__cabinet {
+  overflow: clip; /* the folders slide out from behind the top edge */
+}
+html:not(.drawer-opened) body .drawer .drawer__front {
+  transform: translateY(calc(-1 * var(--shift, 0px)));
+}
+html:not(.drawer-opened) body .drawer .drawer__stack {
+  transform: translateY(calc(-1 * var(--shift, 0px)));
+}
+html:not(.drawer-opened) body .drawer .drawer__back,
+html:not(.drawer-opened) body .drawer .drawer__walls,
+html:not(.drawer-opened) body .drawer .drawer__depth,
+html:not(.drawer-opened) body .drawer .drawer__cabinet::after {
+  opacity: 0;
+}
+
+/* The cabinet body under the closed drawer: a shadow under the front, and a second drawer with its pull */
+html body .drawer::before,
+html body .drawer::after {
+  content: "";
+  position: absolute;
+  z-index: 5;
+  pointer-events: none;
+  transition: opacity 420ms var(--ease-paper);
+}
+/* the drawer is a .container: its sides are the gutter, and 6 px on phones (Cabinet.astro) */
+html body .drawer {
+  --side: var(--gutter);
+}
+@media (max-width: 899px) {
+  html body .drawer {
+    --side: 6px;
+  }
+}
+html body .drawer::before {
+  inset-inline: var(--side);
+  inset-block: calc(var(--front-h, 144px) - 2px) 0;
+  background:
+    radial-gradient(ellipse 60% 38px at 50% 0, rgb(0 0 0 / 0.5), transparent),
+    linear-gradient(180deg, color-mix(in srgb, var(--c-drawer), black 18%), color-mix(in srgb, var(--c-drawer), black 48%));
+  box-shadow: inset 0 0 0 1px var(--c-drawer-edge);
+}
+/* More drawers below, one every 150 px down to the bottom edge: each a front with an empty label holder
+   and a pull, a dark gap under it. Drawn as repeating backgrounds, so any height fills. */
+html body .drawer::after {
+  --tile: 150px;
+  --body: color-mix(in srgb, var(--c-drawer), black 22%);
+  --holder: color-mix(in srgb, var(--c-mist-2), var(--c-drawer) 58%);
+  inset-inline: calc(var(--side) + 14px);
+  inset-block: calc(var(--front-h, 144px) + 14px) 0;
+  background:
+    linear-gradient(var(--c-drawer-handle) 0 14px, transparent 14px) 50% 92px / 150px var(--tile) repeat-y,
+    linear-gradient(var(--holder) 0 30px, transparent 30px) 50% 34px / 120px var(--tile) repeat-y,
+    linear-gradient(
+        180deg,
+        color-mix(in srgb, var(--c-drawer-edge), black 5%) 0 2px,
+        var(--body) 2px 134px,
+        rgb(0 0 0 / 0.45) 134px 100%
+      )
+      0 0 / 100% var(--tile) repeat-y;
+  opacity: 0.9;
+}
+html.drawer-opened body .drawer::before,
+html.drawer-opened body .drawer::after {
+  opacity: 0;
+}
+
+/* The closed front invites a pull: it breathes, and the whole front is the button */
+@media (prefers-reduced-motion: no-preference) {
+  @keyframes front-breathe {
+    0%,
+    100% {
+      translate: 0 0;
+    }
+    50% {
+      translate: 0 5px;
+    }
+  }
+  html:not(.drawer-opened) body .drawer .drawer__front {
+    animation: front-breathe 2.6s ease-in-out 600ms infinite !important;
+  }
+}
+html body .drawer__opener {
+  position: absolute;
+  z-index: 2;
+  inset: 0;
+  border: 0;
+  border-radius: inherit;
+  background: transparent;
+  cursor: pointer;
+}
+html body .drawer__opener:focus-visible {
+  outline: 3px solid var(--c-signal);
+  outline-offset: 4px;
+}
+@media (hover: hover) {
+  html:not(.drawer-opened) body .drawer .drawer__front:hover .drawer__handle {
+    box-shadow:
+      0 5px 10px rgb(0 0 0 / 0.55),
+      inset 0 1px 0 rgb(255 255 255 / 0.7),
+      0 0 18px rgb(var(--c-lamp-rgb) / 0.45);
+  }
+}
+
+/* ---------- Opening: front and folders travel together, the interior lights up ---------- */
+html.drawer-opening body .drawer .drawer__front,
+html.drawer-opening body .drawer .drawer__stack {
+  transition: transform 1000ms var(--ease-paper);
+}
+html.drawer-opening body .drawer .drawer__back,
+html.drawer-opening body .drawer .drawer__walls,
+html.drawer-opening body .drawer .drawer__depth,
+html.drawer-opening body .drawer .drawer__cabinet::after {
+  transition: opacity 600ms var(--ease-paper) 150ms;
+}
+@media (prefers-reduced-motion: reduce) {
+  html.drawer-opening body .drawer .drawer__front,
+  html.drawer-opening body .drawer .drawer__stack {
+    transition: none;
+  }
+  html.drawer-opening body .drawer * {
+    transition-duration: 150ms !important;
+  }
+}

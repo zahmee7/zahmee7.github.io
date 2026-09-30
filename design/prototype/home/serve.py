@@ -10,7 +10,7 @@ import urllib.parse
 HERE = os.path.dirname(os.path.abspath(__file__))
 ROOT = os.path.abspath(os.path.join(HERE, "..", "..", "..", "dist"))
 PORT = int(sys.argv[1]) if len(sys.argv) > 1 else 8773
-VARIANTS = ("bigger", "real", "intro", "motion")
+VARIANTS = ("bigger", "real", "intro", "motion", "closed")
 
 
 class Handler(http.server.SimpleHTTPRequestHandler):
