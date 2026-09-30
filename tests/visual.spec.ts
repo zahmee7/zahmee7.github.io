@@ -18,7 +18,12 @@ test("review screenshots of the home page", async ({ browser }, testInfo) => {
       const page = await context.newPage();
       await page.goto(`/${lang}/`);
       await page.evaluate(() => document.fonts.ready);
-      await page.screenshot({ path: `test-results/review/home-${lang}-${name}.png`, fullPage: true });
+      // animations: "disabled" settles transitions first, so folders are shot in their final place
+      await page.screenshot({
+        path: `test-results/review/home-${lang}-${name}.png`,
+        fullPage: true,
+        animations: "disabled",
+      });
       await context.close();
     }
   }

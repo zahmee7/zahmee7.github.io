@@ -97,12 +97,14 @@ for (const lang of locales) {
   });
 }
 
-test.describe("no sideways scroll on phones", () => {
+test.describe("no sideways scroll and no cut titles", () => {
   const sizes = [
     [360, 740],
     [390, 844],
     [430, 932],
     [740, 360],
+    [1000, 800],
+    [1440, 900],
   ] as const;
 
   for (const [width, height] of sizes) {
