@@ -1,12 +1,17 @@
 import { defineConfig, devices } from "@playwright/test";
 
+// Read CI without pulling in @types/node for one variable.
+const CI = Boolean(
+  (globalThis as { process?: { env?: Record<string, string | undefined> } }).process?.env?.CI,
+);
+
 // Three devices from CLAUDE.md > Tests. Every spec runs its checks in both ar and en.
 export default defineConfig({
   testDir: "tests",
   fullyParallel: true,
-  forbidOnly: !!process.env.CI,
-  retries: process.env.CI ? 1 : 0,
-  reporter: process.env.CI ? [["list"], ["html", { open: "never" }]] : [["list"]],
+  forbidOnly: CI,
+  retries: CI ? 1 : 0,
+  reporter: CI ? [["list"], ["html", { open: "never" }]] : [["list"]],
   use: {
     baseURL: "http://localhost:4321",
     trace: "retain-on-failure",
@@ -19,7 +24,7 @@ export default defineConfig({
   webServer: {
     command: "npm run build && npm run preview -- --port 4321",
     url: "http://localhost:4321/ar/",
-    reuseExistingServer: !process.env.CI,
+    reuseExistingServer: !CI,
     timeout: 180_000,
   },
 });
