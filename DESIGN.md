@@ -34,7 +34,7 @@ Inputs: `docs/BRIEF.md`, `CLAUDE.md`, `design/tokens.css`, `design/MOTION.md`, `
 | Open file (full-screen dialog) | A full page of paper that covers the cabinet, like a new page. A sticky top bar: folio (`Project files · 01 / 06`) and the close button. Desktop, the spread (owner's choice): tag, title and the project summary at inline-start, a larger film beside them, the demo and download at the foot of that column; then the story across the page in three columns under an ink rule. Previous / next at the bottom. Phone: one column: tag, title, summary, film, story, demo and download. While it is open, the address bar shows the project page. |
 | Project `/[lang]/projects/[id]/` | The same paper page at its own URL, for direct visits and sharing. The top bar adds the language switch, and its close becomes a link back to the drawer. Below 480 px the folio shows only its number. The closing card follows the page. |
 | Share image (1200 × 630) | Night room. Home: byline, kicker, H1 and the six folders in their drawer. Project: its folder pulled half out, tab with folio and short title, tag, title, byline. Made by `npm run og`. |
-| Demo `/[lang]/demos/[id]/` | One paper sheet on night. Stamp at the top inline-end, one-line note, the tool, a back link to the file. |
+| Demo `/[lang]/demos/[id]/` | One paper sheet on night, a back link and the language switch above it. Stamp at the top inline-end, the file's kind as a kicker, the project title and summary, then the project's own file in a frame (owner's decision): a waiting panel with "Open the live file" and where it loads from, swapped for the live frame on request. Under the frame: open in a new tab, and download for files on this site. The closing card follows. |
 | 404 | An empty drawer slot and one line: "This file is not in the drawer." with a link back. |
 
 ---
@@ -751,6 +751,8 @@ The masthead is not sticky. The language switch is a link (`<a hreflang lang>`) 
 ```
 
 Charts are hand-built SVG in ink on paper: 1 px `--c-paper-line` gridlines, bars in `--c-ink-2`, one highlighted series in `--c-teal`, direct labels instead of legends where possible, round sample numbers, and the stamp on the sheet.
+
+The live frame (`LiveFile.astro`) holds the project's own file: 1 px `--c-paper-line` border, 12 px radius, `--c-paper-hi` behind it. Its shape follows the kind: a report 16:9.4, a workbook 4:3 (3:4 on phones), a document 3:4 up to 820 px wide, never taller than 85svh. Until opened it shows faint ruled lines, the primary button "Open the live file" and one line saying where it loads from. The file keeps its own design inside the frame; the chart rules above apply to anything drawn by the site itself.
 
 ### Icons and imagery
 

@@ -69,7 +69,7 @@ Rules that keep them from conflicting:
   - No other typeface. `DESIGN.md` dropped IBM Plex Mono; file kinds use Sans.
   - Preload only the two weights used above the fold. No Google Fonts requests in production.
   - **Licence (hard rules).** Web embedding is allowed only as part of the built site. Never commit the font files to any repository that is public, never upload them anywhere else, never link to them or list them as downloads. The deploy workflow gets them from a private source (set up in Phase 1). Do not subset, convert or edit the files, or change the font names inside them: the licence forbids any modification, so use the woff2 files exactly as delivered (hashed file names from the build are fine). Do not use the thmanyah name or logo in a way that suggests endorsement. The owner decided on 2026-09-30 not to ask thmanyah for written confirmation for now, so follow these rules strictly.
-- **Demos**: Preact islands (`client:visible`) with sample data from `src/data/samples/*.json`. Charts: hand-built SVG or Observable Plot. Ask before adding anything over 40 KB gzipped.
+- **Demos**: the project's own file in a sample version, not a tool built in the page (owner decision, Phase 6): a Power BI report published to web, an Excel workbook (OneDrive embed, or a file on this site in Microsoft's viewer) or a PDF on this site. `src/components/demos/LiveFile.astro` shows it behind "Open the live file", so nothing loads from Microsoft until the visitor asks. Each demo's `kind` and `url` live in `content/projects.json`; a page exists once the demo is `ready`. The owner publishes from his own personal Microsoft account; never sign in to it. Owner steps: `docs/DEMOS.md`. An earlier version with Preact tools on sample data is kept on the local branch `demos-built-in`, not merged. Ask before adding anything over 40 KB gzipped.
 - **Video**: self-hosted `<video>` (`src/components/film/`). Loops are muted, `playsinline`, start only when at least half in view and when reduced motion is off. Sources: AV1 MP4 first, H.264 MP4 fallback, AVIF poster, all `preload="none"`. Each film has an EN and an AR version (on-screen text, films/SCRIPTS.md); the loop has no text and serves both.
   - Scene lines and timings live in `content/projects.json` (`film.scenes`). They build the WebVTT captions (`/films/<id>/captions.<lang>.vtt`) and the text under the film.
   - Masters go in `films/<id>/` (`master-en`, `master-ar`, optional text-free `loop-master`, mp4 or mov) and are never committed. `npm run films` makes the web files in `src/assets/films/<id>/` and checks their size budgets. Film.astro shows a film only when its files exist, else the tile placeholder.
@@ -101,7 +101,7 @@ The public site is a trailer. Details are for interviews.
 - No entity-specific numbers of any kind: scores, counts of systems, datasets, findings or people, percentages, rankings, dates of assessments.
 - Do not name the employer on project pages (the copy says "the entity"). No employer logo, no internal system names, no screenshots of internal tools, no colleague names.
 - No wording about internal status such as audit findings in detail, "stalled", "next cycle".
-- Demos use clearly fictional sample data ("Sample Authority", round numbers) and always show a visible "Sample data" badge.
+- Demos use clearly fictional sample data ("Sample Authority", round numbers) and always show a visible "Sample data" badge. Check every demo file before it goes on the site (Excel and PDF sheet by sheet; for Power BI, what the report shows), and never publish from the employer's tenant.
 - Downloads are generic templates built from scratch.
 - Run the `confidentiality-check` skill before any commit that touches copy, samples, films or downloads.
 
@@ -150,9 +150,8 @@ src/
     film/      Film.astro, film.ts
   assets/films/<id>/  film-<lang>.mp4, film-av1-<lang>.mp4, loop.mp4, loop-av1.mp4, poster.avif (npm run films)
     ui/        LangSwitch.astro, Button.astro, SampleBadge.astro
-    demos/     one folder per demo (Preact)
+    demos/     LiveFile.astro
   content.config.ts
-  data/samples/
   i18n/        ui.ts, utils.ts
   layouts/     Base.astro
   pages/
