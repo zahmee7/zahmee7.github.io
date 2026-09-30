@@ -42,9 +42,10 @@ for (const lang of locales) {
         await expect(page.locator("html")).toHaveAttribute("dir", lang === "ar" ? "rtl" : "ltr");
         await expect(page).toHaveTitle(`${text.title} · ${copy.name}`);
         await expect(page.getByRole("heading", { level: 1 })).toHaveText(text.title);
-        for (const part of [text.tag, text.summary, text.context, text.did, text.result, text.demoLabel]) {
+        for (const part of [text.tag, text.summary, text.context, text.did, text.result]) {
           await expect(page.getByText(part, { exact: true })).toBeVisible();
         }
+        await expect(page.getByRole("link", { name: text.demoLabel })).toBeVisible();
 
         await expect(page.locator('meta[name="description"]')).toHaveAttribute("content", text.summary);
         await expect(page.locator('link[rel="canonical"]')).toHaveAttribute(

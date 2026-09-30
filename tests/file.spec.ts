@@ -41,9 +41,11 @@ for (const lang of locales) {
         await expect(page.locator("dialog#file")).toHaveAccessibleName(text.title);
         await expect(page.locator(".leaf__folio")).toContainText(copy.hero.kicker);
         await expect(page.locator("[data-folio]")).toHaveText(/^\S+ \/ \S+$/);
-        for (const part of [text.tag, text.summary, text.context, text.did, text.result, text.demoLabel]) {
+        for (const part of [text.tag, text.summary, text.context, text.did, text.result]) {
           await expect(page.locator("dialog#file").getByText(part, { exact: true })).toBeVisible();
         }
+        // the demo's label also closes the film's text, so find it as the link it is
+        await expect(page.locator("dialog#file").getByRole("link", { name: text.demoLabel })).toBeVisible();
 
         await page.getByRole("button", { name: copy.file.close }).click();
         await expectClosedOn(page, project.id);
