@@ -13,8 +13,8 @@ function setUp(drawer: HTMLElement): void {
 
   const show = (folder: HTMLElement): void => {
     if (drawer.hasAttribute("data-open")) return;
-    captionTitle.textContent = folder.dataset.captionTitle ?? "";
-    captionText.textContent = folder.dataset.captionText ?? "";
+    captionTitle.textContent = folder.dataset.title ?? "";
+    captionText.textContent = folder.dataset.note ?? "";
     hint.hidden = true;
     caption.hidden = false;
   };

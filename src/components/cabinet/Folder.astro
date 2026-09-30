@@ -24,8 +24,8 @@ const note = locked ? copy.drawer.locked : text.summary;
   class="folder"
   data-id={project.id}
   data-locked={locked ? "" : undefined}
-  data-caption-title={text.title}
-  data-caption-text={note}
+  data-title={text.title}
+  data-note={note}
   style={`--i: ${index}; --slot: ${index}; --tone: ${project.tone};`}
 >
   <div class="folder__sheet">
@@ -170,6 +170,17 @@ const note = locked ? copy.drawer.locked : text.summary;
       display: inline-block;
       inline-size: 18px;
       block-size: 18px;
+    }
+  }
+
+  /* Narrowest phones: a slightly tighter tab so the longest short title still fits in full */
+  @media (max-width: 389px) {
+    .folder__tab {
+      gap: 6px;
+      padding-inline: var(--s-3);
+    }
+    .folder__num {
+      font-size: 1.5rem;
     }
   }
 

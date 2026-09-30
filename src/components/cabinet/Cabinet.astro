@@ -257,4 +257,9 @@ const projects = (await getCollection("projects")).sort((a, b) => a.data.order -
       min-block-size: 116px;
     }
   }
+  @media (max-width: 389px) {
+    .drawer__cabinet {
+      --tab-w: clamp(210px, 72%, 250px);
+    }
+  }
 </style>
