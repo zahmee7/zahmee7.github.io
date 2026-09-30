@@ -1,9 +1,10 @@
 // The page pull (DESIGN.md section 7, MOTION.md sequences 3 to 5). Loaded on first intent by cabinet.ts.
 // Open: the folder nudges up and a page of paper is pulled up from the bottom over the cabinet.
 // Close: the page slides back down. Close by button, Esc, browser back or the Android back gesture.
+// While a file is open the address bar and tab title show its project page, so the link can be shared
+// and a reload lands on that page.
 import { gsap } from "gsap";
 import { CustomEase } from "gsap/CustomEase";
-import { showToast } from "../ui/toast";
 
 gsap.registerPlugin(CustomEase);
 CustomEase.create("paper", "0.2,0.7,0.2,1");
@@ -32,9 +33,9 @@ export function createFileSheet(dialog: HTMLDialogElement, drawer: HTMLElement):
   const folioLine = dialog.querySelector<HTMLElement>("[data-folio]")!;
   const prev = dialog.querySelector<HTMLButtonElement>('[data-step="-1"]')!;
   const next = dialog.querySelector<HTMLButtonElement>('[data-step="1"]')!;
-  const soonText = dialog.dataset.soonText ?? "";
   const templates = [...document.querySelectorAll<HTMLTemplateElement>("template[data-file]")];
   const openIds = templates.map((template) => template.dataset.file ?? "");
+  const home = { url: location.href, title: document.title };
 
   let current: { id: string; folder: HTMLElement } | null = null;
   let busy = false;
@@ -52,15 +53,18 @@ export function createFileSheet(dialog: HTMLDialogElement, drawer: HTMLElement):
     else button.removeAttribute("aria-disabled");
   }
 
-  function fill(id: string): void {
+  /** Puts a project's page in the dialog; returns its address for the history entry. */
+  function fill(id: string): string {
     const template = templates.find((item) => item.dataset.file === id);
-    if (!template) return;
+    if (!template) return home.url;
     body.replaceChildren(template.content.cloneNode(true));
+    document.title = template.dataset.pageTitle ?? home.title;
     folioLine.textContent = template.dataset.folioText ?? "";
     dialog.setAttribute("aria-labelledby", `file-title-${id}`);
     const index = openIds.indexOf(id);
     setDisabled(prev, index <= 0);
     setDisabled(next, index >= openIds.length - 1);
+    return template.dataset.url ?? home.url;
   }
 
   function markActive(folder: HTMLElement, active: boolean): void {
@@ -78,16 +82,17 @@ export function createFileSheet(dialog: HTMLDialogElement, drawer: HTMLElement):
     }
   }
 
-  function open(folder: HTMLElement): void {
+  /** push is false when the browser's forward button brings the file back: its entry exists already. */
+  function open(folder: HTMLElement, push = true): void {
     if (busy || current) return;
     const id = folder.dataset.id ?? "";
     if (!openIds.includes(id)) return;
     busy = true;
-    fill(id);
+    const url = fill(id);
     current = { id, folder };
     markActive(folder, true);
     drawer.dataset.open = "";
-    history.pushState({ file: id }, "");
+    if (push) history.pushState({ file: id }, "", url);
 
     gsap.set(risers(), { autoAlpha: 0, y: 14 });
     gsap.set(leaf, { clearProps: "transform,opacity,visibility" });
@@ -138,6 +143,8 @@ export function createFileSheet(dialog: HTMLDialogElement, drawer: HTMLElement):
     const { folder } = current;
 
     const done = (): void => {
+      document.title = home.title;
+      if (location.href !== home.url) history.replaceState(null, "", home.url);
       dialog.close();
       document.documentElement.style.removeProperty("--scroll-gap");
       gsap.set(leaf, { clearProps: "transform,opacity,visibility" });
@@ -178,8 +185,7 @@ export function createFileSheet(dialog: HTMLDialogElement, drawer: HTMLElement):
         const folder = folderOf(id);
         markActive(folder, true);
         current = { id, folder };
-        fill(id);
-        history.replaceState({ file: id }, "");
+        history.replaceState({ file: id }, "", fill(id));
         dialog.scrollTop = 0;
         gsap.fromTo(
           risers(),
@@ -200,8 +206,12 @@ export function createFileSheet(dialog: HTMLDialogElement, drawer: HTMLElement):
     });
   }
 
-  addEventListener("popstate", () => {
+  addEventListener("popstate", (event) => {
     if (current) close();
+    else {
+      const id = (event.state as { file?: string } | null)?.file;
+      if (id && openIds.includes(id)) open(folderOf(id), false);
+    }
   });
   dialog.addEventListener("cancel", (event) => {
     event.preventDefault();
@@ -213,13 +223,6 @@ export function createFileSheet(dialog: HTMLDialogElement, drawer: HTMLElement):
       if (!button.hasAttribute("aria-disabled")) go(Number(button.dataset.step));
     });
   }
-  // Parts built in later phases say "Coming soon"
-  dialog.addEventListener("click", (event) => {
-    const soon = (event.target as Element).closest("[data-soon]");
-    if (!soon) return;
-    event.preventDefault();
-    showToast(soonText);
-  });
 
   return { open };
 }
