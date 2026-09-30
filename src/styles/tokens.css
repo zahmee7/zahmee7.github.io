@@ -1,0 +1,181 @@
+/* Project Files · design tokens (site copy)
+   Copied from design/tokens.css, which is generated from DESIGN.md. Keep the two in sync.
+   One difference: the three font stacks point to the variables that Astro's Fonts API generates
+   (astro.config.mjs > fonts). Each carries its own metric-matched fallback, so the page does not jump.
+   Breakpoints (not tokens, media queries cannot read vars): 900px mobile, 1200px compact desktop. */
+
+:root {
+  /* ---------- Color: night (the room) ---------- */
+  --c-night: #080f1c; /* page background */
+  --c-night-2: #0f1a2f; /* raised surface on night */
+  --c-night-3: #0f1e3a; /* top of the room, background gradient start */
+  --c-line: #1b2740; /* decorative hairline on night */
+  --c-line-2: #2a3a58; /* decorative border on night */
+  --c-line-3: #63728c; /* control border on night (≥3:1 on night, night-2, drawer) */
+
+  /* ---------- Color: text on night ---------- */
+  --c-paper-hi: #fffdf8; /* primary button hover on night */
+  --c-mist: #b3b2ae; /* secondary text (9.0:1) */
+  --c-mist-2: #8e97a6; /* tertiary text (6.5:1) */
+  --c-signal: #62c3db; /* accent and focus ring on night (9.5:1) */
+
+  /* ---------- Color: light (warmth only, never text) ---------- */
+  --c-lamp: #f2d7a0;
+
+  /* ---------- Color: drawer ---------- */
+  --c-drawer: #12264a;
+  --c-drawer-edge: #23426f;
+  --c-drawer-handle: #0b1628;
+
+  /* ---------- Color: paper ---------- */
+  --c-paper: #f4f0e8; /* open file, demo sheet, primary button on night */
+  --c-paper-line: #d9d2c4; /* hairlines and page spine on paper, decorative only */
+  --c-folder-1: #f1ede4;
+  --c-folder-2: #e8e1d3;
+  --c-folder-3: #efe8da;
+  --c-folder-4: #e3daca;
+  --c-folder-5: #ece5d6;
+  --c-folder-6: #ded4c1;
+
+  /* ---------- Color: ink (text on paper) ---------- */
+  --c-ink: #0b1628; /* 15.9:1 on paper */
+  --c-ink-2: #232c3b; /* 12.4:1 on paper */
+  --c-ink-muted: #5a6474; /* 5.3:1 on paper, not on folders */
+  --c-teal: #1f6f86; /* accent and focus ring on paper (5.0:1) */
+  --c-stamp: #9a3a24; /* ink stamp (6.2:1 on paper, 4.8:1 on folder-6) */
+
+  /* ---------- Color: demo status (sample data only, on --c-paper only) ---------- */
+  --c-ok: #2e6a4b;
+  --c-warn: #8a5a00;
+  --c-gap: var(--c-stamp);
+
+  /* ---------- Color: film ---------- */
+  --c-film: #12264a;
+  --c-film-tile: #1b3358;
+  --c-film-lit: #62c3db;
+
+  /* ---------- RGB helpers: rgb(var(--c-night-rgb) / 0.6) ---------- */
+  --c-night-rgb: 8 15 28;
+  --c-paper-rgb: 244 240 232;
+  --c-ink-rgb: 11 22 40;
+  --c-signal-rgb: 98 195 219;
+  --c-lamp-rgb: 242 215 160;
+  --c-stamp-rgb: 154 58 36;
+
+  --focus: var(--c-signal); /* focus ring color, .on-paper switches it to teal */
+
+  /* ---------- Type: thmanyah, one weight per family (three files site-wide) ---------- */
+  --font-display: var(--font-thmanyah-display);
+  --font-text: var(--font-thmanyah-text);
+  --font-ui: var(--font-thmanyah-sans);
+
+  --fw-display: 700;
+  --fw-text: 400;
+  --fw-ui: 400;
+
+  --fs-display: clamp(2.5rem, 1.35rem + 4.6vw, 4.75rem); /* 40 → 76 px */
+  --fs-title: clamp(1.875rem, 1.3rem + 2.2vw, 3rem); /* 30 → 48 px */
+  --fs-folder-num: clamp(1.75rem, 1.2rem + 1.6vw, 2.5rem); /* 28 → 40 px */
+  --fs-folder-title: 1.25rem; /* 20 px */
+  --fs-lead: clamp(1.0625rem, 1rem + 0.3vw, 1.25rem); /* 17 → 20 px */
+  --fs-story: 1.125rem; /* 18 px */
+  --fs-ui: 0.9375rem; /* 15 px */
+  --fs-meta: 0.8125rem; /* 13 px */
+  --fs-kicker: 0.75rem; /* 12 px */
+
+  --lh-display: 1.02;
+  --lh-title: 1.08;
+  --lh-lead: 1.6;
+  --lh-story: 1.65;
+  --lh-ui: 1.5;
+
+  --ls-display: -0.02em;
+  --ls-title: -0.01em;
+  --ls-kicker: 0.26em;
+
+  /* ---------- Shape ---------- */
+  --r-tab: 12px 12px 0 0;
+  --r-page: 18px; /* demo sheet and film frame; folders use 14px */
+  --r-drawer: 22px;
+  --r-sheet: 22px 22px 0 0;
+  --r-btn: 12px;
+  --r-pill: 999px;
+
+  /* ---------- Space ---------- */
+  --s-1: 4px;
+  --s-2: 8px;
+  --s-3: 12px;
+  --s-4: 16px;
+  --s-5: 24px;
+  --s-6: 32px;
+  --s-7: 44px;
+  --s-8: 64px;
+  --s-9: 80px;
+  --gutter: clamp(16px, 5vw, 80px);
+  --container: 1240px;
+  --tap: 44px;
+
+  /* ---------- Depth ---------- */
+  --sh-folder: 0 -12px 28px rgb(0 0 0 / 0.35);
+  --sh-drawer: 0 -18px 40px rgb(0 0 0 / 0.45);
+  --sh-file: 0 30px 70px rgb(0 0 0 / 0.55);
+  --z-folder: 1;
+  --z-drawer: 12;
+  --z-folder-active: 20;
+  --z-file: 40;
+  --z-toast: 60;
+
+  /* ---------- Motion (DESIGN.md section 7) ---------- */
+  --ease-paper: cubic-bezier(0.2, 0.7, 0.2, 1); /* paper sliding to rest */
+  --ease-in: cubic-bezier(0.4, 0, 0.8, 0.3); /* leaving: the page slides back down */
+  --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+  --ease-settle: cubic-bezier(0.3, 1.35, 0.5, 1); /* small overshoot for a lifted folder */
+
+  --d-press: 120ms;
+  --d-hover: 350ms;
+  --d-nudge: 160ms; /* the picked folder nudges up as the page starts */
+  --d-page-in: 720ms; /* the page is pulled up over the cabinet */
+  --d-page-out: 500ms; /* the page slides back down */
+  --d-content: 450ms; /* each content block rising in */
+  --d-stagger: 70ms; /* gap between content blocks */
+  --d-enter: 800ms; /* first-load folder rise */
+  --d-enter-stagger: 90ms;
+  --d-fade: 150ms; /* reduced-motion replacement */
+  --d-stamp: 260ms; /* demo stamp press */
+
+  --m-hover-lift: 16px;
+  --m-nudge: 14px;
+  --m-rise: 14px;
+}
+
+:root:lang(ar) {
+  --fs-story: 1.1875rem; /* 19 px */
+  --fs-ui: 1rem; /* 16 px */
+  --fs-meta: 0.875rem; /* 14 px */
+  --fs-kicker: 0.9375rem; /* 15 px */
+  --lh-display: 1.3;
+  --lh-title: 1.35;
+  --lh-lead: 1.85;
+  --lh-story: 1.95;
+  --lh-ui: 1.7;
+  --ls-display: 0;
+  --ls-title: 0;
+  --ls-kicker: 0;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --d-hover: 0ms;
+    --d-nudge: 0ms;
+    --d-page-in: var(--d-fade);
+    --d-page-out: var(--d-fade);
+    --d-content: var(--d-fade);
+    --d-stagger: 0ms;
+    --d-enter: 0ms;
+    --d-enter-stagger: 0ms;
+    --d-stamp: 0ms;
+    --m-hover-lift: 0px;
+    --m-nudge: 0px;
+    --m-rise: 0px;
+  }
+}

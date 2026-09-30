@@ -1,0 +1,49 @@
+---
+// GitHub Pages serves this for any unknown path, so it speaks both languages.
+import Base from "../layouts/Base.astro";
+import { t } from "../i18n/utils";
+
+const ar = t("ar");
+const en = t("en");
+---
+
+<Base lang="ar" title={`${ar.notFound.title} · ${en.notFound.title}`} noindex>
+  <main class="container missing">
+    <section class="missing__block" lang="ar" dir="rtl">
+      <h1 class="missing__title">{ar.notFound.title}</h1>
+      <a class="btn btn--primary" href="/ar/">
+        {ar.notFound.back}
+      </a>
+    </section>
+    <section class="missing__block" lang="en" dir="ltr">
+      <p class="missing__title">{en.notFound.title}</p>
+      <a class="btn" href="/en/">
+        {en.notFound.back}
+      </a>
+    </section>
+  </main>
+</Base>
+
+<style>
+  .missing {
+    min-block-size: 100dvh;
+    display: grid;
+    align-content: center;
+    gap: var(--s-8);
+    padding-block: var(--s-8);
+  }
+  .missing__block {
+    display: grid;
+    justify-items: start;
+    gap: var(--s-5);
+  }
+  .missing__title {
+    margin: 0;
+    max-inline-size: 20ch;
+    font: var(--fw-display) var(--fs-title) / var(--lh-title) var(--font-display);
+    text-wrap: balance;
+  }
+  .missing__block[lang="en"] .missing__title {
+    --lh-title: 1.08;
+  }
+</style>

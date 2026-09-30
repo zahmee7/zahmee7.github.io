@@ -1,0 +1,15 @@
+# Kit files, specs and copy keep the owner's formatting
+.claude/
+content/
+design/
+docs/
+films/
+*.md
+
+# Generated
+dist/
+.astro/
+node_modules/
+package-lock.json
+playwright-report/
+test-results/

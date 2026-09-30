@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
+  <!-- A paper folder with its tab, on night blue (DESIGN.md palette) -->
+  <rect width="32" height="32" rx="7" fill="#080F1C"/>
+  <path d="M7 11.5a2 2 0 0 1 2-2h5.2l2 2.3H23a2 2 0 0 1 2 2V22a2 2 0 0 1-2 2H9a2 2 0 0 1-2-2z" fill="#F4F0E8"/>
+  <path d="M7 14h18" stroke="#D9D2C4" stroke-width="1"/>
+</svg>

@@ -1,0 +1,36 @@
+{
+  "name": "project-files",
+  "type": "module",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Project Files · Mohammed Alzahmah. Bilingual file-cabinet portfolio.",
+  "engines": {
+    "node": ">=22.12.0"
+  },
+  "scripts": {
+    "predev": "node scripts/check-fonts.mjs",
+    "dev": "astro dev",
+    "prebuild": "node scripts/check-fonts.mjs",
+    "build": "astro build",
+    "preview": "astro preview",
+    "check": "astro check",
+    "test": "playwright test",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "astro": "astro"
+  },
+  "allowScripts": {
+    "esbuild": true
+  },
+  "dependencies": {
+    "astro": "^7.3.5"
+  },
+  "devDependencies": {
+    "@astrojs/check": "^0.9.10",
+    "@axe-core/playwright": "^4.13.0",
+    "@playwright/test": "^1.63.0",
+    "prettier": "^3.9.9",
+    "prettier-plugin-astro": "^1.1.0",
+    "typescript": "^6.0.3"
+  }
+}

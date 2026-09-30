@@ -1,0 +1,51 @@
+---
+import { Font } from "astro:assets";
+import "../styles/tokens.css";
+import "../styles/global.css";
+import { dir, otherLocale, t, type Locale } from "../i18n/utils";
+
+interface Props {
+  lang: Locale;
+  /** Path after the locale, e.g. "projects/ndi-readiness/". Empty for the home page. */
+  path?: string;
+  title?: string;
+  description?: string;
+  /** For pages that should not be indexed and have no language twin (404). */
+  noindex?: boolean;
+}
+
+const { lang, path = "", title, description, noindex = false } = Astro.props;
+const copy = t(lang);
+const other = otherLocale(lang);
+const pageTitle = title ?? copy.meta.title;
+const pageDescription = description ?? copy.meta.description;
+const canonical = new URL(`/${lang}/${path}`, Astro.site);
+const twin = new URL(`/${other}/${path}`, Astro.site);
+---
+
+<!doctype html>
+<html lang={lang} dir={dir(lang)}>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <title>{pageTitle}</title>
+    <meta name="description" content={pageDescription} />
+    {noindex ? (
+      <meta name="robots" content="noindex" />
+    ) : (
+      <>
+        <link rel="canonical" href={canonical} />
+        <link rel="alternate" hreflang={lang} href={canonical} />
+        <link rel="alternate" hreflang={other} href={twin} />
+      </>
+    )}
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <!-- Two files preloaded on every page; the story font loads only where it is used (DESIGN.md section 3) -->
+    <Font cssVariable="--font-thmanyah-display" preload />
+    <Font cssVariable="--font-thmanyah-sans" preload />
+    <Font cssVariable="--font-thmanyah-text" />
+  </head>
+  <body>
+    <slot />
+  </body>
+</html>
