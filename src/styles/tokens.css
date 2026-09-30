@@ -144,7 +144,7 @@
   --d-fade: 150ms; /* reduced-motion replacement */
   --d-stamp: 260ms; /* demo stamp press */
 
-  --m-hover-lift: 16px;
+  --m-hover-lift: 24px;
   --m-nudge: 14px;
   --m-rise: 14px;
 }

@@ -34,18 +34,40 @@ const copy = t(lang);
   <a class="skip" href="#drawer">
     {copy.skip}
   </a>
-  <Masthead lang={lang} />
-  <!-- No closing card here: the masthead's card link is enough on the home page (owner's decision) -->
-  <main class="home">
-    <Hero lang={lang} />
-    <Cabinet lang={lang} />
-  </main>
+  <!-- One view on desktop: the masthead and the title on top, the drawer filling the rest down to the
+       bottom edge. No closing card here: the masthead's card link is enough (owner's decision). -->
+  <div class="home">
+    <Masthead lang={lang} />
+    <main class="home__main">
+      <Hero lang={lang} />
+      <Cabinet lang={lang} />
+    </main>
+  </div>
   <FileSheet lang={lang} />
   <Toast />
 </Base>
 
 <style>
   .home {
-    padding-block-end: clamp(48px, 6vw, 96px);
+    display: grid;
+    grid-template-rows: auto minmax(0, 1fr);
+    min-block-size: 100svh;
+  }
+  .home__main {
+    display: flex;
+    flex-direction: column;
+  }
+  /* Desktop: exactly one screen, so nothing is left empty under the drawer (Cabinet.astro fills it) */
+  @media (min-width: 900px) and (min-height: 620px) {
+    .home {
+      block-size: 100svh;
+    }
+  }
+  /* Wide screens: the masthead, the title and the drawer widen together instead of leaving night on both
+     sides */
+  @media (min-width: 1600px) {
+    .home {
+      --container: 1440px;
+    }
   }
 </style>

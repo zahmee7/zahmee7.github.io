@@ -22,14 +22,15 @@ Tokens live in `design/tokens.css`.
 | Step | Element | Motion | Duration | Delay |
 |---|---|---|---|---|
 | 1 | Kicker, H1, lead | rise `--m-rise` + fade | 700 ms `--ease-paper` | 0, 100, 200 ms |
-| 2 | Folders 1 → 6 | rise 120 px + fade, to their place in the drawer | `--d-enter` | 150 ms + i × `--d-enter-stagger` |
-| 3 | Drawer hint | float 6 px, loop | 2.4 s ease-in-out | after step 2 |
+| 2 | The drawer | slides out towards you: up 56 px and from 0.965 scale + fade | 850 ms `--ease-paper` | 80 ms |
+| 3 | Folders 1 → 6 | rise 170 px + fade, settling with a small overshoot | `--d-enter` `--ease-settle` | 360 ms + i × `--d-enter-stagger` |
+| 4 | Drawer hint | float 6 px, loop | 2.4 s ease-in-out | after step 3 |
 
 A `sessionStorage` flag skips the entrance on later visits and when coming back from a project page.
 
 ### 2. Hover and focus on a folder (pointer devices)
 
-- The folder lifts `--m-hover-lift` over `--d-hover` with `--ease-paper`.
+- The folder lifts `--m-hover-lift` (24 px) over 1.3 × `--d-hover` with `--ease-settle`, and the other folders step back (brightness 0.9, saturation 0.92).
 - The drawer front swaps its hint for the folder's title and summary (or "Coming soon").
 - Keyboard focus on the tab gives the same lift, the caption and the focus ring. Press: tab scales to 0.98.
 
