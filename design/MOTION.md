@@ -41,7 +41,7 @@ A `sessionStorage` flag skips the entrance on later visits and when coming back 
 | 0 → 160 | The picked folder nudges up `--m-nudge`, `--ease-paper`. |
 | 160 → 460 | It settles back into the drawer. |
 | 100 → 820 | The page is pulled up to `y = 0`, `--d-page-in`, `--ease-paper`. The screen turns from night to paper. |
-| 500 → 1300 | Content rises in, `--d-content` each, `--d-stagger` apart: tag, title, film, transcript, story blocks, actions, download, previous / next. |
+| 500 → 1300 | Content rises in, `--d-content` each, `--d-stagger` apart: tag, title, summary, film, demo and download, the three story blocks, previous / next. |
 | 820 | Focus moves to the file title. |
 
 ### 4. Close a project

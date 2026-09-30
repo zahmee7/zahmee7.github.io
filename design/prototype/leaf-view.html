@@ -1,0 +1,105 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Page layouts viewer</title>
+<meta name="description" content="Compare the project page layouts on a phone and on a desktop, in both languages.">
+<link rel="stylesheet" href="../tokens.css">
+<style>
+  @font-face { font-family: "thmanyah Sans"; src: url("../fonts/thmanyah/sans/thmanyahsans-Regular.woff2") format("woff2"); font-weight: 400; font-display: swap; }
+  *, *::before, *::after { box-sizing: border-box; }
+  html { color-scheme: dark; font-family: var(--font-ui); font-synthesis: none; }
+  body {
+    margin: 0; min-block-size: 100dvh; display: grid; justify-items: center; align-content: start; gap: 12px;
+    padding: 16px 16px 32px; background: #05080F; color: var(--c-mist); font-size: 0.9375rem;
+  }
+  .bar { display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 8px; }
+  .bar__label { color: var(--c-mist-2); font-size: 0.8125rem; }
+  button {
+    min-block-size: 40px; padding-inline: 14px; border: 1px solid var(--c-line-2); border-radius: 10px;
+    background: transparent; color: var(--c-mist); font: inherit; cursor: pointer;
+  }
+  button:hover { border-color: var(--c-line-3); color: var(--c-paper); }
+  button[aria-pressed="true"] { border-color: var(--c-signal); color: var(--c-paper); }
+  button:focus-visible { outline: 3px solid var(--c-signal); outline-offset: 2px; }
+  .switch { display: inline-grid; grid-auto-flow: column; padding: 4px; border: 1px solid var(--c-line-2); border-radius: 14px; background: var(--c-night-2); }
+  .switch button { min-inline-size: 120px; min-block-size: 44px; border: 0; border-radius: 10px; font-size: 1rem; }
+  .switch button[aria-pressed="true"] { background: var(--c-paper); color: var(--c-ink); }
+  body { overflow-x: hidden; }
+  .stage { position: relative; inline-size: 100%; }
+  /* Physical on purpose: centred the same way in both directions, then scaled to fit */
+  .device { position: absolute; top: 0; left: 50%; transform-origin: top left; }
+  .device--phone { padding: 12px; border-radius: 52px; background: #1A1F2A; box-shadow: 0 0 0 2px #2A3140, 0 40px 80px rgb(0 0 0 / 0.6); }
+  .device--phone iframe { inline-size: 390px; block-size: 844px; border-radius: 40px; }
+  .device--desktop { padding: 28px 10px 10px; border-radius: 16px; background: #1A1F2A; box-shadow: 0 0 0 2px #2A3140, 0 40px 80px rgb(0 0 0 / 0.6); }
+  .device--desktop iframe { inline-size: 1440px; block-size: 900px; border-radius: 8px; }
+  iframe { display: block; border: 0; background: var(--c-paper); }
+  .note { margin: 0; max-inline-size: 680px; text-align: center; color: var(--c-mist-2); font-size: 0.875rem; line-height: 1.8; }
+</style>
+</head>
+<body>
+  <div class="switch" role="group" aria-label="التخطيط">
+    <button type="button" data-layout="now">الحالي</button>
+    <button type="button" data-layout="spread">أ · القصة بعرض الصفحة</button>
+    <button type="button" data-layout="rail">ب · عمود جانبي ثابت</button>
+  </div>
+  <div class="bar" role="group" aria-label="خيارات العرض">
+    <button type="button" data-device="desktop">الحاسوب</button>
+    <button type="button" data-device="phone">الجوال</button>
+    <span class="bar__label">·</span>
+    <button type="button" data-lang="ar">العربية</button>
+    <button type="button" data-lang="en">English</button>
+    <span class="bar__label">·</span>
+    <button type="button" data-id="ndi-readiness">١</button>
+    <button type="button" data-id="data-classification">٢</button>
+    <button type="button" data-id="executive-dashboard">٣</button>
+  </div>
+  <p class="note" id="note"></p>
+  <div class="stage" id="stage">
+    <div class="device" id="device"><iframe id="screen" title="صفحة المشروع"></iframe></div>
+  </div>
+
+<script>
+  const q = new URLSearchParams(location.search);
+  const state = {
+    layout: ["now", "spread", "rail"].includes(q.get("layout")) ? q.get("layout") : "spread",
+    device: q.get("device") === "phone" ? "phone" : "desktop",
+    lang: q.get("lang") === "en" ? "en" : "ar",
+    id: q.get("id") || "ndi-readiness",
+  };
+  const NOTE = {
+    now: "الحالي: العنوان والفيلم في عمود، والقصة في عمود، وتبقى مساحة فارغة تحتهما وحولهما.",
+    spread: "أ: العنوان والملخص بجانب فيلم أكبر، والقصة في ثلاثة أعمدة بعرض الصفحة. الملف كله في أول نظرة.",
+    rail: "ب: عمود ضيق يبقى ثابتاً فيه العنوان والملخص والأزرار، وبجانبه فيلم كبير ثم القصة تُقرأ للأسفل.",
+  };
+  const SIZE = { phone: [414, 868], desktop: [1460, 938] };
+  const screen = document.getElementById("screen");
+  const device = document.getElementById("device");
+  const stage = document.getElementById("stage");
+
+  function load() {
+    for (const key of ["layout", "device", "lang", "id"]) {
+      document.querySelectorAll(`[data-${key}]`).forEach((b) => b.setAttribute("aria-pressed", String(b.dataset[key] === state[key])));
+    }
+    history.replaceState(null, "", "?" + new URLSearchParams(state).toString());
+    document.getElementById("note").textContent = NOTE[state.layout];
+    device.className = "device device--" + state.device;
+    screen.src = "leaf.html?" + new URLSearchParams({ layout: state.layout, lang: state.lang, id: state.id }).toString();
+    fit();
+  }
+  function fit() {
+    const [w, h] = SIZE[state.device];
+    const top = stage.getBoundingClientRect().top;
+    const k = Math.min(1, (innerWidth - 32) / w, (innerHeight - top - 24) / h);
+    device.style.transform = `scale(${k}) translateX(-50%)`;
+    stage.style.blockSize = `${Math.ceil(h * k)}px`;
+  }
+  addEventListener("resize", fit);
+  for (const key of ["layout", "device", "lang", "id"]) {
+    document.querySelectorAll(`[data-${key}]`).forEach((b) => b.addEventListener("click", () => { state[key] = b.dataset[key]; load(); }));
+  }
+  load();
+</script>
+</body>
+</html>

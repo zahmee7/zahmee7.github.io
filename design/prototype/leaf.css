@@ -1,0 +1,131 @@
+/* Project page layouts under review. Follows DESIGN.md; tokens come from ../tokens.css.
+   "now" mirrors the built page (Leaf.astro, FileLeaf.astro); "spread" and "rail" are the proposals. */
+
+@font-face { font-family: "thmanyah Serif Display"; src: url("../fonts/thmanyah/serif-display/thmanyahserifdisplay-Bold.woff2") format("woff2"); font-weight: 700; font-style: normal; font-display: swap; }
+@font-face { font-family: "thmanyah Sans"; src: url("../fonts/thmanyah/sans/thmanyahsans-Regular.woff2") format("woff2"); font-weight: 400; font-style: normal; font-display: swap; }
+@font-face { font-family: "thmanyah Serif Text"; src: url("../fonts/thmanyah/serif-text/thmanyahseriftext-Regular.woff2") format("woff2"); font-weight: 400; font-style: normal; font-display: swap; }
+
+*, *::before, *::after { box-sizing: border-box; }
+html { color-scheme: light; font-family: var(--font-ui); font-weight: var(--fw-ui); font-synthesis: none; -webkit-font-smoothing: antialiased; }
+body { margin: 0; min-block-size: 100dvh; background: var(--c-paper); color: var(--c-ink); font-size: var(--fs-ui); line-height: var(--lh-ui); }
+:where(a, button):focus-visible { outline: 3px solid var(--c-teal); outline-offset: 2px; border-radius: 4px; }
+
+.container { inline-size: min(100%, var(--container)); margin-inline: auto; padding-inline: var(--gutter); }
+
+/* Buttons and links (DESIGN.md section 4, on paper) */
+.btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: var(--s-2);
+  min-block-size: var(--tap); min-inline-size: var(--tap); padding-inline: var(--s-5);
+  border: 1px solid var(--c-ink-muted); border-radius: var(--r-btn); background: transparent; color: var(--c-ink);
+  font: var(--fw-ui) var(--fs-ui) / 1 var(--font-ui); white-space: nowrap; text-decoration: none; cursor: pointer;
+}
+.btn--primary { background: var(--c-ink); border-color: var(--c-ink); color: var(--c-paper); }
+.btn[aria-disabled="true"] { opacity: 0.45; }
+.link { color: inherit; text-decoration-line: underline; text-decoration-thickness: 1px; text-underline-offset: 0.25em; text-decoration-color: color-mix(in srgb, currentColor 40%, transparent); }
+svg.icon { inline-size: 18px; block-size: 18px; flex: none; }
+[dir="rtl"] svg.icon--dir { scale: -1 1; }
+
+/* The page and its bar (same in every layout) */
+.leaf { min-block-size: 100dvh; }
+.leaf__bar { position: sticky; z-index: 3; inset-block-start: 0; background: var(--c-paper); border-block-end: 1px solid var(--c-paper-line); }
+.leaf__bar-inner { display: flex; align-items: center; justify-content: space-between; gap: var(--s-4); min-block-size: 72px; }
+.leaf__folio { display: flex; gap: var(--s-3); margin: 0; color: var(--c-ink-muted); font-size: var(--fs-meta); }
+.leaf__folio b { color: var(--c-ink); font-weight: inherit; }
+.leaf__tools { display: flex; gap: var(--s-2); }
+.file__nav { display: flex; justify-content: space-between; gap: var(--s-3); padding-block: var(--s-5) var(--s-8); border-block-start: 1px solid var(--c-paper-line); }
+
+/* Shared parts */
+.file__tag { margin: 0 0 var(--s-3); color: var(--c-teal); font: var(--fw-ui) var(--fs-kicker) / 1.4 var(--font-ui); letter-spacing: var(--ls-kicker); text-transform: uppercase; }
+:lang(ar) .file__tag { text-transform: none; }
+.file__title { max-inline-size: 14ch; margin: 0 0 var(--s-6); font: var(--fw-display) clamp(2.25rem, 1.4rem + 3vw, 4rem) / var(--lh-title) var(--font-display); letter-spacing: var(--ls-title); text-wrap: balance; }
+.file__lead { max-inline-size: 30em; margin: 0; color: var(--c-ink-2); font: var(--fw-ui) var(--fs-lead) / 1.6 var(--font-ui); text-wrap: pretty; }
+
+.film { position: relative; aspect-ratio: 16 / 9; overflow: hidden; display: grid; place-items: center; border-radius: 12px; background: var(--c-film); }
+.film__tiles { position: absolute; inset: 14%; display: grid; grid-template-columns: repeat(7, 1fr); gap: 8px; }
+.film__tile { border-radius: 4px; background: var(--c-film-tile); animation: tile 4.2s ease-in-out infinite; animation-delay: calc(var(--t) * 0.3s); }
+@keyframes tile { 0%, 100% { background: var(--c-film-tile); } 40% { background: var(--c-film-lit); } 60% { background: var(--c-film-tile); } }
+.film__play { position: relative; display: grid; place-items: center; inline-size: 64px; block-size: 64px; border: 0; border-radius: 50%; background: var(--c-paper); color: var(--c-ink); cursor: pointer; }
+.film__play svg { inline-size: 22px; block-size: 22px; }
+.film__summary { margin: var(--s-3) 0 0; color: var(--c-ink-muted); font-size: var(--fs-meta); }
+
+.story__label { margin: 0 0 var(--s-2); color: var(--c-ink-muted); font: var(--fw-ui) var(--fs-kicker) / 1.4 var(--font-ui); letter-spacing: var(--ls-kicker); text-transform: uppercase; }
+:lang(ar) .story__label { text-transform: none; }
+.story__text { max-inline-size: 34em; margin: 0; color: var(--c-ink-2); font: var(--fw-text) var(--fs-story) / var(--lh-story) var(--font-text); text-wrap: pretty; }
+
+.file__actions { display: flex; flex-wrap: wrap; gap: var(--s-3); }
+.download { display: flex; align-items: center; gap: var(--s-3); min-block-size: var(--tap); margin-block-start: var(--s-4); padding-block: var(--s-2); border-block-end: 1px solid var(--c-paper-line); color: var(--c-ink); text-decoration: none; }
+.download__kind { margin-inline-start: auto; color: var(--c-ink-muted); font-size: var(--fs-meta); letter-spacing: 0.08em; }
+
+/* ---------- Layout "now": the built page ---------- */
+.now { display: grid; grid-template-columns: 1fr 1fr; padding-block: clamp(32px, 5vw, 72px); }
+.now__a { position: sticky; inset-block-start: 104px; align-self: start; padding-inline-end: clamp(32px, 4vw, 72px); }
+.now__b { padding-inline-start: clamp(32px, 4vw, 72px); border-inline-start: 1px solid var(--c-paper-line); }
+.now .story { display: grid; gap: var(--s-6); }
+.now .story__block { padding-block-start: var(--s-4); border-block-start: 1px solid var(--c-paper-line); }
+.now .story__block:first-child { padding-block-start: 0; border-block-start: 0; }
+.now .file__actions { margin-block-start: var(--s-7); }
+
+/* ---------- Layout "spread": title and film side by side, the story across the page ---------- */
+/* The first view holds the whole file: who, what, the film, then the three parts of the story. */
+.spread {
+  display: grid;
+  grid-template-columns: 5fr 7fr;
+  grid-template-rows: auto 1fr auto;
+  grid-template-areas: "head film" "act film" "story story";
+  column-gap: clamp(40px, 5vw, 88px);
+  padding-block: clamp(40px, 4.5vw, 64px) clamp(48px, 5vw, 80px);
+}
+.spread__head { grid-area: head; }
+.spread__head .file__title { margin-block-end: var(--s-5); }
+.spread__film { grid-area: film; margin: 0; }
+.spread__act { grid-area: act; align-self: end; padding-block-start: var(--s-6); }
+.spread__act .download { max-inline-size: 26em; }
+.spread .story {
+  grid-area: story;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  margin-block-start: clamp(48px, 5vw, 72px);
+  border-block-start: 1px solid var(--c-ink);
+}
+.spread .story__block { padding: var(--s-5) clamp(20px, 2.4vw, 40px) 0; border-inline-start: 1px solid var(--c-paper-line); }
+.spread .story__block:first-child { padding-inline-start: 0; border-inline-start: 0; }
+.spread .story__block:last-child { padding-inline-end: 0; }
+
+/* ---------- Layout "rail": a narrow column that stays, the film and story read down the page ---------- */
+.rail {
+  display: grid;
+  grid-template-columns: 4fr 8fr;
+  column-gap: clamp(40px, 5vw, 88px);
+  padding-block: clamp(40px, 4.5vw, 64px) clamp(48px, 5vw, 80px);
+}
+.rail__side { position: sticky; inset-block-start: 112px; align-self: start; display: grid; gap: var(--s-6); }
+.rail__side .file__title { margin-block-end: var(--s-4); font-size: clamp(2.25rem, 1.4rem + 2.4vw, 3.5rem); }
+.rail__main { display: grid; gap: clamp(40px, 4vw, 56px); }
+.rail__main .film__summary { margin-block-start: var(--s-3); }
+.rail .story { display: grid; gap: var(--s-7); }
+.rail .story__block { display: grid; grid-template-columns: 11em 1fr; gap: var(--s-5); padding-block-start: var(--s-5); border-block-start: 1px solid var(--c-paper-line); }
+.rail .story__text { font-size: 1.25rem; }
+
+/* ---------- Phones: one column in every layout ---------- */
+@media (max-width: 899px) {
+  .leaf__bar-inner { min-block-size: 60px; }
+  .now, .spread, .rail { grid-template-columns: 1fr; padding-block: var(--s-5) var(--s-6); }
+  .now__a { position: static; padding-inline-end: 0; }
+  .now__b { margin-block-start: var(--s-6); padding-inline-start: 0; padding-block-start: var(--s-5); border-inline-start: 0; border-block-start: 1px solid var(--c-paper-line); }
+
+  .spread { grid-template-rows: none; grid-template-areas: "head" "film" "story" "act"; }
+  .spread__film { margin-block-start: var(--s-5); }
+  .spread .story { grid-template-columns: 1fr; margin-block-start: var(--s-6); }
+  .spread .story__block { padding: var(--s-5) 0 var(--s-2); border-inline-start: 0; border-block-start: 1px solid var(--c-paper-line); }
+  .spread .story__block:first-child { border-block-start: 0; }
+
+  .rail__side, .rail__main { display: contents; }
+  .rail__head { order: 1; }
+  .rail__film { order: 2; margin-block-start: var(--s-5); }
+  .rail .story { order: 3; margin-block-start: var(--s-6); }
+  .rail__act { order: 4; margin-block-start: var(--s-6); }
+  .rail .story__block { grid-template-columns: 1fr; gap: 0; }
+  .rail .story__text { font-size: var(--fs-story); }
+
+  .file__actions .btn { white-space: normal; line-height: 1.3; padding-block: var(--s-2); }
+}

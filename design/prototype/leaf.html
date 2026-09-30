@@ -1,0 +1,98 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Project page layouts</title>
+<meta name="description" content="One project page in the built layout and in two proposed layouts, for the owner to compare.">
+<link rel="stylesheet" href="../tokens.css">
+<link rel="stylesheet" href="leaf.css">
+</head>
+<body>
+<article class="leaf" id="leaf"></article>
+
+<script>
+  // Query: layout = now | spread | rail, lang = ar | en, id = a project id.
+  const q = new URLSearchParams(location.search);
+  const layout = ["now", "spread", "rail"].includes(q.get("layout")) ? q.get("layout") : "now";
+  const lang = q.get("lang") === "en" ? "en" : "ar";
+  document.documentElement.lang = lang;
+  document.documentElement.dir = lang === "ar" ? "rtl" : "ltr";
+
+  const ICON = {
+    arrow: '<path d="M4 10h12M11 5l5 5-5 5" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>',
+    close: '<path d="M5 5l10 10M15 5 5 15" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>',
+    download: '<path d="M10 3v10M5.5 8.5 10 13l4.5-4.5M4 16.5h12" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>',
+    play: '<path d="M7 4.5v11l9-5.5z" fill="currentColor"/>',
+  };
+  const icon = (name, dir) => `<svg class="icon${dir ? " icon--dir" : ""}" viewBox="0 0 20 20" aria-hidden="true">${ICON[name]}</svg>`;
+  const digits = (text) => (lang === "ar" ? String(text).replace(/\d/g, (d) => "٠١٢٣٤٥٦٧٨٩"[d]) : String(text));
+  const folio = (n) => digits(String(n).padStart(2, "0"));
+
+  Promise.all([
+    fetch("../../content/projects.json").then((r) => r.json()),
+    fetch("../../content/site.json").then((r) => r.json()),
+  ]).then(([projects, site]) => {
+    projects.sort((a, b) => a.order - b.order);
+    const open = projects.filter((p) => p.mvp);
+    const project = open.find((p) => p.id === q.get("id")) || open[0];
+    const index = open.indexOf(project);
+    const copy = site[lang];
+    const text = project[lang];
+    const download = project.downloads[0];
+    document.title = text.title;
+
+    const tiles = Array.from({ length: 14 }, (_, i) => `<i class="film__tile" style="--t: ${(i % 7) + Math.floor(i / 7)}"></i>`).join("");
+    const film = `
+      <div class="film"><div class="film__tiles" aria-hidden="true">${tiles}</div>
+        <button class="film__play" type="button" aria-label="${copy.file.playFilm}">${icon("play")}</button></div>
+      <p class="film__summary"><a class="link" href="#">${copy.file.transcript}</a></p>`;
+    const tag = `<p class="file__tag">${text.tag}</p>`;
+    const title = `<h1 class="file__title">${text.title}</h1>`;
+    const lead = `<p class="file__lead">${text.summary}</p>`;
+    const story = `<div class="story">${["context", "did", "result"]
+      .map((part, i) => `<section class="story__block"><h2 class="story__label">${copy.file.story[i]}</h2><p class="story__text">${text[part]}</p></section>`)
+      .join("")}</div>`;
+    const demo = `<div class="file__actions"><a class="btn btn--primary" href="#"><span>${text.demoLabel}</span>${icon("arrow", true)}</a></div>`;
+    const dl = download
+      ? `<a class="download" href="#">${icon("download")}<span>${text.downloadLabel}</span><span class="download__kind" lang="en">${download.kind.toUpperCase()}</span></a>`
+      : "";
+
+    const body = {
+      now: `<div class="container now">
+          <div class="now__a">${tag}${title}${film}</div>
+          <div class="now__b">${story}${demo}${dl}</div>
+        </div>`,
+      spread: `<div class="container spread">
+          <div class="spread__head">${tag}${title}${lead}</div>
+          <figure class="spread__film">${film}</figure>
+          <div class="spread__act">${demo}${dl}</div>
+          ${story}
+        </div>`,
+      rail: `<div class="container rail">
+          <div class="rail__side">
+            <div class="rail__head">${tag}${title}${lead}</div>
+            <div class="rail__act">${demo}${dl}</div>
+          </div>
+          <div class="rail__main">
+            <div class="rail__film">${film}</div>
+            ${story}
+          </div>
+        </div>`,
+    }[layout];
+
+    const btn = (label, off) => `<button class="btn" type="button"${off ? ' aria-disabled="true"' : ""}>${label}</button>`;
+    document.getElementById("leaf").innerHTML = `
+      <header class="leaf__bar"><div class="container leaf__bar-inner">
+        <p class="leaf__folio"><span>${copy.hero.kicker}</span><b>${folio(project.order)} / ${folio(projects.length)}</b></p>
+        <div class="leaf__tools">
+          <a class="btn" href="#">${copy.nav.langShort}</a>
+          <a class="btn" href="#">${icon("close")}<span>${copy.file.close}</span></a>
+        </div>
+      </div></header>
+      ${body}
+      <div class="container file__nav">${btn(copy.file.prev, index === 0)}${btn(copy.file.next, index === open.length - 1)}</div>`;
+  });
+</script>
+</body>
+</html>

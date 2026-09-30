@@ -31,7 +31,7 @@ Inputs: `docs/BRIEF.md`, `CLAUDE.md`, `design/tokens.css`, `design/MOTION.md`, `
 | Page | Composition |
 |---|---|
 | Home `/[lang]/` | Masthead (name and role as a byline, card link, language). Hero: kicker, display H1, lead. The drawer fills the lower half of the first view: an open box (dark back wall, slanted side walls) with six folders standing inside, their tabs climbing in a staircase above the rim. The drawer front carries a cream label card, a caption line and a handle. Below: a closing card with the card CTA. |
-| Open file (full-screen dialog) | A full page of paper that covers the cabinet, like a new page. A sticky top bar: folio (`Project files · 01 / 06`) and the close button. Desktop: two columns split by a hairline, like the two pages of an open file. Column A (inline-start, sticky): tag, title, film, transcript link. Column B: the story in three blocks, the demo action, the download. Previous / next at the bottom. Phone: one column in the same order. While it is open, the address bar shows the project page. |
+| Open file (full-screen dialog) | A full page of paper that covers the cabinet, like a new page. A sticky top bar: folio (`Project files · 01 / 06`) and the close button. Desktop, the spread (owner's choice): tag, title and the project summary at inline-start, a larger film beside them, the demo and download at the foot of that column; then the story across the page in three columns under an ink rule. Previous / next at the bottom. Phone: one column: tag, title, summary, film, story, demo and download. While it is open, the address bar shows the project page. |
 | Project `/[lang]/projects/[id]/` | The same paper page at its own URL, for direct visits and sharing. The top bar adds the language switch, and its close becomes a link back to the drawer. Below 480 px the folio shows only its number. The closing card follows the page. |
 | Share image (1200 × 630) | Night room. Home: byline, kicker, H1 and the six folders in their drawer. Project: its folder pulled half out, tab with folio and short title, tag, title, byline. Made by `npm run og`. |
 | Demo `/[lang]/demos/[id]/` | One paper sheet on night. Stamp at the top inline-end, one-line note, the tool, a back link to the file. |
@@ -525,10 +525,21 @@ html:has(dialog[open]) { overflow: hidden; }
 .leaf__bar-inner { display: flex; align-items: center; justify-content: space-between; gap: var(--s-4); min-block-size: 72px; }
 .leaf__folio { margin: 0; color: var(--c-ink-muted); font-size: var(--fs-meta); }
 
-/* Two columns split by a hairline: the two pages of an open file */
-.leaf__body { display: grid; grid-template-columns: 1fr 1fr; padding-block: clamp(32px, 5vw, 72px); }
-.leaf__col--a { position: sticky; inset-block-start: 104px; align-self: start; padding-inline-end: clamp(32px, 4vw, 72px); }
-.leaf__col--b { padding-inline-start: clamp(32px, 4vw, 72px); border-inline-start: 1px solid var(--c-paper-line); }
+/* The spread (owner's choice, layout A in design/prototype/leaf-view.html): tag, title and summary beside
+   a larger film, the demo and download at the foot of that column, then the story across the page.
+   In the DOM the story comes before the actions, so it is read first. */
+.leaf__body {
+  display: grid;
+  grid-template-columns: 5fr 7fr;
+  grid-template-rows: auto 1fr auto;
+  grid-template-areas: "head film" "act film" "story story";
+  column-gap: clamp(40px, 5vw, 88px);
+  padding-block: clamp(40px, 4.5vw, 64px) clamp(48px, 5vw, 80px);
+}
+.file__head { grid-area: head; }
+.file__film { grid-area: film; }
+.file__act { grid-area: act; align-self: end; padding-block-start: var(--s-6); }
+.file__lead { max-inline-size: 30em; margin: 0; color: var(--c-ink-2); font: var(--fw-ui) var(--fs-lead) / 1.6 var(--font-ui); }
 
 .file__tag {
   margin: 0 0 var(--s-3);
@@ -547,9 +558,11 @@ html:has(dialog[open]) { overflow: hidden; }
 .file__title:focus { outline: none; }                          /* receives focus by script after opening */
 .file__title:focus-visible { outline: 3px solid var(--focus); outline-offset: 4px; }
 
-.story { display: grid; gap: var(--s-6); }
-.story__block { padding-block-start: var(--s-4); border-block-start: 1px solid var(--c-paper-line); }
-.story__block:first-child { padding-block-start: 0; border-block-start: 0; }
+/* Three columns under an ink rule, split by hairlines */
+.story { grid-area: story; display: grid; grid-template-columns: repeat(3, 1fr); margin-block-start: clamp(48px, 5vw, 72px); border-block-start: 1px solid var(--c-ink); }
+.story__block { padding: var(--s-5) clamp(20px, 2.4vw, 40px) 0; border-inline-start: 1px solid var(--c-paper-line); }
+.story__block:first-child { padding-inline-start: 0; border-inline-start: 0; }
+.story__block:last-child { padding-inline-end: 0; }
 .story__label {
   margin: 0 0 var(--s-2);
   color: var(--c-ink-muted);
@@ -564,7 +577,7 @@ html:has(dialog[open]) { overflow: hidden; }
   font: var(--fw-text) var(--fs-story) / var(--lh-story) var(--font-text);
   text-wrap: pretty;
 }
-.file__actions { display: flex; flex-wrap: wrap; gap: var(--s-3); margin-block-start: var(--s-7); }
+.file__actions { display: flex; flex-wrap: wrap; gap: var(--s-3); }
 .file__nav {
   display: flex;
   justify-content: space-between;
@@ -933,7 +946,7 @@ Approved by the owner in the prototype (style 1, "page pulled up"). Reference im
 | 0 → 160 | The picked folder nudges up `--m-nudge` (14 px), `--ease-paper`. |
 | 160 → 460 | It settles back into the drawer. |
 | 100 → 820 | The page is pulled up to `y = 0` over the cabinet, `--d-page-in`, `--ease-paper`. The screen turns from night to paper. |
-| 500 → 1300 | Content rises in, `--d-content` each, `--d-stagger` apart: tag, title, film, transcript, story blocks, actions, download, previous / next. |
+| 500 → 1300 | Content rises in, `--d-content` each, `--d-stagger` apart: tag, title, summary, film, demo and download, the three story blocks, previous / next. |
 | 820 | Focus moves to the file title. |
 
 **Close** (500 ms): the page slides back down below the screen, `--d-page-out`, `--ease-in`, with its content in place. Then the dialog closes and focus returns to the tab. Triggers: the close button, `Esc`, browser back and the Android back gesture (opening pushes a history entry). The dialog is scrolled to the top first.
@@ -1075,15 +1088,12 @@ Test widths: 360, 390, 430, landscape 740, plus 1440 × 900 desktop.
 
   /* The open file: one column */
   .leaf__bar-inner { min-block-size: 60px; }
-  .leaf__body { grid-template-columns: 1fr; padding-block: var(--s-5) var(--s-6); }
-  .leaf__col--a { position: static; padding-inline-end: 0; }
-  .leaf__col--b {
-    margin-block-start: var(--s-6);
-    padding-inline-start: 0;
-    padding-block-start: var(--s-5);
-    border-inline-start: 0;
-    border-block-start: 1px solid var(--c-paper-line);
-  }
+  .leaf__body { grid-template-columns: 1fr; grid-template-rows: none; grid-template-areas: "head" "film" "story" "act"; padding-block: var(--s-5) var(--s-6); }
+  .file__film { margin-block-start: var(--s-5); }
+  .story { grid-template-columns: 1fr; margin-block-start: var(--s-6); }
+  .story__block { padding: var(--s-5) 0 var(--s-2); border-inline-start: 0; border-block-start: 1px solid var(--c-paper-line); }
+  .story__block:first-child { border-block-start: 0; }
+  .file__act { padding-block-start: var(--s-5); }
 }
 
 @media (max-width: 389px) {

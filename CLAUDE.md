@@ -18,7 +18,7 @@ The site is a **file cabinet**. Each project is a paper folder in a drawer. The 
 | `content/site.json` | UI strings (nav, hero, labels, footer). |
 | `design/tokens.css` | Colors, type, radii, spacing, motion tokens, generated from `DESIGN.md`. Copy to `src/styles/tokens.css` in Phase 1 and keep in sync. |
 | `design/MOTION.md` | Motion spec, generated from `DESIGN.md` section 7. Follow its durations, easings and sequences. |
-| `design/prototype/cabinet.html` | Approved interaction prototype (with `cabinet.css`, `cabinet.js`; `view.html` compares phone and desktop). Serve the project root locally and open `/design/prototype/view.html`. Motion style 1 is the approved one; styles 2 and 3 are kept only for comparison. Match its feel; production code is a rewrite, not a copy. |
+| `design/prototype/cabinet.html` | Approved interaction prototype (with `cabinet.css`, `cabinet.js`; `view.html` compares phone and desktop). Serve the project root locally and open `/design/prototype/view.html`. Motion style 1 is the approved one; styles 2 and 3 are kept only for comparison. `leaf-view.html` compares project page layouts; layout A (the spread) is the approved one. Match its feel; production code is a rewrite, not a copy. |
 | `docs/PLAN.md` | Phases and acceptance criteria (Arabic). |
 | `docs/PROMPTS.md` | The prompt for each phase. |
 | `films/SCRIPTS.md` | Film scripts and export specs. |
@@ -75,7 +75,7 @@ Rules that keep them from conflicting:
 - **Share images**: `npm run og` (`scripts/og.mjs`) draws `public/og/<lang>/<name>.png` (1200×630, home and each open project) in headless Chromium with the local font files, which never leave the machine. The PNGs are committed. Rerun it after a title, tag or name changes.
 - **Hosting**: GitHub Pages through GitHub Actions (`withastro/action`). Repo name `zahmee7.github.io`, so the site is served at `https://zahmee7.github.io/` with no base path.
   - The digital card is a separate repo served at `/mohammed-card/`. Never create a route or folder named `mohammed-card`, and never edit that repo.
-- **Tests**: Playwright (`@playwright/test`) with projects `desktop` (Chromium 1440×900), `pixel` (Pixel 7) and `iphone` (iPhone 15, WebKit), each run in `en` and `ar`. `@axe-core/playwright` for accessibility. Lighthouse CI for budgets.
+- **Tests**: Playwright (`@playwright/test`) with projects `desktop` (Chromium 1440×900), `pixel` (Pixel 7) and `iphone` (iPhone 15, WebKit), each run in `en` and `ar`. `@axe-core/playwright` for accessibility. Lighthouse CI for budgets. The tests build the site and serve `dist/` with `scripts/serve.mjs` on port 4330, which answers like GitHub Pages (`astro preview` sends headers that make WebKit fetch preloaded fonts twice).
 - **Tooling**: npm, Node LTS (22 or newer), Prettier, `astro check`.
 
 ## Content model
