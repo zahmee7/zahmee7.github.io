@@ -13,7 +13,6 @@ html {
   font-synthesis: none; /* one weight per family: never fake bold or italic */
   text-size-adjust: 100%;
   -webkit-font-smoothing: antialiased;
-  scrollbar-gutter: stable;
 }
 
 body {
@@ -29,8 +28,11 @@ body {
   line-height: var(--lh-ui);
 }
 
+/* The open file locks the page behind. file.ts sets --scroll-gap to the scrollbar's width, so the
+   page does not shift when its scrollbar goes away. */
 html:has(dialog[open]) {
   overflow: hidden;
+  padding-right: var(--scroll-gap, 0px); /* physical: the page scrollbar is on the right in both directions */
 }
 
 :where(a, button, summary, [tabindex]):focus-visible {

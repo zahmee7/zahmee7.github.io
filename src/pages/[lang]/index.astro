@@ -3,6 +3,7 @@ import Base from "../../layouts/Base.astro";
 import Masthead from "../../components/site/Masthead.astro";
 import Hero from "../../components/site/Hero.astro";
 import Cabinet from "../../components/cabinet/Cabinet.astro";
+import FileSheet from "../../components/cabinet/FileSheet.astro";
 import Closing from "../../components/site/Closing.astro";
 import Toast from "../../components/ui/Toast.astro";
 import { locales, t, type Locale } from "../../i18n/utils";
@@ -40,5 +41,6 @@ const copy = t(lang);
     <Cabinet lang={lang} />
   </main>
   <Closing lang={lang} />
+  <FileSheet lang={lang} />
   <Toast />
 </Base>

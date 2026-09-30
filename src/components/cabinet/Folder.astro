@@ -35,6 +35,9 @@ const note = locked ? copy.drawer.locked : text.summary;
       id={`tab-${project.id}`}
       aria-describedby={`desc-${project.id}`}
       aria-disabled={locked ? "true" : undefined}
+      aria-haspopup={locked ? undefined : "dialog"}
+      aria-controls={locked ? undefined : "file"}
+      aria-expanded={locked ? undefined : "false"}
     >
       <span class="folder__num">{folio(project.order, lang)}</span>
       <span class="folder__short">{text.short}</span>
