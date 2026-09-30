@@ -1,0 +1,75 @@
+/* Variant C · a short introduction beside the headline (v-intro.js adds it). Desktop: the headline and lead
+   on the start side, the introduction on the end side, split by a hairline. Phones: under the lead. */
+
+html body .hero .intro {
+  grid-column: 9 / -1;
+  grid-row: 2 / span 2;
+  align-self: end;
+  display: grid;
+  gap: var(--s-3);
+  padding-inline-start: clamp(16px, 2vw, 32px);
+  border-inline-start: 1px solid var(--c-line-2);
+}
+html body .hero .intro__mark {
+  display: grid;
+  place-items: center;
+  inline-size: 56px;
+  block-size: 56px;
+  border-radius: 50%;
+  background: var(--c-paper);
+  color: var(--c-ink);
+  font: var(--fw-display) 1.75rem / 1 var(--font-display);
+  box-shadow: 0 0 0 4px rgb(var(--c-paper-rgb) / 0.12);
+}
+html body .hero .intro__line {
+  margin: 0;
+  color: var(--c-paper);
+  font-size: var(--fs-ui);
+  line-height: 1.7;
+}
+html body .hero .intro__areas {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--s-2);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+html body .hero .intro__areas li {
+  padding: 4px 12px;
+  border: 1px solid var(--c-line-3);
+  border-radius: var(--r-pill);
+  color: var(--c-mist);
+  font-size: var(--fs-meta);
+}
+@media (min-width: 900px) {
+  html body .hero .hero__kicker,
+  html body .hero .hero__title {
+    grid-column: 1 / span 8;
+  }
+  html body .hero .hero__lead {
+    grid-column: 1 / span 7;
+  }
+}
+
+@media (max-width: 899px) {
+  html body .hero .intro {
+    grid-column: 1 / -1;
+    grid-row: auto;
+    grid-template-columns: 48px minmax(0, 1fr);
+    align-items: center;
+    margin-block-start: var(--s-5);
+    padding-inline-start: 0;
+    padding-block-start: var(--s-4);
+    border-inline-start: 0;
+    border-block-start: 1px solid var(--c-line-2);
+  }
+  html body .hero .intro__mark {
+    inline-size: 48px;
+    block-size: 48px;
+    font-size: 1.5rem;
+  }
+  html body .hero .intro__areas {
+    grid-column: 1 / -1;
+  }
+}

@@ -1,0 +1,106 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Home variants viewer</title>
+<meta name="description" content="Compare the home page and drawer design variants on a phone and on a desktop, in both languages.">
+<style>
+  :root { --paper: #f4f0e8; --ink: #0b1628; --mist: #b3b2ae; --mist-2: #8e97a6; --line: #2a3a58; --line-3: #63728c; --signal: #62c3db; --night-2: #0f1a2f; }
+  *, *::before, *::after { box-sizing: border-box; }
+  html { color-scheme: dark; font-family: system-ui, "Segoe UI", "Noto Sans Arabic", sans-serif; }
+  body { margin: 0; min-block-size: 100dvh; display: grid; justify-items: center; align-content: start; gap: 12px; padding: 16px 16px 32px; background: #05080f; color: var(--mist); font-size: 0.9375rem; overflow-x: hidden; }
+  .bar { display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 8px; }
+  .bar__label { color: var(--mist-2); font-size: 0.8125rem; }
+  button { min-block-size: 40px; padding-inline: 14px; border: 1px solid var(--line); border-radius: 10px; background: transparent; color: var(--mist); font: inherit; cursor: pointer; }
+  button:hover { border-color: var(--line-3); color: var(--paper); }
+  button[aria-pressed="true"] { border-color: var(--signal); color: var(--paper); }
+  button:focus-visible { outline: 3px solid var(--signal); outline-offset: 2px; }
+  .switch { display: inline-flex; flex-wrap: wrap; justify-content: center; gap: 4px; padding: 4px; border: 1px solid var(--line); border-radius: 14px; background: var(--night-2); }
+  .switch button { min-block-size: 44px; border: 0; border-radius: 10px; font-size: 1rem; }
+  .switch button[aria-pressed="true"] { background: var(--paper); color: var(--ink); }
+  .note { margin: 0; max-inline-size: 760px; text-align: center; color: var(--mist-2); font-size: 0.875rem; line-height: 1.8; }
+  .stage { position: relative; inline-size: 100%; }
+  /* Physical on purpose: centred the same way in both directions, then scaled to fit */
+  .device { position: absolute; top: 0; left: 50%; transform-origin: top left; }
+  .device--phone { padding: 12px; border-radius: 52px; background: #1a1f2a; box-shadow: 0 0 0 2px #2a3140, 0 40px 80px rgb(0 0 0 / 0.6); }
+  .device--phone iframe { inline-size: 390px; block-size: 844px; border-radius: 40px; }
+  .device--desktop { padding: 28px 10px 10px; border-radius: 16px; background: #1a1f2a; box-shadow: 0 0 0 2px #2a3140, 0 40px 80px rgb(0 0 0 / 0.6); }
+  .device--desktop iframe { inline-size: 1440px; block-size: 900px; border-radius: 8px; }
+  iframe { display: block; border: 0; background: #080f1c; }
+</style>
+</head>
+<body>
+  <div class="switch" role="group" aria-label="التصميم">
+    <button type="button" data-variant="">الحالي</button>
+    <button type="button" data-variant="bigger">أ · درج أكبر وأوضح</button>
+    <button type="button" data-variant="real">ب · أقرب للحقيقة</button>
+    <button type="button" data-variant="intro">ج · تعريف قصير بك</button>
+    <button type="button" data-variant="motion">د · حركة أجمل</button>
+    <button type="button" data-variant="bigger,real,intro,motion">الكل معاً</button>
+  </div>
+  <div class="bar" role="group" aria-label="خيارات العرض">
+    <button type="button" data-device="desktop">الحاسوب</button>
+    <button type="button" data-device="phone">الجوال</button>
+    <span class="bar__label">·</span>
+    <button type="button" data-lang="ar">العربية</button>
+    <button type="button" data-lang="en">English</button>
+    <span class="bar__label">·</span>
+    <button type="button" id="replay">أعد حركة الدخول</button>
+  </div>
+  <p class="note" id="note"></p>
+  <div class="stage" id="stage">
+    <div class="device" id="device"><iframe id="screen" title="الصفحة الرئيسية"></iframe></div>
+  </div>
+
+<script>
+  const q = new URLSearchParams(location.search);
+  const state = {
+    variant: q.get("variant") ?? "",
+    device: q.get("device") === "phone" ? "phone" : "desktop",
+    lang: q.get("lang") === "en" ? "en" : "ar",
+  };
+  const NOTE = {
+    "": "التصميم الحالي كما هو في الموقع.",
+    bigger: "أ: العنوان والوصف جنباً إلى جنب فيصعد الدرج، والدرج أكبر، والألسنة أطول وكتابتها أكبر.",
+    real: "ب: ضوء دافئ من الأعلى، وعمق أوضح للدرج، وورق بحافة مضيئة وملمس خفيف، وبطاقة في إطار معدني، ومقبض معدني، وظل على الأرض.",
+    intro: "ج: تعريف قصير بك بجانب العنوان: حرف اسمك، وسطران عنك، ومجالات عملك الثلاثة.",
+    motion: "د: الدرج ينسحب نحوك عند الدخول ثم تصعد المجلدات، والمجلد يرتفع أكثر عند المرور عليه، والدرج يميل قليلاً مع الفأرة. اضغط «أعد حركة الدخول» لتراها مرة أخرى.",
+    "bigger,real,intro,motion": "كل التحسينات الأربعة معاً في صفحة واحدة.",
+  };
+  const SIZE = { phone: [414, 868], desktop: [1460, 938] };
+  const screen = document.getElementById("screen");
+  const device = document.getElementById("device");
+  const stage = document.getElementById("stage");
+
+  function load(replay = false) {
+    for (const key of ["variant", "device", "lang"]) {
+      document.querySelectorAll(`[data-${key}]`).forEach((b) => b.setAttribute("aria-pressed", String(b.dataset[key] === state[key])));
+    }
+    history.replaceState(null, "", "?" + new URLSearchParams(state).toString());
+    document.getElementById("note").textContent = NOTE[state.variant] ?? "";
+    device.className = "device device--" + state.device;
+    if (replay) {
+      try { screen.contentWindow.sessionStorage.removeItem("entered"); } catch (error) {}
+    }
+    const params = new URLSearchParams();
+    if (state.variant) params.set("v", state.variant);
+    screen.src = `/${state.lang}/` + (params.toString() ? "?" + params.toString() : "");
+    fit();
+  }
+  function fit() {
+    const [w, h] = SIZE[state.device];
+    const top = stage.getBoundingClientRect().top;
+    const k = Math.min(1, (innerWidth - 32) / w, (innerHeight - top - 24) / h);
+    device.style.transform = `scale(${k}) translateX(-50%)`;
+    stage.style.blockSize = `${Math.ceil(h * k)}px`;
+  }
+  addEventListener("resize", fit);
+  for (const key of ["variant", "device", "lang"]) {
+    document.querySelectorAll(`[data-${key}]`).forEach((b) => b.addEventListener("click", () => { state[key] = b.dataset[key]; load(key === "variant"); }));
+  }
+  document.getElementById("replay").addEventListener("click", () => load(true));
+  load(true);
+</script>
+</body>
+</html>

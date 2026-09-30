@@ -1,0 +1,48 @@
+/* Variant D · livelier motion. First load: the drawer slides out towards you, then the folders rise into it
+   with a small overshoot. Hover: the folder lifts higher with the same overshoot, the others dim a little.
+   Transforms, opacity and filter only, and nothing moves with reduced motion. */
+
+@media (prefers-reduced-motion: no-preference) {
+  @keyframes drawer-out {
+    from {
+      opacity: 0;
+      transform: translateY(56px) scale(0.965);
+    }
+  }
+  @keyframes folder-rise-settle {
+    from {
+      opacity: 0;
+      translate: 0 calc(var(--i) * var(--step) + 170px);
+    }
+    to {
+      opacity: 1;
+      translate: 0 calc(var(--i) * var(--step));
+    }
+  }
+  html.is-entering body .drawer {
+    animation: drawer-out 850ms var(--ease-paper) 80ms backwards;
+  }
+  html.is-entering body .drawer .folder {
+    animation: folder-rise-settle 880ms var(--ease-settle) backwards;
+    animation-delay: calc(360ms + var(--i) * 90ms);
+  }
+
+  html body .drawer .folder {
+    transition:
+      translate 460ms var(--ease-settle),
+      filter 300ms var(--ease-paper);
+  }
+  html body .drawer:not([data-open]) .folder:hover,
+  html body .drawer:not([data-open]) .folder:has(.folder__tab:focus-visible) {
+    --lift: 26px;
+  }
+  html body .drawer:not([data-open]) .drawer__stack:has(.folder:hover) .folder:not(:hover) {
+    filter: brightness(0.9) saturate(0.92);
+  }
+
+  /* A slight tilt that follows the pointer (v-motion.js sets --rx and --ry) */
+  html body .drawer .drawer__cabinet {
+    transform: perspective(1600px) rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg));
+    transition: transform 400ms var(--ease-paper);
+  }
+}
