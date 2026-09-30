@@ -30,7 +30,7 @@ Inputs: `docs/BRIEF.md`, `CLAUDE.md`, `design/tokens.css`, `design/MOTION.md`, `
 
 | Page | Composition |
 |---|---|
-| Home `/[lang]/` | Masthead (name and role as a byline, card link, language). Hero: kicker, display H1, lead. The drawer fills the lower half of the first view: an open box (dark back wall, slanted side walls) with six folders standing inside, their tabs climbing in a staircase above the rim. The drawer front carries a cream label card, a caption line and a handle. Below: a closing card with the card CTA. |
+| Home `/[lang]/` | Masthead (name and role as a byline, card link, language). Hero: kicker, then the H1 and the lead side by side (owner's choice, design A), so the drawer takes most of the first view: an open box (dark back wall, slanted side walls) with six folders standing inside, their tabs climbing in a staircase above the rim. The drawer front carries a cream label card, a caption line and a handle. No closing card: the masthead's card link is the one way to the card on this page (owner's decision). |
 | Open file (full-screen dialog) | A full page of paper that covers the cabinet, like a new page. A sticky top bar: folio (`Project files · 01 / 06`) and the close button. Desktop, the spread (owner's choice): tag, title and the project summary at inline-start, a larger film beside them, the demo and download at the foot of that column; then the story across the page in three columns under an ink rule. Previous / next at the bottom. Phone: one column: tag, title, summary, film, story, demo and download. While it is open, the address bar shows the project page. |
 | Project `/[lang]/projects/[id]/` | The same paper page at its own URL, for direct visits and sharing. The top bar adds the language switch, and its close becomes a link back to the drawer. Below 480 px the folio shows only its number. The closing card follows the page. |
 | Share image (1200 × 630) | Night room. Home: byline, kicker, H1 and the six folders in their drawer. Project: its folder pulled half out, tab with folio and short title, tag, title, byline. Made by `npm run og`. |
@@ -355,16 +355,18 @@ A folder is a `<li>` with a real `<button>` tab. Clicking anywhere on the folder
 
 ```css
 .drawer__cabinet {
-  --step: 42px;                  /* vertical offset between folders */
-  --tab-w: clamp(184px, 18.5%, 220px);   /* wide enough for the longest short title with Latin digits */
-  --visible-front: 84px;         /* the front folder shows the most paper */
-  --wall-front: 26px;            /* side wall thickness at the front */
+  /* Design A (owner's choice): a wider step, taller tabs, more paper at the front */
+  --step: 58px;                  /* vertical offset between folders */
+  --tab-w: clamp(230px, 21%, 270px);     /* wide enough for the longest short title with Latin digits */
+  --visible-front: 120px;        /* the front folder shows the most paper */
+  --wall-front: 30px;            /* side wall thickness at the front */
   --wall-back: 8px;              /* side wall thickness at the back */
-  --inset-back: 46px;            /* how far the back of the box sits inside the front, per side */
+  --inset-back: 52px;            /* how far the back of the box sits inside the front, per side */
   --rim: 16px;                   /* back wall showing above the backmost folder */
   --tab-pad: 14px;               /* tabs keep off the folder corners, so every tab sits on a straight edge */
+  --stack-top: 78px;             /* room for the first tab (56 px) and its lift */
   position: relative;
-  block-size: calc(64px + 5 * var(--step) + var(--visible-front));
+  block-size: calc(var(--stack-top) + 5 * var(--step) + var(--visible-front));
 }
 .drawer__back {
   position: absolute; z-index: 0;
@@ -412,7 +414,7 @@ A folder is a `<li>` with a real `<button>` tab. Clicking anywhere on the folder
 }
 .folder__sheet {
   position: relative;
-  min-block-size: 320px;
+  min-block-size: 400px;
   padding: 10px var(--s-6) var(--s-8);
   border-radius: 14px;
   background: var(--tone);
@@ -425,21 +427,21 @@ A folder is a `<li>` with a real `<button>` tab. Clicking anywhere on the folder
   inset-block-end: calc(100% - 1px);
   inset-inline-start: calc(var(--tab-pad) + var(--slot) * (100% - var(--tab-w) - 2 * var(--tab-pad)) / 5);
   inline-size: var(--tab-w);
-  min-block-size: var(--tap);
+  min-block-size: 56px;
   display: flex;
-  align-items: baseline;
+  align-items: center;
   gap: var(--s-3);
-  padding: var(--s-2) var(--s-4) 2px;
+  padding: 10px 18px 4px;
   border: 0;
   border-radius: var(--r-tab);
   background: var(--tone);
   color: var(--c-ink);
-  font: var(--fw-ui) var(--fs-meta) / 1.2 var(--font-ui);
+  font: var(--fw-ui) 1rem / 1.2 var(--font-ui);
   text-align: start;
   cursor: pointer;
   transition: scale var(--d-press) var(--ease-paper);
 }
-.folder__num { font: var(--fw-display) var(--fs-folder-num) / 1 var(--font-display); }
+.folder__num { font: var(--fw-display) 2.25rem / 1 var(--font-display); }
 .folder__short { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .folder__lock { display: none; inline-size: 16px; block-size: 16px; flex: none; align-self: center; color: var(--c-stamp); }
 
@@ -469,7 +471,7 @@ The drawer front is a caption plate. At rest it shows the label card and the hin
   position: relative;
   z-index: var(--z-drawer);
   margin-block-start: -18px;                 /* overlaps the clipped bottom of the stack */
-  min-block-size: 132px;
+  min-block-size: 144px;
   display: grid;
   place-content: center;
   justify-items: center;
@@ -711,6 +713,8 @@ The masthead is not sticky. The language switch is a link (`<a hreflang lang>`) 
 
 ### Closing card (footer)
 
+Used at the end of project and demo pages. Not on the home page, where the masthead's card link is enough (owner's decision).
+
 ```css
 .closing {
   display: grid;
@@ -785,8 +789,11 @@ The live frame (`LiveFile.astro`) holds the project's own file: 1 px `--c-paper-
   grid-template-columns: repeat(12, minmax(0, 1fr));
   column-gap: clamp(16px, 2vw, 32px);
 }
-.hero__kicker, .hero__title { grid-column: 1 / span 9; }
-.hero__lead { grid-column: 1 / span 6; }
+/* Design A: the kicker on its own row, then the title and the lead side by side */
+.hero__grid { align-items: end; }
+.hero__kicker { grid-column: 1 / -1; }
+.hero__title { grid-column: 1 / span 7; margin: 0; font-size: var(--fs-hero); }   /* 40 → 64 px */
+.hero__lead { grid-column: 8 / span 5; }
 
 @media (max-width: 899px) {
   .grid { grid-template-columns: repeat(4, minmax(0, 1fr)); }
@@ -1047,7 +1054,7 @@ Open and close become a 150 ms fade of the page. Loops stop, videos do not autop
 | Name | Width | Key changes |
 |---|---|---|
 | Desktop | ≥ 1200 px | 12-column hero, the drawer at full container width, the open file in two columns |
-| Compact desktop | 900 to 1199 px | same layout, `--step: 36px` |
+| Compact desktop | 900 to 1199 px | same layout, `--step: 50px` |
 | Mobile | < 900 px | 4-column grid, the same drawer seen closer (edge to edge, larger tabs), the open file in one column |
 
 Test widths: 360, 390, 430, landscape 740, plus 1440 × 900 desktop.
@@ -1064,7 +1071,7 @@ Test widths: 360, 390, 430, landscape 740, plus 1440 × 900 desktop.
 
 ```css
 @media (max-width: 1199px) {
-  .drawer__cabinet { --step: 36px; }
+  .drawer__cabinet { --step: 50px; }
 }
 
 @media (max-width: 899px) {
@@ -1076,20 +1083,18 @@ Test widths: 360, 390, 430, landscape 740, plus 1440 × 900 desktop.
   /* The same drawer, seen closer */
   .drawer { padding-inline: 6px; }
   .drawer__cabinet {
-    --step: 60px; --tab-w: clamp(196px, 66%, 250px); --visible-front: 76px;
+    --step: 68px; --tab-w: clamp(212px, 74%, 280px); --visible-front: 84px;
     --wall-front: 16px; --wall-back: 5px; --inset-back: 28px; --rim: 14px; --tab-pad: 10px;
-    block-size: calc(76px + 5 * var(--step) + var(--visible-front));
+    --stack-top: 88px;
   }
-  .drawer__back { inset-block-start: calc(76px - var(--rim)); }
-  .drawer__walls::before, .drawer__walls::after { inset-block-start: calc(76px - var(--rim)); }
-  .drawer__stack { padding-block-start: 76px; }
   .folder__sheet { padding: 8px var(--s-4) var(--s-8); }
-  .folder__tab { gap: var(--s-2); min-block-size: 54px; padding: var(--s-2) var(--s-4) 4px; align-items: center; font-size: 1rem; }
-  .folder__num { font-size: 1.875rem; }
+  .folder__tab { gap: var(--s-2); min-block-size: 60px; padding: var(--s-2) var(--s-4) 4px; font-size: 1.0625rem; }
+  .folder__num { font-size: 2rem; }
+  .hero__title { margin-block-end: var(--s-5); font-size: 2.25rem; }
   .folder[data-locked] .stamp { display: none; }
   .folder__lock { display: inline-block; inline-size: 18px; block-size: 18px; }
   .drawer__caption { display: none; }
-  .drawer__front { min-block-size: 116px; }
+  .drawer__front { min-block-size: 124px; }
 
   /* The open file: one column */
   .leaf__bar-inner { min-block-size: 60px; }

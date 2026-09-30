@@ -62,15 +62,15 @@ const projects = (await getCollection("projects")).sort((a, b) => a.data.order -
   }
 
   .drawer__cabinet {
-    --step: 42px; /* vertical offset between folders */
-    --tab-w: clamp(184px, 18.5%, 220px); /* wide enough for the longest short title with Latin digits */
-    --visible-front: 84px; /* the front folder shows the most paper */
-    --wall-front: 26px; /* side wall thickness at the front */
+    --step: 58px; /* vertical offset between folders */
+    --tab-w: clamp(230px, 21%, 270px); /* wide enough for the longest short title with Latin digits */
+    --visible-front: 120px; /* the front folder shows the most paper */
+    --wall-front: 30px; /* side wall thickness at the front */
     --wall-back: 8px; /* side wall thickness at the back */
-    --inset-back: 46px; /* how far the back of the box sits inside the front, per side */
+    --inset-back: 52px; /* how far the back of the box sits inside the front, per side */
     --rim: 16px; /* back wall showing above the backmost folder */
     --tab-pad: 14px; /* tabs keep off the folder corners, so every tab sits on a straight edge */
-    --stack-top: 64px; /* room for the first tab and its lift */
+    --stack-top: 78px; /* room for the first tab (56 px) and its lift */
     position: relative;
     block-size: calc(var(--stack-top) + 5 * var(--step) + var(--visible-front));
   }
@@ -142,7 +142,7 @@ const projects = (await getCollection("projects")).sort((a, b) => a.data.order -
     position: relative;
     z-index: var(--z-drawer);
     margin-block-start: -18px; /* overlaps the clipped bottom of the stack */
-    min-block-size: 132px;
+    min-block-size: 144px;
     display: grid;
     place-content: center;
     justify-items: center;
@@ -152,12 +152,12 @@ const projects = (await getCollection("projects")).sort((a, b) => a.data.order -
     box-shadow: var(--sh-drawer);
   }
   .drawer__label {
-    padding: var(--s-2) var(--s-5);
+    padding: 10px 28px;
     border: 2px solid var(--c-drawer-edge);
     border-radius: 6px;
     background: var(--c-paper);
     color: var(--c-ink);
-    font: var(--fw-ui) var(--fs-kicker) / 1.4 var(--font-ui);
+    font: var(--fw-ui) 0.9375rem / 1.4 var(--font-ui);
     letter-spacing: var(--ls-kicker);
     text-transform: uppercase;
   }
@@ -205,7 +205,7 @@ const projects = (await getCollection("projects")).sort((a, b) => a.data.order -
   .drawer__caption-title {
     margin: 0;
     color: var(--c-paper);
-    font: var(--fw-display) 1.125rem / 1.45 var(--font-display);
+    font: var(--fw-display) 1.375rem / 1.45 var(--font-display);
   }
   .drawer__caption-text {
     margin: 0;
@@ -230,7 +230,7 @@ const projects = (await getCollection("projects")).sort((a, b) => a.data.order -
 
   @media (max-width: 1199px) {
     .drawer__cabinet {
-      --step: 36px;
+      --step: 50px;
     }
   }
 
@@ -240,21 +240,21 @@ const projects = (await getCollection("projects")).sort((a, b) => a.data.order -
       padding-inline: 6px;
     }
     .drawer__cabinet {
-      --step: 60px;
-      --tab-w: clamp(196px, 66%, 250px);
-      --visible-front: 76px;
+      --step: 68px;
+      --tab-w: clamp(212px, 74%, 280px);
+      --visible-front: 84px;
       --wall-front: 16px;
       --wall-back: 5px;
       --inset-back: 28px;
       --rim: 14px;
       --tab-pad: 10px;
-      --stack-top: 76px;
+      --stack-top: 88px;
     }
     .drawer__caption {
       display: none;
     }
     .drawer__front {
-      min-block-size: 116px;
+      min-block-size: 124px;
     }
   }
   @media (max-width: 389px) {

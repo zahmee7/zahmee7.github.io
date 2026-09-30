@@ -54,10 +54,8 @@ for (const lang of locales) {
         `/${other}/`,
       );
       await expect(page.getByRole("link", { name: copy.nav.card })).toHaveAttribute("href", site.links.card);
-      await expect(page.getByRole("link", { name: copy.footer.cardCta })).toHaveAttribute(
-        "href",
-        site.links.card,
-      );
+      // one way to the card on the home page, in the masthead: no closing card below (owner's decision)
+      await expect(page.getByRole("link", { name: copy.footer.cardCta })).toHaveCount(0);
     });
   });
 }

@@ -73,6 +73,7 @@
   --fw-ui: 400;
 
   --fs-display: clamp(2.5rem, 1.35rem + 4.6vw, 4.75rem);   /* 40 → 76 px */
+  --fs-hero: clamp(2.5rem, 1.6rem + 2.6vw, 4rem);           /* 40 → 64 px, home title beside its lead */
   --fs-title: clamp(1.875rem, 1.3rem + 2.2vw, 3rem);       /* 30 → 48 px */
   --fs-folder-num: clamp(1.75rem, 1.2rem + 1.6vw, 2.5rem); /* 28 → 40 px */
   --fs-folder-title: 1.25rem;                               /* 20 px */

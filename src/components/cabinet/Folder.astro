@@ -61,7 +61,7 @@ const note = locked ? copy.drawer.locked : text.summary;
   }
   .folder__sheet {
     position: relative;
-    min-block-size: 320px;
+    min-block-size: 400px;
     padding: 10px var(--s-6) var(--s-8);
     border-radius: 14px;
     background: var(--tone);
@@ -74,16 +74,16 @@ const note = locked ? copy.drawer.locked : text.summary;
     inset-block-end: calc(100% - 1px);
     inset-inline-start: calc(var(--tab-pad) + var(--slot) * (100% - var(--tab-w) - 2 * var(--tab-pad)) / 5);
     inline-size: var(--tab-w);
-    min-block-size: var(--tap);
+    min-block-size: 56px;
     display: flex;
-    align-items: baseline;
+    align-items: center;
     gap: var(--s-3);
-    padding: var(--s-2) var(--s-4) 2px;
+    padding: 10px 18px 4px;
     border: 0;
     border-radius: var(--r-tab);
     background: var(--tone);
     color: var(--c-ink);
-    font: var(--fw-ui) var(--fs-meta) / 1.2 var(--font-ui);
+    font: var(--fw-ui) 1rem / 1.2 var(--font-ui);
     text-align: start;
     cursor: pointer;
     transition: scale var(--d-press) var(--ease-paper);
@@ -96,7 +96,7 @@ const note = locked ? copy.drawer.locked : text.summary;
     scale: 0.98;
   }
   .folder__num {
-    font: var(--fw-display) var(--fs-folder-num) / 1 var(--font-display);
+    font: var(--fw-display) 2.25rem / 1 var(--font-display);
   }
   .folder__short {
     min-inline-size: 0;
@@ -157,13 +157,12 @@ const note = locked ? copy.drawer.locked : text.summary;
     }
     .folder__tab {
       gap: var(--s-2);
-      min-block-size: 54px;
+      min-block-size: 60px;
       padding: var(--s-2) var(--s-4) 4px;
-      align-items: center;
-      font-size: 1rem;
+      font-size: 1.0625rem;
     }
     .folder__num {
-      font-size: 1.875rem;
+      font-size: 2rem;
     }
     /* No free band between tabs on a phone: a red lock inside the tab instead of the stamp */
     .folder :global(.folder__stamp) {
