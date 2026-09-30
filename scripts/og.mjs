@@ -30,7 +30,8 @@ const tokens = await readFile("src/styles/tokens.css", "utf8");
 
 const arabicIndic = "٠١٢٣٤٥٦٧٨٩";
 const digits = (text, lang) => (lang === "ar" ? text.replace(/\d/g, (d) => arabicIndic[Number(d)]) : text);
-const folio = (n, lang) => digits(String(n).padStart(2, "0"), lang);
+const folio = (n, lang) => digits(String(n), lang);
+const number = (n, lang) => `${folio(n, lang)}-`; // as the folder tabs show it (owner's choice)
 const escape = (text) => text.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
 
 const base = `
@@ -85,7 +86,7 @@ function projectImage(project, lang) {
   `;
   const body = `
     <div class="folder">
-      <div class="tab"><span class="num">${folio(project.order, lang)}</span><span>${escape(text.short)}</span></div>
+      <div class="tab"><span class="num">${number(project.order, lang)}</span><span>${escape(text.short)}</span></div>
       <p class="tag">${escape(text.tag)}</p>
       <h1>${escape(text.title)}</h1>
       <div class="by"><span>${escape(copy.name)} · ${escape(copy.role)}</span><span>${escape(copy.hero.kicker)}</span></div>
@@ -123,7 +124,7 @@ function homeImage(lang) {
   const folders = projects
     .map(
       (project, i) =>
-        `<div class="folder" style="--i: ${i}; --tone: ${project.tone};"><span class="num">${folio(project.order, lang)}</span></div>`,
+        `<div class="folder" style="--i: ${i}; --tone: ${project.tone};"><span class="num">${number(project.order, lang)}</span></div>`,
     )
     .join("");
   const body = `

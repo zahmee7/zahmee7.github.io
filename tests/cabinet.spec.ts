@@ -21,7 +21,7 @@ for (const lang of locales) {
 
       for (const [index, project] of ordered.entries()) {
         const tab = tabs.nth(index);
-        const number = String(project.order).padStart(2, "0");
+        const number = `${project.order}-`;
         const note = project.mvp ? project[lang].summary : copy.drawer.locked;
 
         await expect(tab).toContainText(lang === "ar" ? arabicDigits(number) : number);

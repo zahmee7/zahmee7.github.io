@@ -31,7 +31,7 @@ Inputs: `docs/BRIEF.md`, `CLAUDE.md`, `design/tokens.css`, `design/MOTION.md`, `
 | Page | Composition |
 |---|---|
 | Home `/[lang]/` | Masthead (name and role as a byline, card link, language). Hero: kicker, then the H1 and the lead side by side (owner's choice, design A), so the drawer takes most of the first view: an open box (dark back wall, slanted side walls) with six folders standing inside, their tabs climbing in a staircase above the rim. The drawer front carries a cream label card in a metal holder, a caption line and a metal pull. On desktop the page is exactly one screen: the drawer fills what the masthead and the title leave, and its front meets the bottom edge like a drawer pulled out towards you (the cabinet is a size container; `--step` and `--visible-front` follow its height). Wide screens (≥ 1600 px) widen the container to 1440 px; short ones (≤ 820 px tall) tighten the masthead, title and front. Warm lamp light falls on the folders; paper has a lit top edge and a faint grain. No closing card: the masthead's card link is the one way to the card on this page (owner's decision). On the first visit of a session the drawer starts closed and is pulled out when pressed (Closed drawer). A switch for the drawer's sounds sits by the language switch, off at first (section 7, Sound). |
-| Open file (full-screen dialog) | A full page of paper that covers the cabinet, like a new page. A sticky top bar: folio (`Project files · 01 / 06`) and the close button. Desktop, the spread (owner's choice): tag, title and the project summary at inline-start, a larger film beside them, the demo and download at the foot of that column; then the story across the page in three columns under an ink rule. Previous / next at the bottom. Phone: one column: tag, title, summary, film, story, demo and download. While it is open, the address bar shows the project page. |
+| Open file (full-screen dialog) | A full page of paper that covers the cabinet, like a new page. A sticky top bar: folio (`Project files · 1 / 6`) and the close button. Desktop, the spread (owner's choice): tag, title and the project summary at inline-start, a larger film beside them, the demo and download at the foot of that column; then the story across the page in three columns under an ink rule. Previous / next at the bottom. Phone: one column: tag, title, summary, film, story, demo and download. While it is open, the address bar shows the project page. |
 | Project `/[lang]/projects/[id]/` | The same paper page at its own URL, for direct visits and sharing. The top bar adds the language switch, and its close becomes a link back to the drawer. Below 480 px the folio shows only its number. The closing card follows the page. |
 | Share image (1200 × 630) | Night room. Home: byline, kicker, H1 and the six folders in their drawer. Project: its folder pulled half out, tab with folio and short title, tag, title, byline. Made by `npm run og`. |
 | Demo `/[lang]/demos/[id]/` | One paper sheet on night, a back link and the language switch above it. Stamp at the top inline-end, the file's kind as a kicker, the project title and summary, then the project's own file in a frame (owner's decision): a waiting panel with "Open the live file" and where it loads from, swapped for the live frame on request. Under the frame: open in a new tab, and download for files on this site. The closing card follows. |
@@ -237,7 +237,7 @@ html {
 - Hierarchy comes from family, size, color, case and space. Never from weight: each family has one weight.
 - Headings (H1, H2, H3, folder numbers) always use Serif Display. The project story (context, what I did, result) always uses Serif Text. Everything else uses Sans.
 - Story measure: 34 to 40 em in EN, 30 to 36 em in AR. Lead measure: 46 ch max.
-- Arabic never gets letter-spacing, uppercase or italic. Arabic UI digits are Arabic-Indic (٠١٢٣), including folder numbers (٠١).
+- Arabic never gets letter-spacing, uppercase or italic. Arabic UI digits are Arabic-Indic (٠١٢٣), including folder numbers (١-).
 - Digits are proportional (no `tnum`). Number columns in demos sit in fixed-width cells aligned to `end`.
 - Swash letters and the slanted kashida are off. The prototype tests one Arabic display word on the home H1 with the font's alternates; it stays only if the owner approves it in the prototype.
 - `text-wrap: balance` on H1, H2 and folder titles. `text-wrap: pretty` on lead and story.
@@ -817,7 +817,7 @@ The live frame (`LiveFile.astro`) holds the project's own file: 1 px `--c-paper-
 
 - Left-heavy (inline-start) composition. Nothing is centered except the drawer label and the handle.
 - Hairlines separate, boxes do not: no cards inside cards, no bordered panels on paper.
-- Folio numbers (`01`, `٠١`) are the only large numerals on the site. They count files, never entity data.
+- Folder numbers (`1-`, `١-`, owner's choice) are the only large numerals on the site. They count files, never entity data.
 
 ---
 

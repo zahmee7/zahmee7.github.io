@@ -5,7 +5,7 @@
 import type { CollectionEntry } from "astro:content";
 import Icon from "../ui/Icon.astro";
 import Stamp from "../ui/Stamp.astro";
-import { folio, t, type Locale } from "../../i18n/utils";
+import { projectNumber, t, type Locale } from "../../i18n/utils";
 
 interface Props {
   project: CollectionEntry<"projects">["data"];
@@ -39,7 +39,7 @@ const note = locked ? copy.drawer.locked : text.summary;
       aria-controls={locked ? undefined : "file"}
       aria-expanded={locked ? undefined : "false"}
     >
-      <span class="folder__num">{folio(project.order, lang)}</span>
+      <span class="folder__num">{projectNumber(project.order, lang)}</span>
       <span class="folder__short">{text.short}</span>
       {locked && <Icon name="lock" class="folder__lock" />}
     </button>

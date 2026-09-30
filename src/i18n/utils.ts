@@ -28,9 +28,14 @@ export function localDigits(value: string | number, lang: Locale): string {
   return lang === "ar" ? text.replace(/\d/g, (d) => arabicIndic[Number(d)] ?? d) : text;
 }
 
-/** Two-digit folio number, e.g. 01 or ٠١. */
+/** A project's number as its folder shows it, e.g. 1- or ١- (owner's choice). */
+export function projectNumber(n: number, lang: Locale): string {
+  return `${localDigits(n, lang)}-`;
+}
+
+/** A plain number for a file's place in the drawer, e.g. 1 / 6 or ١ / ٦. */
 export function folio(n: number, lang: Locale): string {
-  return localDigits(String(n).padStart(2, "0"), lang);
+  return localDigits(n, lang);
 }
 
 /** Browser tab and search title of a page inside the site, e.g. "NDI readiness · Mohammed Alzahmah". */
