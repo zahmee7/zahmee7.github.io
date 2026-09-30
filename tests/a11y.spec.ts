@@ -81,3 +81,13 @@ for (const lang of locales) {
     });
   });
 }
+
+// No skipEntrance: the first visit of a session shows the drawer closed
+for (const lang of locales) {
+  test(`home has no violations with the drawer closed · ${lang}`, async ({ page }) => {
+    await page.goto(`/${lang}/`);
+    await page.evaluate(() => document.fonts.ready);
+    await expect(page.locator("html")).toHaveClass(/drawer-closed/);
+    expect(await violations(page)).toEqual([]);
+  });
+}

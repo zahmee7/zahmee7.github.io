@@ -17,16 +17,30 @@ Tokens live in `design/tokens.css`.
 
 ## Sequences
 
-### 1. First load (home, once per session)
+### 1. First load (home, once per session): the closed drawer
+
+The first visit of a session starts with the drawer closed (`DESIGN.md` > Closed drawer). A `sessionStorage` flag skips both the entrance and the closed drawer on later visits and when coming back from a project page.
 
 | Step | Element | Motion | Duration | Delay |
 |---|---|---|---|---|
 | 1 | Kicker, H1, lead | rise `--m-rise` + fade | 700 ms `--ease-paper` | 0, 100, 200 ms |
-| 2 | The drawer | slides out towards you: up 56 px and from 0.965 scale + fade | 850 ms `--ease-paper` | 80 ms |
-| 3 | Folders 1 → 6 | rise 170 px + fade, settling with a small overshoot | `--d-enter` `--ease-settle` | 360 ms + i × `--d-enter-stagger` |
-| 4 | Drawer hint | float 6 px, loop | 2.4 s ease-in-out | after step 3 |
+| 2 | The closed cabinet | slides into view: up 56 px and from 0.965 scale + fade | 850 ms `--ease-paper` | 80 ms |
+| 3 | The closed front | a tug: 7 px towards you, back to 1, out to 4, home; loop | 3.2 s `--ease-paper` | 900 ms |
+| 4 | Drawer hint | float 6 px, loop | 2.4 s ease-in-out | 1.9 s |
 
-A `sessionStorage` flag skips the entrance on later visits and when coming back from a project page.
+### 1b. Pull the drawer out (on press, first visit only)
+
+Worked out from simple physics in `src/components/cabinet/pull.ts`, sampled into Web Animations keyframes. Transform only.
+
+| t | What happens |
+|---|---|
+| press | The front gives (scale 0.992) and the pull drops 2 px, 120 ms. |
+| 0 | The front and the box set off together; a tug in progress fades out of the path in 0.3 s. The folders lag behind. |
+| 0 → hit | The pull: a cubic from rest, fastest in the middle, still at 0.6 × the average speed when it reaches the stop. hit = 0.72 to 0.92 s by drawer length. |
+| hit | The stop: a stiff bumper (5.5 Hz, damping 0.42), about 7 px in and 2 px back, settled 0.45 s later. The folders swing forward on their rails (2.2 to 3.3 Hz, damping 0.26). |
+| hit + 60 ms | The lamp comes on (900 ms); the cabinet's top edge, its shadow and the drawers below fade out (360 to 800 ms). |
+| hit + 0.45 s | Open: the folders can be reached and focus moves to the first tab. |
+| hit + 1 s | The folders have settled; the cabinet around the drawer is gone. |
 
 ### 2. Hover and focus on a folder (pointer devices)
 
@@ -83,8 +97,20 @@ Close is a link back to the drawer. The paper slides down over the cabinet (view
 When `prefers-reduced-motion: reduce` is set:
 
 - No lifts, no nudge, no pull, no stagger, no loops, no autoplay.
+- The closed drawer does not tug, and opens without travelling: the open drawer fades in (150 ms). Its sound, if on, is only the latch and a soft knock.
 - Open and close become a 150 ms fade of the page. Focus handling stays the same.
 - The hint stops floating. Film tiles stay static, some lit.
+
+## Sound
+
+Off until the visitor turns it on (`DESIGN.md` > Sound). Each sound starts inside the press it answers and follows the motion above.
+
+| Moment | Sound | Timing |
+|---|---|---|
+| Pull (1b) | latch, roll with bearing ticks, thud and ring at the stop, rebound knock, folders rustling | latch at the press; roll to hit; stop at hit; rebound at hit + 125 ms; rustle to hit + 0.5 s |
+| Pick a folder (2) | a short flick of paper | at the lift; at most one every 70 ms |
+| Open a project (3) | a tap, then a swish that follows the page's speed | tap at the press; swish from 100 ms, fading by 820 ms |
+| Locked folder | two muted knocks | 0 and 120 ms |
 
 ## Performance checks
 

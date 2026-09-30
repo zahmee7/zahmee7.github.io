@@ -1,15 +1,18 @@
 ---
 // Name and role as a byline, the digital card link and the language switch (DESIGN.md > Masthead).
 import LangSwitch from "../ui/LangSwitch.astro";
+import SoundSwitch from "../ui/SoundSwitch.astro";
 import { links } from "../../i18n/ui";
 import { t, type Locale } from "../../i18n/utils";
 
 interface Props {
   lang: Locale;
   path?: string;
+  /** The home page adds the switch for the drawer's sounds (wide screens; phones have it by the title). */
+  sound?: boolean;
 }
 
-const { lang, path = "" } = Astro.props;
+const { lang, path = "", sound = false } = Astro.props;
 const copy = t(lang);
 ---
 
@@ -23,6 +26,7 @@ const copy = t(lang);
       {copy.nav.card}
     </a>
     <LangSwitch lang={lang} path={path} />
+    {sound && <SoundSwitch lang={lang} place="masthead" />}
   </nav>
 </header>
 

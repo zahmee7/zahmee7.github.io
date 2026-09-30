@@ -1,5 +1,6 @@
 ---
 // Kicker, display H1 and lead (DESIGN.md > Page anatomy, Layout).
+import SoundSwitch from "../ui/SoundSwitch.astro";
 import { t, type Locale } from "../../i18n/utils";
 
 interface Props {
@@ -13,6 +14,7 @@ const copy = t(lang);
 <section class="container hero" aria-labelledby="hero-title">
   <div class="hero__grid">
     <p class="kicker hero__kicker">{copy.hero.kicker}</p>
+    <SoundSwitch lang={lang} place="hero" />
     <h1 class="hero__title" id="hero-title">
       {copy.hero.h1}
     </h1>
@@ -33,7 +35,15 @@ const copy = t(lang);
     column-gap: clamp(16px, 2vw, 32px);
   }
   .hero__kicker {
+    grid-row: 1;
     grid-column: 1 / -1;
+  }
+  /* phones: the sound switch sits at the end of the kicker line (the masthead has no room for it) */
+  .hero__grid > :global(.sound-switch) {
+    grid-row: 1;
+    grid-column: 1 / -1;
+    justify-self: end;
+    align-self: center;
   }
   .hero__title {
     grid-column: 1 / span 7;

@@ -1,0 +1,57 @@
+---
+// The switch for the drawer's sounds (DESIGN.md > Sound): a square button, off until the visitor turns it
+// on. The home page has two, one in the masthead for wide screens and one by the title for phones, and
+// shows one of them; sound.ts keeps both in step. Shown only where the browser can play sound (index.astro
+// puts .can-sound on <html>).
+import Icon from "./Icon.astro";
+import { t, type Locale } from "../../i18n/utils";
+
+interface Props {
+  lang: Locale;
+  /** Where it sits: the masthead (wide screens) or the title (phones). */
+  place: "masthead" | "hero";
+}
+
+const { lang, place } = Astro.props;
+const label = t(lang).sound.label;
+---
+
+<button
+  class:list={["btn", "sound-switch", `sound-switch--${place}`]}
+  type="button"
+  aria-pressed="false"
+  aria-label={label}
+  title={label}
+  data-sound-switch
+>
+  <Icon name="sound" />
+</button>
+
+<style>
+  .sound-switch {
+    display: none;
+    padding-inline: 0;
+    inline-size: var(--tap);
+  }
+  .sound-switch :global(.icon) {
+    inline-size: 20px;
+    block-size: 20px;
+  }
+  .sound-switch[aria-pressed="false"] {
+    color: var(--c-mist-2);
+  }
+  .sound-switch[aria-pressed="true"] :global(.icon-sound__off),
+  .sound-switch[aria-pressed="false"] :global(.icon-sound__on) {
+    display: none;
+  }
+  @media (min-width: 900px) {
+    :global(.can-sound) .sound-switch--masthead {
+      display: inline-flex;
+    }
+  }
+  @media (max-width: 899px) {
+    :global(.can-sound) .sound-switch--hero {
+      display: inline-flex;
+    }
+  }
+</style>

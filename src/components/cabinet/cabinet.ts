@@ -1,11 +1,16 @@
-// The drawer's behaviour on the home page (DESIGN.md > Drawer front, MOTION.md sequences 2 and 3).
+// The drawer's behaviour on the home page (DESIGN.md > Drawer front, MOTION.md sequences 1 to 3).
+// - On the first visit of a session the drawer starts closed and is pulled out when pressed (pull.ts).
 // - The drawer front captions the folder under the mouse or keyboard focus.
 // - The whole folder face acts as its tab.
 // - Locked folders say "Coming soon"; open folders open their page (file.ts).
+// - With sound on, each of these has its sound (sound.ts).
 // The motion code and the story font load on first intent, so the first view stays light.
 import { bindSoon } from "../ui/soon";
 import { showToast } from "../ui/toast";
 import type { FileSheet } from "./file";
+import { setUpPull } from "./pull";
+import { setUpSound } from "./sound";
+import type { SoundName, SoundOptions } from "./synth";
 
 let fileModule: Promise<typeof import("./file")> | undefined;
 let sheet: FileSheet | undefined;
@@ -37,6 +42,30 @@ function setUp(drawer: HTMLElement): void {
   // (a shared chunk gets a preload link, which Safari reports as unused).
   bindSoon(dialog, dialog.dataset.soonText ?? "");
 
+  const folders = [...drawer.querySelectorAll<HTMLElement>(".folder")];
+  let hit: number | undefined;
+  const sound = setUpSound([...document.querySelectorAll<HTMLButtonElement>("[data-sound-switch]")], () => {
+    const ahead: Array<[SoundName, SoundOptions]> = [
+      ["open", {}],
+      ["knock", {}],
+    ];
+    if (hit) ahead.push(["drawer", { hit }]);
+    folders.forEach((_, index) => [0, 1, 2].forEach((turn) => ahead.push(["select", { index, turn }])));
+    return ahead;
+  });
+  hit = setUpPull(drawer, (start) => sound.play("drawer", start));
+
+  // A folder picked out: a flick of paper, at most one every 70 ms, in three slightly different takes
+  let lastPick = 0;
+  let turn = 0;
+  const pick = (index: number): void => {
+    const now = performance.now();
+    if (now - lastPick < 70 || dialog.open) return;
+    lastPick = now;
+    turn = (turn + 1) % 3;
+    sound.play("select", { index, turn });
+  };
+
   const show = (folder: HTMLElement): void => {
     if (drawer.hasAttribute("data-open")) return;
     captionTitle.textContent = folder.dataset.title ?? "";
@@ -60,17 +89,27 @@ function setUp(drawer: HTMLElement): void {
     drawer.addEventListener(event, () => void prepare(), { once: true, passive: true });
   }
 
-  for (const folder of drawer.querySelectorAll<HTMLElement>(".folder")) {
+  for (const [index, folder] of folders.entries()) {
     folder.addEventListener("pointerenter", (event) => {
-      if (event.pointerType === "mouse") show(folder);
+      if (event.pointerType !== "mouse") return;
+      show(folder);
+      pick(index);
     });
     folder.addEventListener("pointerleave", hide);
-    folder.addEventListener("focusin", () => show(folder));
+    folder.addEventListener("focusin", (event) => {
+      show(folder);
+      if (event.target instanceof Element && event.target.matches(":focus-visible")) pick(index);
+    });
     folder.addEventListener("focusout", hide);
 
     folder.querySelector(".folder__sheet")?.addEventListener("click", () => {
-      if (folder.hasAttribute("data-locked")) showToast(drawer.dataset.lockedText ?? "");
-      else void openFolder(folder);
+      if (folder.hasAttribute("data-locked")) {
+        sound.play("knock");
+        showToast(drawer.dataset.lockedText ?? "");
+      } else {
+        sound.play("open");
+        void openFolder(folder);
+      }
     });
   }
 }

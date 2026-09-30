@@ -59,6 +59,7 @@ Rules that keep them from conflicting:
 - **Motion**:
   - GSAP (core and CustomEase) for the page pull: the picked folder nudges up and a full page of paper is pulled up from the bottom of the screen over the cabinet. No Flip.
   - CSS transitions for hover, focus and press micro-interactions.
+  - The closed drawer's pull on the first visit of a session (owner decision, 2026-10-01): Web Animations keyframes sampled from simple physics in `src/components/cabinet/pull.ts`, transform only.
   - The browser's own cross-document view transitions between pages (`@view-transition` in `global.css`), not Astro's `<ClientRouter />`: the open file uses the back button, which the router would take over (owner decision, Phase 4). A project page's paper is named `leaf`: leaving for the cabinet it slides down, and the language switch and previous / next cross-fade. Browsers without support change page at once.
   - dotLottie (`@lottiefiles/dotlottie-web`) for small vector animations exported from After Effects.
 - **Fonts**: the **thmanyah** typeface, chosen by the owner. Source files: `design/fonts/thmanyah/` (woff2 as delivered, plus `LICENSE.pdf` and `LICENSE-ar.pdf`; the Arabic licence prevails).
@@ -70,6 +71,7 @@ Rules that keep them from conflicting:
   - Preload only the two weights used above the fold. No Google Fonts requests in production.
   - **Licence (hard rules).** Web embedding is allowed only as part of the built site. Never commit the font files to any repository that is public, never upload them anywhere else, never link to them or list them as downloads. The deploy workflow gets them from a private source (set up in Phase 1). Do not subset, convert or edit the files, or change the font names inside them: the licence forbids any modification, so use the woff2 files exactly as delivered (hashed file names from the build are fine). Do not use the thmanyah name or logo in a way that suggests endorsement. The owner decided on 2026-09-30 not to ask thmanyah for written confirmation for now, so follow these rules strictly.
 - **Demos**: the project's own file in a sample version, not a tool built in the page (owner decision, Phase 6): a Power BI report published to web, an Excel workbook (OneDrive embed, or a file on this site in Microsoft's viewer) or a PDF on this site. `src/components/demos/LiveFile.astro` shows it behind "Open the live file", so nothing loads from Microsoft until the visitor asks. Each demo's `kind` and `url` live in `content/projects.json`; a page exists once the demo is `ready`. The owner publishes from his own personal Microsoft account; never sign in to it. Owner steps: `docs/DEMOS.md`. An earlier version with Preact tools on sample data is kept on the local branch `demos-built-in`, not merged. Ask before adding anything over 40 KB gzipped.
+- **Sound**: the drawer's sounds (pull, picked folder, opened file, locked folder) are drawn in code with Web Audio in `src/components/cabinet/synth.ts`: no audio files. Off by default (owner decision); `SoundSwitch.astro` turns them on and the choice is kept in `localStorage`. `synth.ts` loads only once sound is on.
 - **Video**: self-hosted `<video>` (`src/components/film/`). Loops are muted, `playsinline`, start only when at least half in view and when reduced motion is off. Sources: AV1 MP4 first, H.264 MP4 fallback, AVIF poster, all `preload="none"`. Each film has an EN and an AR version (on-screen text, films/SCRIPTS.md); the loop has no text and serves both.
   - Scene lines and timings live in `content/projects.json` (`film.scenes`). They build the WebVTT captions (`/films/<id>/captions.<lang>.vtt`) and the text under the film.
   - Masters go in `films/<id>/` (`master-en`, `master-ar`, optional text-free `loop-master`, mp4 or mov) and are never committed. `npm run films` makes the web files in `src/assets/films/<id>/` and checks their size budgets. Film.astro shows a film only when its files exist, else the tile placeholder.
@@ -146,10 +148,10 @@ The public site is a trailer. Details are for interviews.
 ```
 src/
   components/
-    cabinet/   Cabinet.astro, Folder.astro, FileSheet.astro, cabinet.ts
+    cabinet/   Cabinet.astro, Folder.astro, FileSheet.astro, cabinet.ts, pull.ts, sound.ts, synth.ts
     film/      Film.astro, film.ts
   assets/films/<id>/  film-<lang>.mp4, film-av1-<lang>.mp4, loop.mp4, loop-av1.mp4, poster.avif (npm run films)
-    ui/        LangSwitch.astro, Button.astro, SampleBadge.astro
+    ui/        LangSwitch.astro, Button.astro, SampleBadge.astro, SoundSwitch.astro
     demos/     LiveFile.astro
   content.config.ts
   i18n/        ui.ts, utils.ts

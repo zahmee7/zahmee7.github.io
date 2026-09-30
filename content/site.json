@@ -19,7 +19,15 @@
       "h1": "Pull any project’s file.",
       "lead": "Each file is a real project from a Data Management Office: a short film, the story, a live demo to try, and templates to take."
     },
-    "drawer": { "label": "THE PROJECT DRAWER", "hint": "Pick a tab to pull a file", "hintTouch": "Tap a file to pull it out", "locked": "Coming soon" },
+    "drawer": {
+      "label": "THE PROJECT DRAWER",
+      "hint": "Pick a tab to pull a file",
+      "hintTouch": "Tap a file to pull it out",
+      "locked": "Coming soon",
+      "open": "Open the project drawer",
+      "pressToOpen": "Press to open the drawer"
+    },
+    "sound": { "label": "Drawer sounds" },
     "file": {
       "close": "Close file",
       "film": "Project film",
@@ -59,7 +67,15 @@
       "h1": "اسحب ملف أي مشروع.",
       "lead": "كل ملف مشروع حقيقي من مكتب إدارة البيانات: فيلم قصير، والقصة، ونسخة حية تجربها، وقوالب للتحميل."
     },
-    "drawer": { "label": "درج المشاريع", "hint": "اختر لسان الملف لتسحبه", "hintTouch": "المس الملف لتسحبه", "locked": "قريباً" },
+    "drawer": {
+      "label": "درج المشاريع",
+      "hint": "اختر لسان الملف لتسحبه",
+      "hintTouch": "المس الملف لتسحبه",
+      "locked": "قريباً",
+      "open": "افتح درج المشاريع",
+      "pressToOpen": "اضغط لتفتح الدرج"
+    },
+    "sound": { "label": "أصوات الدرج" },
     "file": {
       "close": "إغلاق الملف",
       "film": "فيلم المشروع",

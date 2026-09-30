@@ -30,7 +30,7 @@ Inputs: `docs/BRIEF.md`, `CLAUDE.md`, `design/tokens.css`, `design/MOTION.md`, `
 
 | Page | Composition |
 |---|---|
-| Home `/[lang]/` | Masthead (name and role as a byline, card link, language). Hero: kicker, then the H1 and the lead side by side (owner's choice, design A), so the drawer takes most of the first view: an open box (dark back wall, slanted side walls) with six folders standing inside, their tabs climbing in a staircase above the rim. The drawer front carries a cream label card in a metal holder, a caption line and a metal pull. On desktop the page is exactly one screen: the drawer fills what the masthead and the title leave, and its front meets the bottom edge like a drawer pulled out towards you (the cabinet is a size container; `--step` and `--visible-front` follow its height). Wide screens (≥ 1600 px) widen the container to 1440 px; short ones (≤ 820 px tall) tighten the masthead, title and front. Warm lamp light falls on the folders; paper has a lit top edge and a faint grain. No closing card: the masthead's card link is the one way to the card on this page (owner's decision). |
+| Home `/[lang]/` | Masthead (name and role as a byline, card link, language). Hero: kicker, then the H1 and the lead side by side (owner's choice, design A), so the drawer takes most of the first view: an open box (dark back wall, slanted side walls) with six folders standing inside, their tabs climbing in a staircase above the rim. The drawer front carries a cream label card in a metal holder, a caption line and a metal pull. On desktop the page is exactly one screen: the drawer fills what the masthead and the title leave, and its front meets the bottom edge like a drawer pulled out towards you (the cabinet is a size container; `--step` and `--visible-front` follow its height). Wide screens (≥ 1600 px) widen the container to 1440 px; short ones (≤ 820 px tall) tighten the masthead, title and front. Warm lamp light falls on the folders; paper has a lit top edge and a faint grain. No closing card: the masthead's card link is the one way to the card on this page (owner's decision). On the first visit of a session the drawer starts closed and is pulled out when pressed (Closed drawer). A switch for the drawer's sounds sits by the language switch, off at first (section 7, Sound). |
 | Open file (full-screen dialog) | A full page of paper that covers the cabinet, like a new page. A sticky top bar: folio (`Project files · 01 / 06`) and the close button. Desktop, the spread (owner's choice): tag, title and the project summary at inline-start, a larger film beside them, the demo and download at the foot of that column; then the story across the page in three columns under an ink rule. Previous / next at the bottom. Phone: one column: tag, title, summary, film, story, demo and download. While it is open, the address bar shows the project page. |
 | Project `/[lang]/projects/[id]/` | The same paper page at its own URL, for direct visits and sharing. The top bar adds the language switch, and its close becomes a link back to the drawer. Below 480 px the folio shows only its number. The closing card follows the page. |
 | Share image (1200 × 630) | Night room. Home: byline, kicker, H1 and the six folders in their drawer. Project: its folder pulled half out, tab with folio and short title, tag, title, byline. Made by `npm run og`. |
@@ -504,6 +504,16 @@ The drawer front is a caption plate. At rest it shows the label card and the hin
 .drawer__caption-text { margin: 0; color: var(--c-mist); font-size: var(--fs-meta); }
 ```
 
+### Closed drawer (first visit of a session)
+
+Approved by the owner on 2026-10-01 from the `pull` and `sound` variants in `design/prototype/home/`. On the first visit of a session the drawer starts closed in its cabinet; later visits, reloads and returns from a project page find it open. Without JavaScript it is open.
+
+- **Closed**: the drawer front sits right under the title, tucked under the cabinet's top edge (a 9 px metal lip). Below it, more drawers down to the bottom edge, each a front with an empty label holder and a metal pull, dimmer further from the lamp. The folders are inside, out of sight and out of reach (`visibility: hidden`, then `inert`). The lamp is off.
+- **The front is the button**: a transparent `<button>` over the whole front, labelled "Open the project drawer" (`aria-controls` the stack, `aria-expanded`). The hint reads "Press to open the drawer". Pressed, the front gives a little (scale 0.992) and the pull drops 2 px. On hover the pull glows with lamp light. Now and then the closed front gives a small tug (section 7).
+- **Opened**: the drawer is pulled out (section 7, The drawer pull). The box comes out from under the top edge, front end first and back wall last, with the lip's shadow falling into it, and covers the drawers below. At the stop the lamp comes on and the cabinet around the drawer fades away, leaving the open design above. Focus moves to the first folder tab.
+- `index.astro` puts `.drawer-closed` and `.drawer-cased` on `<html>` before the first paint, so there is no flash and nothing is measured: while closed the front simply comes first in the drawer's column. `pull.ts` takes the classes off. States: `.drawer-closed` (front first, box hidden), `.drawer-pulling` (the travel), `.drawer-lit` (lamp on, cabinet fading), `.drawer-cased` (the cabinet around the drawer is shown).
+- New shades are mixed from the tokens (`--c-drawer`, `--c-drawer-edge`, `--c-mist`, `--c-mist-2`, `--c-night`), as for the metal front.
+
 ### Open file (a full page)
 
 Opening a project replaces the view: a page of paper covers the whole screen, so the colour changes from night to paper as if you had entered a new page (owner's decision). It is a native `<dialog>` opened with `showModal()`, sized to the viewport, and it scrolls on its own; the page behind is locked.
@@ -689,7 +699,7 @@ The demo stamp is always visible and is never covered, hidden or animated out.
 .lang-switch:lang(en) { letter-spacing: 0.08em; }
 ```
 
-The masthead is not sticky. The language switch is a link (`<a hreflang lang>`) to the same page in the other language.
+The masthead is not sticky. The language switch is a link (`<a hreflang lang>`) to the same page in the other language. On the home page the sound switch follows it on wide screens (section 7, Sound); on phones the masthead has no room, so it sits at the end of the kicker line.
 
 ### Downloads
 
@@ -900,18 +910,44 @@ export const reducedMotion = () => matchMedia("(prefers-reduced-motion: reduce)"
 }
 .is-entering .hero__title { animation-delay: 100ms; }
 .is-entering .hero__lead { animation-delay: 200ms; }
-/* Folders already sit at a translate offset, so they rise to that offset, not to 0 */
-@keyframes folder-rise {
-  from { opacity: 0; translate: 0 calc(var(--i) * var(--step) + 120px); }
-  to { opacity: 1; translate: 0 calc(var(--i) * var(--step)); }
+/* The closed cabinet slides into view below the title */
+@keyframes drawer-out {
+  from { opacity: 0; transform: translateY(56px) scale(0.965); }
 }
-.is-entering .folder {
-  animation: folder-rise var(--d-enter) var(--ease-paper) backwards;
-  animation-delay: calc(150ms + var(--i) * var(--d-enter-stagger));
-}
+.is-entering .drawer { animation: drawer-out 850ms var(--ease-paper) 80ms backwards; }
 ```
 
-`is-entering` is set on `<html>` by an inline script only when `sessionStorage` has no `entered` flag. It is never set when coming back from a project page.
+`is-entering` is set on `<html>` by an inline script only when `sessionStorage` has no `entered` flag. It is never set when coming back from a project page. The same first visit starts with the drawer closed, so the folders no longer rise in: they come out with the drawer (The drawer pull).
+
+### The drawer pull (first visit)
+
+Pressing the closed front pulls the drawer out like a real one. The motion is worked out from simple physics in `src/components/cabinet/pull.ts` and sampled at 120 steps a second into Web Animations keyframes (transform only, nothing measured while it runs):
+
+| Part | Motion |
+|---|---|
+| The pull | The front and the box travel together from the closed place to the open one. A cubic from rest: a heavy start, full speed in the middle, and still moving (0.6 × the average speed) when it reaches the stop. It takes 0.72 to 0.92 s, a little longer for a longer drawer. |
+| The stop | A stiff rubber bumper (about 5.5 swings a second, damping 0.42): the drawer gives about 7 px and rebounds about 2 px, settled in 0.45 s. |
+| The folders | They hang on rails: each is a pendulum (2.2 swings a second at the back up to 3.3 at the front, damping 0.26) pushed by the drawer's acceleration. They lag as it sets off, swing forward at the stop and settle within a second; held to −9 … 12 px. |
+| The lamp | Comes on 60 ms after the stop, over 900 ms. The lip, its shadow and the drawers below fade out after it. |
+| The tug | While closed, every 3.2 s from 0.9 s, the front moves 7 px towards you, back to 1, out to 4 and home. A tug in progress carries into the pull. |
+
+With reduced motion there is no travel and no tug: the open drawer fades in (150 ms).
+
+### Sound
+
+Owner's decision: the drawer has sounds, **off until the visitor turns them on**. A square switch with a speaker icon (`SoundSwitch.astro`, `aria-pressed`, labelled "Drawer sounds") sits by the language switch on wide screens and at the end of the kicker line on phones. The choice is kept in this browser (`localStorage`). The switch shows only where the browser can play sound.
+
+| Moment | Sound |
+|---|---|
+| The drawer pulled open | The latch lets go, the drawer rolls out on ball-bearing rails (the roll follows the pull's speed, a bearing ticks every few millimetres), hits its stop with a thud and a ring of metal, rebounds, and the hanging folders settle with a rustle. |
+| A folder picked out (mouse over it, or keyboard focus) | A short flick of paper, a little higher for each folder forward, in three slightly different takes, at most one every 70 ms. Touch has no hover, so phones hear the next two only. |
+| A folder opened | A tap on the tab, then a swish that follows the page as it is pulled up. |
+| A locked folder | Two muted knocks, with the "Coming soon" note. |
+
+- Every sound is drawn in code, sample by sample (`src/components/cabinet/synth.ts`, Web Audio): no audio files to load or license. A small room reverb and a limiter sit on the output. The code (about 2.5 KB gzipped) loads only once sound is on.
+- Browsers allow sound only after a press, so the audio starts inside one: the switch, or, after a visit that left sound on, the first press on the page.
+- Levels: the stop peaks near −6 dBFS, the roll around −30 dB, the flick near −20 dBFS. The overtones of the low sounds carry them on phone speakers.
+
 
 ### Scroll behavior
 
@@ -1015,7 +1051,7 @@ Approved by the owner in the prototype (style 1, "page pulled up"). Reference im
 }
 ```
 
-Open and close become a 150 ms fade of the page. Loops stop, videos do not autoplay, the stamp appears without a press. Focus handling is the same as the full motion.
+Open and close become a 150 ms fade of the page. Loops stop, videos do not autoplay, the stamp appears without a press. The closed drawer does not tug, and opens without travelling: the open drawer fades in. Focus handling is the same as the full motion.
 
 ## 8. Do's and Don'ts
 

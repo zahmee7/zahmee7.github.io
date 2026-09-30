@@ -151,23 +151,6 @@ const note = locked ? copy.drawer.locked : text.summary;
     );
   }
 
-  /* First load, once per session: folders rise to their place in the drawer (MOTION.md sequence 1) */
-  @keyframes folder-rise {
-    from {
-      opacity: 0;
-      translate: 0 calc(var(--i) * var(--step) + 170px);
-    }
-    to {
-      opacity: 1;
-      translate: 0 calc(var(--i) * var(--step));
-    }
-  }
-  :global(.is-entering) .folder {
-    /* after the drawer has slid out (Cabinet.astro), each folder rises in and settles */
-    animation: folder-rise var(--d-enter) var(--ease-settle) backwards;
-    animation-delay: calc(360ms + var(--i) * var(--d-enter-stagger));
-  }
-
   @media (max-width: 899px) {
     .folder__sheet {
       padding: 8px var(--s-4) var(--s-8);
@@ -200,12 +183,6 @@ const note = locked ? copy.drawer.locked : text.summary;
     }
     .folder__num {
       font-size: 1.5rem;
-    }
-  }
-
-  @media (prefers-reduced-motion: reduce) {
-    :global(.is-entering) .folder {
-      animation: none;
     }
   }
 </style>

@@ -16,14 +16,18 @@ const copy = t(lang);
 ---
 
 <Base lang={lang}>
-  <!-- First-load entrance, once per session and never with reduced motion (MOTION.md sequence 1) -->
+  <!-- Before the first paint: the sound switch shows where the browser can play sound, and the first visit
+       of a session starts with the drawer closed (pull.ts) and the entrance, which never runs with reduced
+       motion (MOTION.md sequence 1). -->
   <script is:inline slot="head">
     (function () {
+      var root = document.documentElement;
+      if ("AudioContext" in window) root.classList.add("can-sound");
       try {
         if (sessionStorage.getItem("entered")) return;
         sessionStorage.setItem("entered", "1");
+        root.classList.add("drawer-closed", "drawer-cased");
         if (matchMedia("(prefers-reduced-motion: reduce)").matches) return;
-        var root = document.documentElement;
         root.classList.add("is-entering");
         setTimeout(function () {
           root.classList.remove("is-entering");
@@ -37,7 +41,7 @@ const copy = t(lang);
   <!-- One view on desktop: the masthead and the title on top, the drawer filling the rest down to the
        bottom edge. No closing card here: the masthead's card link is enough (owner's decision). -->
   <div class="home">
-    <Masthead lang={lang} />
+    <Masthead lang={lang} sound />
     <main class="home__main">
       <Hero lang={lang} />
       <Cabinet lang={lang} />
