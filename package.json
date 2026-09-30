@@ -18,7 +18,9 @@
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "astro": "astro",
-    "og": "node scripts/og.mjs"
+    "og": "node scripts/og.mjs",
+    "films": "node scripts/films.mjs",
+    "films:sample": "node scripts/sample-film.mjs && node scripts/films.mjs"
   },
   "allowScripts": {
     "esbuild": true
