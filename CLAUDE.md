@@ -59,7 +59,7 @@ Rules that keep them from conflicting:
 - **Motion**:
   - GSAP (core and CustomEase) for the page pull: the picked folder nudges up and a full page of paper is pulled up from the bottom of the screen over the cabinet. No Flip.
   - CSS transitions for hover, focus and press micro-interactions.
-  - Astro `<ClientRouter />` view transitions between the cabinet and project pages (`transition:name="file-<id>"` on the folder and on the opened file).
+  - The browser's own cross-document view transitions between pages (`@view-transition` in `global.css`), not Astro's `<ClientRouter />`: the open file uses the back button, which the router would take over (owner decision, Phase 4). A project page's paper is named `leaf`: leaving for the cabinet it slides down, and the language switch and previous / next cross-fade. Browsers without support change page at once.
   - dotLottie (`@lottiefiles/dotlottie-web`) for small vector animations exported from After Effects.
 - **Fonts**: the **thmanyah** typeface, chosen by the owner. Source files: `design/fonts/thmanyah/` (woff2 as delivered, plus `LICENSE.pdf` and `LICENSE-ar.pdf`; the Arabic licence prevails).
   - Three families, weights 300, 400, 500, 700, 900 (no 600): `thmanyah Serif Display` (headings), `thmanyah Serif Text` (long reading), `thmanyah Sans` (screen and UI). Each file covers Arabic and Latin, so EN and AR use the same stack.
@@ -72,6 +72,7 @@ Rules that keep them from conflicting:
 - **Demos**: Preact islands (`client:visible`) with sample data from `src/data/samples/*.json`. Charts: hand-built SVG or Observable Plot. Ask before adding anything over 40 KB gzipped.
 - **Video**: self-hosted `<video>`. Loops are muted, `playsinline`, start only when in view and when reduced motion is off. Sources: AV1 MP4 first, H.264 MP4 fallback, AVIF poster. Captions as WebVTT in EN and AR. `preload="none"` on mobile.
 - **Images**: `astro:assets` (`<Picture>` with AVIF and WebP).
+- **Share images**: `npm run og` (`scripts/og.mjs`) draws `public/og/<lang>/<name>.png` (1200×630, home and each open project) in headless Chromium with the local font files, which never leave the machine. The PNGs are committed. Rerun it after a title, tag or name changes.
 - **Hosting**: GitHub Pages through GitHub Actions (`withastro/action`). Repo name `zahmee7.github.io`, so the site is served at `https://zahmee7.github.io/` with no base path.
   - The digital card is a separate repo served at `/mohammed-card/`. Never create a route or folder named `mohammed-card`, and never edit that repo.
 - **Tests**: Playwright (`@playwright/test`) with projects `desktop` (Chromium 1440×900), `pixel` (Pixel 7) and `iphone` (iPhone 15, WebKit), each run in `en` and `ar`. `@axe-core/playwright` for accessibility. Lighthouse CI for budgets.
@@ -84,7 +85,7 @@ Rules that keep them from conflicting:
 Routes:
 
 - `/[lang]/` the cabinet (home)
-- `/[lang]/projects/[id]/` the opened file (one static page per project, shareable, own OG image)
+- `/[lang]/projects/[id]/` the opened file (one static page per project, shareable, own OG image). While a file is open on the cabinet, the address bar and tab title show this page (`pushState`), so a reload or a copied link lands here.
 - `/[lang]/demos/[id]/` the live demo
 - `/404`
 

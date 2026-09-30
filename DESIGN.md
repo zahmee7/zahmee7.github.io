@@ -19,7 +19,7 @@ Inputs: `docs/BRIEF.md`, `CLAUDE.md`, `design/tokens.css`, `design/MOTION.md`, `
 **The one action**: open the digital card and get in touch. Templates and demos are the reason to stay, the card is where the visit ends.
 
 **Interaction tier**: L2 (flowing), with a single signature moment: the page pull (one GSAP timeline). No pinning, no scroll-scrubbed scenes, no WebGL, no smooth-scroll library.
-**Dependencies**: `gsap` (core and CustomEase), CSS transitions, Astro `<ClientRouter />` view transitions, `IntersectionObserver`. Lenis, Three.js and ScrollTrigger are not used.
+**Dependencies**: `gsap` (core and CustomEase), CSS transitions, the browser's cross-document view transitions (CSS only, no router), `IntersectionObserver`. Lenis, Three.js and ScrollTrigger are not used.
 
 **What people remember**: the drawer and the pull. Six paper folders stand inside an open drawer; pick one and a full page of paper is pulled up over the cabinet, as if you had stepped into the file.
 
@@ -31,8 +31,9 @@ Inputs: `docs/BRIEF.md`, `CLAUDE.md`, `design/tokens.css`, `design/MOTION.md`, `
 | Page | Composition |
 |---|---|
 | Home `/[lang]/` | Masthead (name and role as a byline, card link, language). Hero: kicker, display H1, lead. The drawer fills the lower half of the first view: an open box (dark back wall, slanted side walls) with six folders standing inside, their tabs climbing in a staircase above the rim. The drawer front carries a cream label card, a caption line and a handle. Below: a closing card with the card CTA. |
-| Open file (full-screen dialog) | A full page of paper that covers the cabinet, like a new page. A sticky top bar: folio (`Project files · 01 / 06`) and the close button. Desktop: two columns split by a hairline, like the two pages of an open file. Column A (inline-start, sticky): tag, title, film, transcript link. Column B: the story in three blocks, actions (demo, open full file), the download. Previous / next at the bottom. Phone: one column in the same order. |
-| Project `/[lang]/projects/[id]/` | The same paper page at its own URL, for direct visits and sharing; the top bar's close becomes a link back to the drawer. |
+| Open file (full-screen dialog) | A full page of paper that covers the cabinet, like a new page. A sticky top bar: folio (`Project files · 01 / 06`) and the close button. Desktop: two columns split by a hairline, like the two pages of an open file. Column A (inline-start, sticky): tag, title, film, transcript link. Column B: the story in three blocks, the demo action, the download. Previous / next at the bottom. Phone: one column in the same order. While it is open, the address bar shows the project page. |
+| Project `/[lang]/projects/[id]/` | The same paper page at its own URL, for direct visits and sharing. The top bar adds the language switch, and its close becomes a link back to the drawer. Below 480 px the folio shows only its number. The closing card follows the page. |
+| Share image (1200 × 630) | Night room. Home: byline, kicker, H1 and the six folders in their drawer. Project: its folder pulled half out, tab with folio and short title, tag, title, byline. Made by `npm run og`. |
 | Demo `/[lang]/demos/[id]/` | One paper sheet on night. Stamp at the top inline-end, one-line note, the tool, a back link to the file. |
 | 404 | An empty drawer slot and one line: "This file is not in the drawer." with a link back. |
 
@@ -958,7 +959,7 @@ Approved by the owner in the prototype (style 1, "page pulled up"). Reference im
 
 - **Drawer hint**: floats 6 px up and down, 2.4 s ease-in-out loop, only after the entrance ends.
 - **Film tiles placeholder**: 14 tiles light up in a slow wave (4.2 s loop, 0.3 s offset each), paused when out of view.
-- **Page transitions**: Astro view transitions. `transition:name="file-<id>"` on the folder and on the project spread; language switch cross-fades in 250 ms.
+- **Page transitions**: the browser's cross-document view transitions (`@view-transition { navigation: auto; }`), off with reduced motion. A project page's paper is named `leaf`. Leaving it for the drawer, the paper slides down (`--d-page-out`, `--ease-in`); arriving on it from a page without it, the paper is pulled up (`--d-page-in`, `--ease-paper`). Project to project and the language switch cross-fade (250 ms).
 - **Mobile sheet**: see section 9.
 
 ### Reduced motion

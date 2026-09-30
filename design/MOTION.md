@@ -56,7 +56,9 @@ Content fades up 6 px (150 ms), swaps, then rises in with half the stagger. The 
 
 ### 6. Project page (direct visit)
 
-No folder to come from. The page is already there; its content rises in as in sequence 3.
+No folder to come from. The page is already there; its content rises in as in sequence 3 (CSS keyframes, `--d-content`, `--d-stagger`).
+
+Close is a link back to the drawer. The paper slides down over the cabinet (view transition, `--d-page-out`, `--ease-in`), and the drawer's first-load entrance does not play. Previous / next and the language switch cross-fade, then the content rises in.
 
 ### 7. Film placeholder and film
 
