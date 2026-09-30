@@ -1,0 +1,48 @@
+name: Deploy to GitHub Pages
+
+# Builds the site and publishes it to https://zahmee7.github.io/.
+# The thmanyah font files are never in this repository: the build fetches them
+# from the owner's private fonts repository with a read-only token (docs/DEPLOY.md).
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out the site
+        uses: actions/checkout@v7
+
+      - name: Fetch the thmanyah font files (private repository)
+        uses: actions/checkout@v7
+        with:
+          repository: zahmee7/thmanyah-fonts
+          token: ${{ secrets.FONTS_TOKEN }}
+          path: src/assets/fonts/thmanyah
+          persist-credentials: false
+
+      - name: Build and upload the site
+        uses: withastro/action@v6
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v5
