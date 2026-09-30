@@ -3,6 +3,7 @@
 // - The whole folder face acts as its tab.
 // - Locked folders say "Coming soon"; open folders open their page (file.ts).
 // The motion code and the story font load on first intent, so the first view stays light.
+import { bindSoon } from "../ui/soon";
 import { showToast } from "../ui/toast";
 import type { FileSheet } from "./file";
 
@@ -32,6 +33,9 @@ function setUp(drawer: HTMLElement): void {
   const captionText = drawer.querySelector<HTMLElement>("[data-caption-text]");
   const dialog = document.querySelector<HTMLDialogElement>("[data-file-sheet]");
   if (!hint || !caption || !captionTitle || !captionText || !dialog) return;
+  // Bound here rather than in file.ts, so the lazy file chunk shares no module with this page's script
+  // (a shared chunk gets a preload link, which Safari reports as unused).
+  bindSoon(dialog, dialog.dataset.soonText ?? "");
 
   const show = (folder: HTMLElement): void => {
     if (drawer.hasAttribute("data-open")) return;

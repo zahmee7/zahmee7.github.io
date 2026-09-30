@@ -1,11 +1,13 @@
 ---
 // The open file: a full-screen native <dialog> with a page of paper (DESIGN.md > Open file (a full page)).
 // Each open project's content waits in a <template>, which the browser never renders: nothing from
-// inside a project is shown until its folder is opened (owner's rule). file.ts fills and animates it.
+// inside a project is shown until its folder is opened (owner's rule). file.ts fills and animates it,
+// and moves the address bar to the project page while the file is open.
 import { getCollection } from "astro:content";
 import FileLeaf from "./FileLeaf.astro";
+import Leaf from "./Leaf.astro";
 import Icon from "../ui/Icon.astro";
-import { folio, t, type Locale } from "../../i18n/utils";
+import { folio, pageTitle, t, type Locale } from "../../i18n/utils";
 
 interface Props {
   lang: Locale;
@@ -18,35 +20,32 @@ const total = folio(projects.length, lang);
 ---
 
 <dialog class="file-dialog on-paper" id="file" data-file-sheet data-soon-text={copy.drawer.locked}>
-  <article class="leaf">
-    <header class="leaf__bar">
-      <div class="container leaf__bar-inner">
-        <p class="leaf__folio">
-          <span>{copy.hero.kicker}</span>
-          <span class="leaf__folio-num" data-folio></span>
-        </p>
-        <button class="btn" type="button" data-close>
-          <Icon name="close" />
-          <span>{copy.file.close}</span>
-        </button>
-      </div>
-    </header>
+  <Leaf lang={lang}>
+    <button class="btn" type="button" data-close slot="tools">
+      <Icon name="close" />
+      <span>{copy.file.close}</span>
+    </button>
     <div data-leaf-body></div>
-    <div class="container file__nav" data-rise>
+    <Fragment slot="nav">
       <button class="btn" type="button" data-step="-1">
         {copy.file.prev}
       </button>
       <button class="btn" type="button" data-step="1">
         {copy.file.next}
       </button>
-    </div>
-  </article>
+    </Fragment>
+  </Leaf>
 </dialog>
 
 {projects
   .filter((entry) => entry.data.mvp)
   .map((entry) => (
-    <template data-file={entry.data.id} data-folio-text={`${folio(entry.data.order, lang)} / ${total}`}>
+    <template
+      data-file={entry.data.id}
+      data-folio-text={`${folio(entry.data.order, lang)} / ${total}`}
+      data-url={`/${lang}/projects/${entry.data.id}/`}
+      data-page-title={pageTitle(entry.data[lang].title, lang)}
+    >
       <FileLeaf project={entry.data} lang={lang} />
     </template>
   ))}
@@ -75,52 +74,5 @@ const total = folio(projects.length, lang);
   }
   .file-dialog::backdrop {
     background: transparent;
-  }
-
-  .leaf {
-    position: relative;
-    min-block-size: 100dvh;
-    padding-block-end: env(safe-area-inset-bottom);
-    background: var(--c-paper);
-    color: var(--c-ink);
-  }
-  .leaf__bar {
-    position: sticky;
-    z-index: 3;
-    inset-block-start: 0;
-    background: var(--c-paper);
-    border-block-end: 1px solid var(--c-paper-line);
-  }
-  .leaf__bar-inner {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: var(--s-4);
-    min-block-size: 72px;
-  }
-  /* No middle dot here: next to an Arabic-Indic zero it reads as part of the number */
-  .leaf__folio {
-    display: flex;
-    flex-wrap: wrap;
-    gap: var(--s-3);
-    margin: 0;
-    color: var(--c-ink-muted);
-    font-size: var(--fs-meta);
-  }
-  .leaf__folio-num {
-    color: var(--c-ink);
-  }
-  .file__nav {
-    display: flex;
-    justify-content: space-between;
-    gap: var(--s-3);
-    padding-block: var(--s-5) var(--s-8);
-    border-block-start: 1px solid var(--c-paper-line);
-  }
-
-  @media (max-width: 899px) {
-    .leaf__bar-inner {
-      min-block-size: 60px;
-    }
   }
 </style>

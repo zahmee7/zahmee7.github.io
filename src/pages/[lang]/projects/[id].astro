@@ -1,0 +1,92 @@
+---
+// A project's own page (DESIGN.md > Page anatomy): the same paper page as the open file, at its own
+// address for direct visits and sharing. Close becomes a link back to the drawer, where the page slides
+// down (global.css). Only open (mvp) projects get a page; locked ones fall through to the 404.
+import type { GetStaticPaths, InferGetStaticPropsType } from "astro";
+import { getCollection } from "astro:content";
+import Base from "../../../layouts/Base.astro";
+import Leaf from "../../../components/cabinet/Leaf.astro";
+import FileLeaf from "../../../components/cabinet/FileLeaf.astro";
+import Closing from "../../../components/site/Closing.astro";
+import Icon from "../../../components/ui/Icon.astro";
+import LangSwitch from "../../../components/ui/LangSwitch.astro";
+import Toast from "../../../components/ui/Toast.astro";
+import { folio, locales, pageTitle, t } from "../../../i18n/utils";
+
+export const getStaticPaths = (async () => {
+  const projects = (await getCollection("projects"))
+    .map((entry) => entry.data)
+    .sort((a, b) => a.order - b.order);
+  const open = projects.filter((project) => project.mvp);
+  return locales.flatMap((lang) =>
+    open.map((project, index) => ({
+      params: { lang, id: project.id },
+      props: { lang, project, prev: open[index - 1], next: open[index + 1], total: projects.length },
+    })),
+  );
+}) satisfies GetStaticPaths;
+
+type Props = InferGetStaticPropsType<typeof getStaticPaths>;
+
+const { lang, project, prev, next, total } = Astro.props;
+const copy = t(lang);
+const text = project[lang];
+const path = `projects/${project.id}/`;
+---
+
+<Base
+  lang={lang}
+  path={path}
+  title={pageTitle(text.title, lang)}
+  description={text.summary}
+  image={project.id}
+  story
+>
+  <!-- Coming back to the drawer from here never replays its first-load entrance (MOTION.md sequence 1) -->
+  <script is:inline slot="head">
+    try {
+      sessionStorage.setItem("entered", "1");
+    } catch (error) {}
+  </script>
+  <main class="on-paper" data-project-page data-soon-text={copy.drawer.locked}>
+    <Leaf lang={lang} folio={`${folio(project.order, lang)} / ${folio(total, lang)}`} page>
+      <Fragment slot="tools">
+        <LangSwitch lang={lang} path={path} />
+        <a class="btn" href={`/${lang}/`}>
+          <Icon name="close" />
+          <span>{copy.file.close}</span>
+        </a>
+      </Fragment>
+      <FileLeaf project={project} lang={lang} heading="h1" />
+      <Fragment slot="nav">
+        {prev ? (
+          <a class="btn" href={`/${lang}/projects/${prev.id}/`} rel="prev">
+            {copy.file.prev}
+          </a>
+        ) : (
+          <button class="btn" type="button" disabled>
+            {copy.file.prev}
+          </button>
+        )}
+        {next ? (
+          <a class="btn" href={`/${lang}/projects/${next.id}/`} rel="next">
+            {copy.file.next}
+          </a>
+        ) : (
+          <button class="btn" type="button" disabled>
+            {copy.file.next}
+          </button>
+        )}
+      </Fragment>
+    </Leaf>
+  </main>
+  <Closing lang={lang} />
+  <Toast />
+</Base>
+
+<script>
+  import { bindSoon } from "../../../components/ui/soon";
+
+  const page = document.querySelector<HTMLElement>("[data-project-page]");
+  if (page) bindSoon(page, page.dataset.soonText ?? "");
+</script>

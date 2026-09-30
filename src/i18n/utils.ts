@@ -32,3 +32,8 @@ export function localDigits(value: string | number, lang: Locale): string {
 export function folio(n: number, lang: Locale): string {
   return localDigits(String(n).padStart(2, "0"), lang);
 }
+
+/** Browser tab and search title of a page inside the site, e.g. "NDI readiness · Mohammed Alzahmah". */
+export function pageTitle(title: string, lang: Locale): string {
+  return `${title} · ${t(lang).name}`;
+}

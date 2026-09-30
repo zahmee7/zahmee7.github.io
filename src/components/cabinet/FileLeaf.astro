@@ -1,7 +1,8 @@
 ---
 // The inside of one project's file: two columns like the two pages of an open file (DESIGN.md > Open file).
-// Used in the home page's closed templates (FileSheet.astro) and, in Phase 4, on the project page.
-// Parts not built yet (film, demo, full page, download) carry data-soon: a click shows "Coming soon".
+// Used in the home page's closed templates (FileSheet.astro) and on the project page.
+// Parts not built yet (film, demo, download) carry data-soon: a click shows "Coming soon".
+// --rise orders the blocks for the project page's entrance (global.css); the dialog animates them with GSAP.
 import type { CollectionEntry } from "astro:content";
 import Icon from "../ui/Icon.astro";
 import { t, type Locale } from "../../i18n/utils";
@@ -9,9 +10,13 @@ import { t, type Locale } from "../../i18n/utils";
 interface Props {
   project: CollectionEntry<"projects">["data"];
   lang: Locale;
+  /** The project page makes the title its h1; in the home page's dialog it is an h2. */
+  heading?: "h1" | "h2";
 }
 
-const { project, lang } = Astro.props;
+const { project, lang, heading = "h2" } = Astro.props;
+const Title = heading;
+const Label = heading === "h1" ? "h2" : "h3";
 const copy = t(lang);
 const text = project[lang];
 const download = project.downloads[0];
@@ -21,13 +26,13 @@ const tiles = Array.from({ length: 14 }, (_, index) => (index % 7) + Math.floor(
 
 <div class="container leaf__body">
   <div class="leaf__col leaf__col--a">
-    <p class="file__tag" data-rise>
+    <p class="file__tag" data-rise style="--rise: 0;">
       {text.tag}
     </p>
-    <h2 class="file__title" id={`file-title-${project.id}`} tabindex="-1" data-rise>
+    <Title class="file__title" id={`file-title-${project.id}`} tabindex="-1" data-rise style="--rise: 1;">
       {text.title}
-    </h2>
-    <div class="film" data-rise>
+    </Title>
+    <div class="film" data-rise style="--rise: 2;">
       <div class="film__tiles" aria-hidden="true">
         {tiles.map((delay) => (
           <i class="film__tile" style={`--t: ${delay};`} />
@@ -37,7 +42,7 @@ const tiles = Array.from({ length: 14 }, (_, index) => (index % 7) + Math.floor(
         <Icon name="play" />
       </button>
     </div>
-    <p class="film__summary" data-rise>
+    <p class="film__summary" data-rise style="--rise: 3;">
       <a class="link" href={`/${lang}/projects/${project.id}/`} data-soon>
         {copy.file.transcript}
       </a>
@@ -47,23 +52,20 @@ const tiles = Array.from({ length: 14 }, (_, index) => (index % 7) + Math.floor(
   <div class="leaf__col leaf__col--b">
     <div class="story">
       {storyParts.map((part, index) => (
-        <section class="story__block" data-rise>
-          <h3 class="story__label">{copy.file.story[index]}</h3>
+        <section class="story__block" data-rise style={`--rise: ${4 + index};`}>
+          <Label class="story__label">{copy.file.story[index]}</Label>
           <p class="story__text">{text[part]}</p>
         </section>
       ))}
     </div>
-    <div class="file__actions" data-rise>
+    <div class="file__actions" data-rise style="--rise: 7;">
       <a class="btn btn--primary" href={`/${lang}/demos/${project.id}/`} data-soon>
         <span>{text.demoLabel}</span>
         <Icon name="arrow" directional />
       </a>
-      <a class="btn" href={`/${lang}/projects/${project.id}/`} data-soon>
-        {copy.file.openFull}
-      </a>
     </div>
     {download && (
-      <a class="download" href={download.file} data-soon data-rise>
+      <a class="download" href={download.file} data-soon data-rise style="--rise: 8;">
         <Icon name="download" class="download__icon" />
         <span class="download__label">{text.downloadLabel}</span>
         <span class="download__kind" lang="en">
@@ -150,7 +152,8 @@ const tiles = Array.from({ length: 14 }, (_, index) => (index % 7) + Math.floor(
     }
   }
   @media (prefers-reduced-motion: no-preference) {
-    :global(dialog[open]) .film__tile {
+    :global(dialog[open]) .film__tile,
+    :global(.leaf--page) .film__tile {
       animation: tile 4.2s ease-in-out infinite;
       animation-delay: calc(var(--t) * 0.3s);
     }

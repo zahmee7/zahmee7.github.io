@@ -1,0 +1,119 @@
+---
+// The paper page of an open file (DESIGN.md > Open file (a full page)): a sticky top bar with the folio
+// and tools, the file itself, then previous / next. Shared by the home page's dialog (FileSheet.astro)
+// and the project page, so both look the same.
+import { t, type Locale } from "../../i18n/utils";
+
+interface Props {
+  lang: Locale;
+  /** Folio number, e.g. "01 / 06". Empty in the dialog: file.ts fills it. */
+  folio?: string;
+  /** The project page's leaf, which slides down when it closes to the drawer (global.css). */
+  page?: boolean;
+}
+
+const { lang, folio = "", page = false } = Astro.props;
+const copy = t(lang);
+---
+
+<article class:list={["leaf", { "leaf--page": page }]}>
+  <header class="leaf__bar">
+    <div class="container leaf__bar-inner">
+      <p class="leaf__folio">
+        <span class="leaf__folio-kicker">{copy.hero.kicker}</span>
+        <span class="leaf__folio-num" data-folio>
+          {folio}
+        </span>
+      </p>
+      <div class="leaf__tools">
+        <slot name="tools" />
+      </div>
+    </div>
+  </header>
+  <slot />
+  <div class="container file__nav" data-rise style="--rise: 9;">
+    <slot name="nav" />
+  </div>
+</article>
+
+<style>
+  .leaf {
+    position: relative;
+    min-block-size: 100dvh;
+    padding-block-end: env(safe-area-inset-bottom);
+    background: var(--c-paper);
+    color: var(--c-ink);
+  }
+  /* The project page: named for the page transition to the drawer (global.css), and on arrival its
+     content rises in, as when the file opens (MOTION.md sequence 6). Reduced motion turns this into a
+     150 ms fade through the tokens. */
+  .leaf--page {
+    view-transition-name: leaf;
+  }
+  @keyframes rise {
+    from {
+      opacity: 0;
+      translate: 0 var(--m-rise);
+    }
+  }
+  .leaf--page :global([data-rise]) {
+    animation: rise var(--d-content) var(--ease-paper) backwards;
+    animation-delay: calc(var(--rise, 0) * var(--d-stagger));
+  }
+  .leaf__bar {
+    position: sticky;
+    z-index: 3;
+    inset-block-start: 0;
+    background: var(--c-paper);
+    border-block-end: 1px solid var(--c-paper-line);
+  }
+  .leaf__bar-inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--s-4);
+    min-block-size: 72px;
+  }
+  /* No middle dot here: next to an Arabic-Indic zero it reads as part of the number */
+  .leaf__folio {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--s-3);
+    margin: 0;
+    color: var(--c-ink-muted);
+    font-size: var(--fs-meta);
+  }
+  .leaf__folio-num {
+    color: var(--c-ink);
+  }
+  .leaf__tools {
+    display: flex;
+    align-items: center;
+    gap: var(--s-2);
+  }
+  .file__nav {
+    display: flex;
+    justify-content: space-between;
+    gap: var(--s-3);
+    padding-block: var(--s-5) var(--s-8);
+    border-block-start: 1px solid var(--c-paper-line);
+  }
+
+  @media (max-width: 899px) {
+    .leaf__bar-inner {
+      min-block-size: 60px;
+    }
+  }
+  /* Narrow phones: the project page's bar also holds the language switch, so the folio shows only its
+     number. The words stay for screen readers. */
+  @media (max-width: 479px) {
+    .leaf--page .leaf__folio-kicker {
+      position: absolute;
+      inline-size: 1px;
+      block-size: 1px;
+      overflow: hidden;
+      clip: rect(0 0 0 0);
+      white-space: nowrap;
+    }
+  }
+</style>
