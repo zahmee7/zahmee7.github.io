@@ -41,7 +41,10 @@ export function createFileSheet(dialog: HTMLDialogElement, drawer: HTMLElement):
   let busy = false;
   let pendingClose = false;
 
-  const risers = (): HTMLElement[] => [...dialog.querySelectorAll<HTMLElement>("[data-rise]")];
+  // In the order set by --rise (FileLeaf.astro), which follows the layout rather than the DOM
+  const rise = (element: HTMLElement): number => Number(element.style.getPropertyValue("--rise"));
+  const risers = (): HTMLElement[] =>
+    [...dialog.querySelectorAll<HTMLElement>("[data-rise]")].sort((a, b) => rise(a) - rise(b));
   const tabOf = (folder: HTMLElement) => folder.querySelector<HTMLButtonElement>(".folder__tab")!;
   const sheetOf = (folder: HTMLElement) => folder.querySelector<HTMLElement>(".folder__sheet")!;
   const folderOf = (id: string) => drawer.querySelector<HTMLElement>(`.folder[data-id="${id}"]`)!;

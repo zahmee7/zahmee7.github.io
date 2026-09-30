@@ -1,5 +1,7 @@
 ---
-// The inside of one project's file: two columns like the two pages of an open file (DESIGN.md > Open file).
+// The inside of one project's file (DESIGN.md > Open file). Desktop: the tag, title and summary beside the
+// film, the demo and download under them, then the story across the page in three columns. Phones: one column.
+// In the DOM the story comes before the actions, so it is read first; the grid places them.
 // Used in the home page's closed templates (FileSheet.astro) and on the project page.
 // Parts not built yet (film, demo, download) carry data-soon: a click shows "Coming soon".
 // --rise orders the blocks for the project page's entrance (global.css); the dialog animates them with GSAP.
@@ -25,14 +27,20 @@ const tiles = Array.from({ length: 14 }, (_, index) => (index % 7) + Math.floor(
 ---
 
 <div class="container leaf__body">
-  <div class="leaf__col leaf__col--a">
+  <div class="file__head">
     <p class="file__tag" data-rise style="--rise: 0;">
       {text.tag}
     </p>
     <Title class="file__title" id={`file-title-${project.id}`} tabindex="-1" data-rise style="--rise: 1;">
       {text.title}
     </Title>
-    <div class="film" data-rise style="--rise: 2;">
+    <p class="file__lead" data-rise style="--rise: 2;">
+      {text.summary}
+    </p>
+  </div>
+
+  <div class="file__film" data-rise style="--rise: 3;">
+    <div class="film">
       <div class="film__tiles" aria-hidden="true">
         {tiles.map((delay) => (
           <i class="film__tile" style={`--t: ${delay};`} />
@@ -42,30 +50,31 @@ const tiles = Array.from({ length: 14 }, (_, index) => (index % 7) + Math.floor(
         <Icon name="play" />
       </button>
     </div>
-    <p class="film__summary" data-rise style="--rise: 3;">
+    <p class="film__summary">
       <a class="link" href={`/${lang}/projects/${project.id}/`} data-soon>
         {copy.file.transcript}
       </a>
     </p>
   </div>
 
-  <div class="leaf__col leaf__col--b">
-    <div class="story">
-      {storyParts.map((part, index) => (
-        <section class="story__block" data-rise style={`--rise: ${4 + index};`}>
-          <Label class="story__label">{copy.file.story[index]}</Label>
-          <p class="story__text">{text[part]}</p>
-        </section>
-      ))}
-    </div>
-    <div class="file__actions" data-rise style="--rise: 7;">
+  <div class="story">
+    {storyParts.map((part, index) => (
+      <section class="story__block" data-rise style={`--rise: ${5 + index};`}>
+        <Label class="story__label">{copy.file.story[index]}</Label>
+        <p class="story__text">{text[part]}</p>
+      </section>
+    ))}
+  </div>
+
+  <div class="file__act" data-rise style="--rise: 4;">
+    <div class="file__actions">
       <a class="btn btn--primary" href={`/${lang}/demos/${project.id}/`} data-soon>
         <span>{text.demoLabel}</span>
         <Icon name="arrow" directional />
       </a>
     </div>
     {download && (
-      <a class="download" href={download.file} data-soon data-rise style="--rise: 8;">
+      <a class="download" href={download.file} data-soon>
         <Icon name="download" class="download__icon" />
         <span class="download__label">{text.downloadLabel}</span>
         <span class="download__kind" lang="en">
@@ -79,18 +88,29 @@ const tiles = Array.from({ length: 14 }, (_, index) => (index % 7) + Math.floor(
 <style>
   .leaf__body {
     display: grid;
-    grid-template-columns: 1fr 1fr;
-    padding-block: clamp(32px, 5vw, 72px);
+    grid-template-columns: 5fr 7fr;
+    grid-template-rows: auto 1fr auto;
+    grid-template-areas:
+      "head film"
+      "act film"
+      "story story";
+    column-gap: clamp(40px, 5vw, 88px);
+    padding-block: clamp(40px, 4.5vw, 64px) clamp(48px, 5vw, 80px);
   }
-  .leaf__col--a {
-    position: sticky;
-    inset-block-start: 104px;
-    align-self: start;
-    padding-inline-end: clamp(32px, 4vw, 72px);
+  .file__head {
+    grid-area: head;
   }
-  .leaf__col--b {
-    padding-inline-start: clamp(32px, 4vw, 72px);
-    border-inline-start: 1px solid var(--c-paper-line);
+  .file__film {
+    grid-area: film;
+  }
+  /* The demo and the download sit at the foot of the first column, level with the film's bottom */
+  .file__act {
+    grid-area: act;
+    align-self: end;
+    padding-block-start: var(--s-6);
+  }
+  .file__act .download {
+    max-inline-size: 26em;
   }
 
   .file__tag {
@@ -105,7 +125,7 @@ const tiles = Array.from({ length: 14 }, (_, index) => (index % 7) + Math.floor(
   }
   .file__title {
     max-inline-size: 14ch;
-    margin: 0 0 var(--s-6);
+    margin: 0 0 var(--s-5);
     font: var(--fw-display) clamp(2.25rem, 1.4rem + 3vw, 4rem) / var(--lh-title) var(--font-display);
     letter-spacing: var(--ls-title);
     text-wrap: balance;
@@ -194,23 +214,38 @@ const tiles = Array.from({ length: 14 }, (_, index) => (index % 7) + Math.floor(
       background: var(--c-paper-hi);
     }
   }
+  .file__lead {
+    max-inline-size: 30em;
+    margin: 0;
+    color: var(--c-ink-2);
+    font: var(--fw-ui) var(--fs-lead) / 1.6 var(--font-ui);
+    text-wrap: pretty;
+  }
+
   .film__summary {
     margin: var(--s-3) 0 0;
     color: var(--c-ink-muted);
     font-size: var(--fs-meta);
   }
 
+  /* The story across the page: three columns under an ink rule, split by hairlines */
   .story {
+    grid-area: story;
     display: grid;
-    gap: var(--s-6);
+    grid-template-columns: repeat(3, 1fr);
+    margin-block-start: clamp(48px, 5vw, 72px);
+    border-block-start: 1px solid var(--c-ink);
   }
   .story__block {
-    padding-block-start: var(--s-4);
-    border-block-start: 1px solid var(--c-paper-line);
+    padding: var(--s-5) clamp(20px, 2.4vw, 40px) 0;
+    border-inline-start: 1px solid var(--c-paper-line);
   }
   .story__block:first-child {
-    padding-block-start: 0;
-    border-block-start: 0;
+    padding-inline-start: 0;
+    border-inline-start: 0;
+  }
+  .story__block:last-child {
+    padding-inline-end: 0;
   }
   .story__label {
     margin: 0 0 var(--s-2);
@@ -234,7 +269,6 @@ const tiles = Array.from({ length: 14 }, (_, index) => (index % 7) + Math.floor(
     display: flex;
     flex-wrap: wrap;
     gap: var(--s-3);
-    margin-block-start: var(--s-7);
   }
   .download {
     display: flex;
@@ -269,18 +303,27 @@ const tiles = Array.from({ length: 14 }, (_, index) => (index % 7) + Math.floor(
   @media (max-width: 899px) {
     .leaf__body {
       grid-template-columns: 1fr;
+      grid-template-rows: none;
+      grid-template-areas: "head" "film" "story" "act";
       padding-block: var(--s-5) var(--s-6);
     }
-    .leaf__col--a {
-      position: static;
-      padding-inline-end: 0;
+    .file__film {
+      margin-block-start: var(--s-5);
     }
-    .leaf__col--b {
+    .story {
+      grid-template-columns: 1fr;
       margin-block-start: var(--s-6);
-      padding-inline-start: 0;
-      padding-block-start: var(--s-5);
+    }
+    .story__block {
+      padding: var(--s-5) 0 var(--s-2);
       border-inline-start: 0;
       border-block-start: 1px solid var(--c-paper-line);
+    }
+    .story__block:first-child {
+      border-block-start: 0;
+    }
+    .file__act {
+      padding-block-start: var(--s-5);
     }
     .file__actions :global(.btn) {
       white-space: normal;
