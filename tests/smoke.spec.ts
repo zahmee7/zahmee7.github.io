@@ -1,6 +1,6 @@
 import { test, expect, type Page } from "@playwright/test";
 import site from "../content/site.json" with { type: "json" };
-import { locales, watchConsole } from "./helpers";
+import { locales, watchConsole, watchFonts } from "./helpers";
 
 // Accessibility checks live in a11y.spec.ts, drawer behaviour in cabinet.spec.ts.
 
@@ -36,14 +36,11 @@ for (const lang of locales) {
     });
 
     test("keeps first-view fonts within 160 KB", async ({ page }) => {
-      let fontBytes = 0;
-      page.on("response", async (response) => {
-        if (response.url().endsWith(".woff2")) fontBytes += (await response.body()).length;
-      });
+      const fonts = watchFonts(page);
       await page.goto(`/${lang}/`);
-      await page.evaluate(() => document.fonts.ready);
-      await page.waitForLoadState("networkidle");
+      await fonts.settled();
 
+      const fontBytes = [...fonts.files.values()].reduce((sum, size) => sum + size, 0);
       expect(fontBytes).toBeGreaterThan(0);
       expect(fontBytes).toBeLessThanOrEqual(160 * 1024);
     });

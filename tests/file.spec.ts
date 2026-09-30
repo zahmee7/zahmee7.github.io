@@ -122,7 +122,7 @@ for (const lang of locales) {
 
     test("parts built later say Coming soon", async ({ page }) => {
       await openFile(page, first!.id);
-      await page.getByRole("link", { name: first![lang].demoLabel }).click();
+      await page.getByRole("link", { name: first![lang].downloadLabel }).click();
 
       const toast = page.locator("dialog#file #toast");
       await expect(toast).toHaveText(copy.drawer.locked);

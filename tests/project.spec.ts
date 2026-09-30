@@ -1,7 +1,7 @@
 import { test, expect, type Page } from "@playwright/test";
 import projects from "../content/projects.json" with { type: "json" };
 import site from "../content/site.json" with { type: "json" };
-import { locales, watchConsole } from "./helpers";
+import { locales, watchConsole, watchFonts } from "./helpers";
 
 // The project pages, /[lang]/projects/[id]/ (DESIGN.md > Page anatomy, MOTION.md sequence 6).
 const sorted = [...projects].sort((a, b) => a.order - b.order);
@@ -108,20 +108,16 @@ for (const lang of locales) {
 
     test("parts built later say Coming soon", async ({ page }) => {
       await page.goto(`/${lang}/projects/${first.id}/`);
-      await page.getByRole("link", { name: first[lang].demoLabel }).click();
+      await page.getByRole("link", { name: first[lang].downloadLabel }).click();
 
       await expect(page.locator("#toast")).toHaveText(copy.drawer.locked);
       await expect(page).toHaveURL(new RegExp(`/${lang}/projects/${first.id}/$`));
     });
 
     test("loads three font files within 240 KB, the story font among them", async ({ page }) => {
-      const files = new Map<string, number>();
-      page.on("response", async (response) => {
-        if (response.url().endsWith(".woff2")) files.set(response.url(), (await response.body()).length);
-      });
+      const { files, settled } = watchFonts(page);
       await page.goto(`/${lang}/projects/${first.id}/`);
-      await page.evaluate(() => document.fonts.ready);
-      await page.waitForLoadState("networkidle");
+      await settled();
 
       const bytes = [...files.values()].reduce((sum, size) => sum + size, 0);
       expect(files.size).toBe(3);

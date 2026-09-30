@@ -26,6 +26,26 @@ export function watchConsole(page: Page): string[] {
   return problems;
 }
 
+/**
+ * Records every font file a page loads, with its size. Call settled() once the page is open: it waits for
+ * the fonts and their bodies, without waiting for the network to go quiet (a film loop never lets it).
+ */
+export function watchFonts(page: Page): { files: Map<string, number>; settled: () => Promise<void> } {
+  const files = new Map<string, number>();
+  const pending: Array<Promise<void>> = [];
+  page.on("response", (response) => {
+    if (!response.url().endsWith(".woff2")) return;
+    pending.push(response.body().then((body) => void files.set(response.url(), body.length)));
+  });
+  return {
+    files,
+    settled: async () => {
+      await page.evaluate(() => document.fonts.ready);
+      await Promise.all(pending);
+    },
+  };
+}
+
 /** Arabic-Indic digits, as the Arabic UI shows them. */
 export function arabicDigits(text: string): string {
   return text.replace(/\d/g, (digit) => "٠١٢٣٤٥٦٧٨٩"[Number(digit)] ?? digit);
