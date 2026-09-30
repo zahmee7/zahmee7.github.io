@@ -45,7 +45,7 @@ for (const lang of locales) {
     });
 
     for (const project of ready) {
-      const kind = project.demo.kind as Kind;
+      const kind = (project.demo as { kind?: Kind }).kind!;
       const text = project[lang];
       const kindName = copy.demo.kinds[kind];
 
