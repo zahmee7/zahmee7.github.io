@@ -1,0 +1,202 @@
+[
+  {
+    "id": "ndi-readiness",
+    "order": 1,
+    "mvp": true,
+    "tone": "#F1EDE4",
+    "demo": { "type": "readiness-tracker", "status": "planned" },
+    "film": { "dir": "/films/ndi-readiness/", "status": "planned", "lengthSec": 60 },
+    "downloads": [
+      { "file": "/downloads/ndi-readiness-tracker.xlsx", "kind": "xlsx", "status": "planned" }
+    ],
+    "en": {
+      "short": "NDI readiness",
+      "tag": "NDI · COMPLIANCE",
+      "title": "NDI readiness",
+      "summary": "From scattered evidence to one readiness picture and a plan the team could follow.",
+      "context": "The entity was taking part in the National Data Index while its Data Management Office was still being built, and evidence sat in different places.",
+      "did": "Worked directly with the DMO manager to map earlier results to each domain, rank the gaps, and prepare and review evidence.",
+      "result": "One readiness picture per domain, and a remediation plan the team could work through together.",
+      "demoLabel": "Try the readiness tracker",
+      "downloadLabel": "Readiness tracker · Excel"
+    },
+    "ar": {
+      "short": "الجاهزية للمؤشر",
+      "tag": "المؤشر الوطني · الامتثال",
+      "title": "الجاهزية للمؤشر الوطني للبيانات",
+      "summary": "من أدلة متفرقة إلى صورة جاهزية واحدة وخطة يعمل عليها الفريق.",
+      "context": "كانت الجهة تشارك في المؤشر الوطني بينما مكتب إدارة البيانات ما زال في طور البناء، والأدلة موزعة في أماكن مختلفة.",
+      "did": "عملت مباشرة مع مدير المكتب على ربط النتائج السابقة بكل مجال، وترتيب الفجوات، وإعداد الأدلة ومراجعتها.",
+      "result": "صورة جاهزية واحدة لكل مجال، وخطة معالجة يعمل عليها الفريق معاً.",
+      "demoLabel": "جرّب متتبع الجاهزية",
+      "downloadLabel": "متتبع الجاهزية · إكسل"
+    }
+  },
+  {
+    "id": "data-classification",
+    "order": 2,
+    "mvp": true,
+    "tone": "#E8E1D3",
+    "demo": { "type": "classification-helper", "status": "planned" },
+    "film": { "dir": "/films/data-classification/", "status": "planned", "lengthSec": 60 },
+    "downloads": [
+      { "file": "/downloads/data-classification-guide.pdf", "kind": "pdf", "status": "planned" }
+    ],
+    "en": {
+      "short": "Classification",
+      "tag": "CLASSIFICATION",
+      "title": "Data classification, made usable",
+      "summary": "A national policy turned into steps any department can follow.",
+      "context": "Staff across the entity needed a clear way to classify data and handle it by sensitivity.",
+      "did": "Delivered an entity-wide workshop that turned the policy into practical steps, then followed up on classification plans with departments.",
+      "result": "A shared, practical way for each department to decide how sensitive its data is and how to handle it.",
+      "demoLabel": "Try the classification helper",
+      "downloadLabel": "Classification guide · one page"
+    },
+    "ar": {
+      "short": "تصنيف البيانات",
+      "tag": "تصنيف البيانات",
+      "title": "تصنيف البيانات بشكل عملي",
+      "summary": "سياسة وطنية تحولت إلى خطوات تستطيع أي إدارة تطبيقها.",
+      "context": "كان الموظفون في كل الإدارات يحتاجون طريقة واضحة لتصنيف البيانات والتعامل معها حسب حساسيتها.",
+      "did": "قدمت ورشة على مستوى الجهة حوّلت السياسة إلى خطوات عملية، وتابعت خطط التصنيف مع الإدارات.",
+      "result": "طريقة مشتركة وعملية تقرر بها كل إدارة حساسية بياناتها وكيف تتعامل معها.",
+      "demoLabel": "جرّب مساعد التصنيف",
+      "downloadLabel": "دليل التصنيف · صفحة واحدة"
+    }
+  },
+  {
+    "id": "executive-dashboard",
+    "order": 3,
+    "mvp": true,
+    "tone": "#EFE8DA",
+    "demo": { "type": "executive-dashboard", "status": "planned" },
+    "film": { "dir": "/films/executive-dashboard/", "status": "planned", "lengthSec": 60 },
+    "downloads": [
+      { "file": "/downloads/dmo-dashboard-template.pbit", "kind": "pbit", "status": "planned" }
+    ],
+    "en": {
+      "short": "Exec dashboard",
+      "tag": "BI · REPORTING",
+      "title": "DMO executive dashboard",
+      "summary": "One live view of the office’s progress, replacing separate spreadsheets.",
+      "context": "The office’s progress was tracked across several separate spreadsheets.",
+      "did": "Built the dashboard from scratch to follow NDI progress across operational excellence, maturity and compliance, alongside the office’s plans.",
+      "result": "One up-to-date source that management uses to follow the office.",
+      "demoLabel": "Open the sample dashboard",
+      "downloadLabel": "Dashboard template · Power BI"
+    },
+    "ar": {
+      "short": "اللوحة التنفيذية",
+      "tag": "ذكاء الأعمال",
+      "title": "لوحة المتابعة التنفيذية",
+      "summary": "صورة حية واحدة لتقدم المكتب بدل ملفات متفرقة.",
+      "context": "كانت متابعة تقدم المكتب موزعة على عدة ملفات إكسل منفصلة.",
+      "did": "بنيت اللوحة من الصفر لتتابع تقدم المؤشر الوطني في التميز التشغيلي والنضج والامتثال، مع خطط المكتب ومبادراته.",
+      "result": "مصدر واحد محدّث تتابع به الإدارة تقدم المكتب.",
+      "demoLabel": "افتح اللوحة التجريبية",
+      "downloadLabel": "قالب اللوحة · باور بي آي"
+    }
+  },
+  {
+    "id": "national-data-catalog",
+    "order": 4,
+    "mvp": false,
+    "tone": "#E3DACA",
+    "demo": { "type": "glossary-builder", "status": "later" },
+    "film": { "dir": "/films/national-data-catalog/", "status": "later", "lengthSec": 45 },
+    "downloads": [
+      { "file": "/downloads/business-glossary-template.xlsx", "kind": "xlsx", "status": "later" },
+      { "file": "/downloads/data-dictionary-template.xlsx", "kind": "xlsx", "status": "later" }
+    ],
+    "en": {
+      "short": "Data catalog",
+      "tag": "METADATA",
+      "title": "National Data Catalog onboarding",
+      "summary": "Registering the entity’s systems and documenting what the data means.",
+      "context": "The entity was joining the national catalog with nothing documented yet.",
+      "did": "Registered the in-scope systems and their technical metadata, then documented the glossary, datasets, business attributes and KPIs.",
+      "result": "Coverage well beyond the required minimum.",
+      "demoLabel": "Try the glossary builder",
+      "downloadLabel": "Glossary and data dictionary templates"
+    },
+    "ar": {
+      "short": "فهرس البيانات",
+      "tag": "البيانات الوصفية",
+      "title": "الانضمام إلى فهرس البيانات الوطني",
+      "summary": "تسجيل أنظمة الجهة وتوثيق معنى بياناتها.",
+      "context": "كانت الجهة تنضم إلى فهرس البيانات الوطني ولا يوجد أي توثيق جاهز.",
+      "did": "سجلت الأنظمة المشمولة وخصائصها التقنية، ثم وثقت المسرد ومجموعات البيانات والخصائص الوظيفية ومؤشرات الأداء.",
+      "result": "تغطية تجاوزت الحد المطلوب بكثير.",
+      "demoLabel": "جرّب أداة بناء المسرد",
+      "downloadLabel": "قوالب المسرد وقاموس البيانات"
+    }
+  },
+  {
+    "id": "open-data",
+    "order": 5,
+    "mvp": false,
+    "tone": "#ECE5D6",
+    "demo": { "type": "dataset-checker", "status": "later" },
+    "film": { "dir": "/films/open-data/", "status": "later", "lengthSec": 45 },
+    "downloads": [
+      { "file": "/downloads/open-data-intake-checklist.pdf", "kind": "pdf", "status": "later" }
+    ],
+    "en": {
+      "short": "Open data",
+      "tag": "OPEN DATA",
+      "title": "Open data, all year round",
+      "summary": "A continuous intake process with departments instead of a yearly rush.",
+      "context": "Datasets were gathered once a year, in a rush before publishing.",
+      "did": "Took over the entity’s open data portal presence, raised dataset quality, and set up continuous intake with departments, backed by a workshop for managers.",
+      "result": "A steady flow of datasets ready for publishing.",
+      "demoLabel": "Check a sample dataset",
+      "downloadLabel": "Intake checklist"
+    },
+    "ar": {
+      "short": "البيانات المفتوحة",
+      "tag": "البيانات المفتوحة",
+      "title": "البيانات المفتوحة طوال السنة",
+      "summary": "استقبال مستمر للبيانات من الإدارات بدل الاستعجال مرة في السنة.",
+      "context": "كانت مجموعات البيانات تُجمع مرة في السنة وعلى عجل قبل النشر.",
+      "did": "توليت حضور الجهة في منصة البيانات المفتوحة، ورفعت جودة المجموعات، وأنشأت استقبالاً مستمراً مع الإدارات دعمته بورشة للمدراء.",
+      "result": "تدفق ثابت من مجموعات البيانات الجاهزة للنشر.",
+      "demoLabel": "افحص مجموعة بيانات تجريبية",
+      "downloadLabel": "قائمة تحقق الاستقبال"
+    }
+  },
+  {
+    "id": "governance-committee",
+    "order": 6,
+    "mvp": false,
+    "tone": "#DED4C1",
+    "demo": { "type": "decision-tracker", "status": "later" },
+    "film": { "dir": "/films/governance-committee/", "status": "later", "lengthSec": 45 },
+    "downloads": [
+      { "file": "/downloads/committee-minutes-template.docx", "kind": "docx", "status": "later" },
+      { "file": "/downloads/decision-tracker.xlsx", "kind": "xlsx", "status": "later" }
+    ],
+    "en": {
+      "short": "Committee",
+      "tag": "GOVERNANCE",
+      "title": "Governance committee",
+      "summary": "Keeping committee decisions moving until they are carried out.",
+      "context": "Decisions were made in meetings, but follow-up was scattered.",
+      "did": "As committee secretary, prepared agendas and minutes and followed up on every assignment with department representatives.",
+      "result": "Decisions followed through to closure, not left in the minutes.",
+      "demoLabel": "Try the decision tracker",
+      "downloadLabel": "Minutes and follow-up template"
+    },
+    "ar": {
+      "short": "لجنة الحوكمة",
+      "tag": "الحوكمة",
+      "title": "لجنة حوكمة وإدارة البيانات",
+      "summary": "متابعة قرارات اللجنة حتى تُنفَّذ فعلاً.",
+      "context": "كانت القرارات تُتخذ في الاجتماعات، لكن متابعتها موزعة.",
+      "did": "بصفتي أميناً للجنة، أعددت جداول الأعمال والمحاضر، وتابعت كل تكليف مع ممثلي الإدارات.",
+      "result": "قرارات تُتابع حتى تُغلق بدل أن تبقى في المحضر.",
+      "demoLabel": "جرّب متتبع القرارات",
+      "downloadLabel": "قالب المحضر والمتابعة"
+    }
+  }
+]
