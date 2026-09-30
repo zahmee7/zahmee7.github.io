@@ -1,0 +1,260 @@
+---
+// The drawer: an open box seen from the front and a little above (DESIGN.md > Drawer and folders).
+// Layers, back to front: back wall, folders, depth shade, side walls, drawer front.
+import { getCollection } from "astro:content";
+import Folder from "./Folder.astro";
+import { t, type Locale } from "../../i18n/utils";
+
+interface Props {
+  lang: Locale;
+}
+
+const { lang } = Astro.props;
+const copy = t(lang);
+const projects = (await getCollection("projects")).sort((a, b) => a.data.order - b.data.order);
+---
+
+<section
+  class="container drawer"
+  id="drawer"
+  tabindex="-1"
+  aria-label={copy.drawer.label}
+  data-cabinet
+  data-locked-text={copy.drawer.locked}
+>
+  <div class="drawer__cabinet">
+    <div class="drawer__back" aria-hidden="true"></div>
+    <ol class="drawer__stack">
+      {projects.map((entry, index) => (
+        <Folder project={entry.data} lang={lang} index={index} />
+      ))}
+    </ol>
+    <div class="drawer__depth" aria-hidden="true"></div>
+    <div class="drawer__walls" aria-hidden="true"></div>
+  </div>
+
+  <div class="drawer__front">
+    <span class="drawer__label" aria-hidden="true">
+      {copy.drawer.label}
+    </span>
+    <p class="drawer__hint" data-hint>
+      <span class="drawer__hint-pointer">{copy.drawer.hint}</span>
+      <span class="drawer__hint-touch">{copy.drawer.hintTouch}</span>
+    </p>
+    <div class="drawer__caption" data-caption aria-hidden="true" hidden>
+      <p class="drawer__caption-title" data-caption-title></p>
+      <p class="drawer__caption-text" data-caption-text></p>
+    </div>
+    <span class="drawer__handle" aria-hidden="true"></span>
+  </div>
+</section>
+
+<script>
+  import "./cabinet.ts";
+</script>
+
+<style>
+  .drawer {
+    position: relative;
+  }
+  .drawer:focus {
+    outline: none;
+  }
+
+  .drawer__cabinet {
+    --step: 42px; /* vertical offset between folders */
+    --tab-w: clamp(150px, 17%, 210px);
+    --visible-front: 84px; /* the front folder shows the most paper */
+    --wall-front: 26px; /* side wall thickness at the front */
+    --wall-back: 8px; /* side wall thickness at the back */
+    --inset-back: 46px; /* how far the back of the box sits inside the front, per side */
+    --rim: 16px; /* back wall showing above the backmost folder */
+    --tab-pad: 14px; /* tabs keep off the folder corners, so every tab sits on a straight edge */
+    --stack-top: 64px; /* room for the first tab and its lift */
+    position: relative;
+    block-size: calc(var(--stack-top) + 5 * var(--step) + var(--visible-front));
+  }
+  .drawer__back {
+    position: absolute;
+    z-index: 0;
+    inset-inline: calc(var(--inset-back) - var(--wall-back) - 2px);
+    inset-block: calc(var(--stack-top) - var(--rim)) 0;
+    border-radius: 10px 10px 0 0;
+    background: linear-gradient(180deg, var(--c-drawer-handle), var(--c-night) 70%);
+    box-shadow: inset 0 2px 0 var(--c-drawer-edge);
+  }
+  .drawer__stack {
+    position: absolute;
+    z-index: 1;
+    inset: 0;
+    display: grid;
+    grid-template-areas: "stack";
+    margin: 0;
+    padding: var(--stack-top) 0 0;
+    list-style: none;
+    clip-path: inset(-400px 0 18px 0); /* folder bottoms end behind the drawer front */
+  }
+  .drawer__depth {
+    position: absolute;
+    z-index: 2;
+    inset: 0;
+    pointer-events: none;
+    background: linear-gradient(180deg, transparent 72%, rgb(var(--c-night-rgb) / 0.22) 100%);
+  }
+  .drawer__walls {
+    position: absolute;
+    z-index: 3;
+    inset: 0;
+    pointer-events: none;
+  }
+  .drawer__walls::before,
+  .drawer__walls::after {
+    content: "";
+    position: absolute;
+    inset-block: calc(var(--stack-top) - var(--rim)) 0;
+    inline-size: var(--inset-back);
+  }
+  /* Physical sides on purpose: the box is symmetric, so RTL needs no mirroring */
+  .drawer__walls::before {
+    left: 0;
+    background: linear-gradient(90deg, var(--c-drawer) 30%, var(--c-drawer-edge));
+    clip-path: polygon(
+      0 100%,
+      0 calc(100% - var(--visible-front) - 18px),
+      calc(100% - var(--wall-back)) 0,
+      100% 0,
+      var(--wall-front) 100%
+    );
+  }
+  .drawer__walls::after {
+    right: 0;
+    background: linear-gradient(270deg, var(--c-drawer) 30%, var(--c-drawer-edge));
+    clip-path: polygon(
+      100% 100%,
+      100% calc(100% - var(--visible-front) - 18px),
+      var(--wall-back) 0,
+      0 0,
+      calc(100% - var(--wall-front)) 100%
+    );
+  }
+
+  .drawer__front {
+    position: relative;
+    z-index: var(--z-drawer);
+    margin-block-start: -18px; /* overlaps the clipped bottom of the stack */
+    min-block-size: 132px;
+    display: grid;
+    place-content: center;
+    justify-items: center;
+    gap: var(--s-3);
+    border-radius: 8px 8px var(--r-drawer) var(--r-drawer);
+    background: linear-gradient(180deg, var(--c-drawer-edge) 0, var(--c-drawer) 6px);
+    box-shadow: var(--sh-drawer);
+  }
+  .drawer__label {
+    padding: var(--s-2) var(--s-5);
+    border: 2px solid var(--c-drawer-edge);
+    border-radius: 6px;
+    background: var(--c-paper);
+    color: var(--c-ink);
+    font: var(--fw-ui) var(--fs-kicker) / 1.4 var(--font-ui);
+    letter-spacing: var(--ls-kicker);
+    text-transform: uppercase;
+  }
+  :global(:root:lang(ar)) .drawer__label {
+    text-transform: none;
+  }
+  .drawer__handle {
+    inline-size: 120px;
+    block-size: 12px;
+    border-radius: var(--r-pill);
+    background: var(--c-drawer-handle);
+    box-shadow: inset 0 1px 0 rgb(var(--c-paper-rgb) / 0.08);
+  }
+  .drawer__hint {
+    margin: 0;
+    color: var(--c-mist);
+    font-size: var(--fs-meta);
+    text-align: center;
+  }
+  .drawer__hint[hidden] {
+    display: none;
+  }
+  .drawer__hint-touch {
+    display: none;
+  }
+  @media (hover: none) {
+    .drawer__hint-pointer {
+      display: none;
+    }
+    .drawer__hint-touch {
+      display: inline;
+    }
+  }
+  .drawer__caption {
+    display: grid;
+    justify-items: center;
+    gap: 2px;
+    min-block-size: 3.4em;
+    padding-inline: var(--s-5);
+    text-align: center;
+  }
+  .drawer__caption[hidden] {
+    display: none;
+  }
+  .drawer__caption-title {
+    margin: 0;
+    color: var(--c-paper);
+    font: var(--fw-display) 1.125rem / 1.45 var(--font-display);
+  }
+  .drawer__caption-text {
+    margin: 0;
+    color: var(--c-mist);
+    font-size: var(--fs-meta);
+  }
+
+  /* The hint floats slowly once the entrance is over (MOTION.md sequence 1, step 3) */
+  @keyframes hint-float {
+    from {
+      translate: 0 0;
+    }
+    to {
+      translate: 0 -6px;
+    }
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    .drawer__hint {
+      animation: hint-float 2.4s ease-in-out 1.9s infinite alternate;
+    }
+  }
+
+  @media (max-width: 1199px) {
+    .drawer__cabinet {
+      --step: 36px;
+    }
+  }
+
+  /* The same drawer, seen closer (DESIGN.md section 9) */
+  @media (max-width: 899px) {
+    .drawer {
+      padding-inline: 6px;
+    }
+    .drawer__cabinet {
+      --step: 60px;
+      --tab-w: clamp(196px, 66%, 250px);
+      --visible-front: 76px;
+      --wall-front: 16px;
+      --wall-back: 5px;
+      --inset-back: 28px;
+      --rim: 14px;
+      --tab-pad: 10px;
+      --stack-top: 76px;
+    }
+    .drawer__caption {
+      display: none;
+    }
+    .drawer__front {
+      min-block-size: 116px;
+    }
+  }
+</style>

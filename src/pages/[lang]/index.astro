@@ -2,6 +2,7 @@
 import Base from "../../layouts/Base.astro";
 import Masthead from "../../components/site/Masthead.astro";
 import Hero from "../../components/site/Hero.astro";
+import Cabinet from "../../components/cabinet/Cabinet.astro";
 import Closing from "../../components/site/Closing.astro";
 import Toast from "../../components/ui/Toast.astro";
 import { locales, t, type Locale } from "../../i18n/utils";
@@ -15,19 +16,29 @@ const copy = t(lang);
 ---
 
 <Base lang={lang}>
-  <a class="skip" href="#main">
+  <!-- First-load entrance, once per session and never with reduced motion (MOTION.md sequence 1) -->
+  <script is:inline slot="head">
+    (function () {
+      try {
+        if (sessionStorage.getItem("entered")) return;
+        sessionStorage.setItem("entered", "1");
+        if (matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+        var root = document.documentElement;
+        root.classList.add("is-entering");
+        setTimeout(function () {
+          root.classList.remove("is-entering");
+        }, 1900);
+      } catch (error) {}
+    })();
+  </script>
+  <a class="skip" href="#drawer">
     {copy.skip}
   </a>
   <Masthead lang={lang} />
-  <main id="main" tabindex="-1">
+  <main>
     <Hero lang={lang} />
+    <Cabinet lang={lang} />
   </main>
   <Closing lang={lang} />
   <Toast />
 </Base>
-
-<style>
-  main:focus {
-    outline: none;
-  }
-</style>

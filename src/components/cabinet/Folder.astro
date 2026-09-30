@@ -1,0 +1,181 @@
+---
+// One folder standing in the drawer (DESIGN.md > Drawer and folders).
+// The edge carries no text: the tab holds the number and short title; the full title and
+// summary are for screen readers (aria-describedby) and the drawer-front caption.
+import type { CollectionEntry } from "astro:content";
+import Icon from "../ui/Icon.astro";
+import Stamp from "../ui/Stamp.astro";
+import { folio, t, type Locale } from "../../i18n/utils";
+
+interface Props {
+  project: CollectionEntry<"projects">["data"];
+  lang: Locale;
+  index: number;
+}
+
+const { project, lang, index } = Astro.props;
+const copy = t(lang);
+const text = project[lang];
+const locked = !project.mvp;
+const note = locked ? copy.drawer.locked : text.summary;
+---
+
+<li
+  class="folder"
+  data-id={project.id}
+  data-locked={locked ? "" : undefined}
+  data-caption-title={text.title}
+  data-caption-text={note}
+  style={`--i: ${index}; --slot: ${index}; --tone: ${project.tone};`}
+>
+  <div class="folder__sheet">
+    <button
+      type="button"
+      class="folder__tab"
+      id={`tab-${project.id}`}
+      aria-describedby={`desc-${project.id}`}
+      aria-disabled={locked ? "true" : undefined}
+    >
+      <span class="folder__num">{folio(project.order, lang)}</span>
+      <span class="folder__short">{text.short}</span>
+      {locked && <Icon name="lock" class="folder__lock" />}
+    </button>
+    <p class="sr-only" id={`desc-${project.id}`}>{`${text.title}. ${note}`}</p>
+    {locked && <Stamp text={copy.drawer.locked} decorative class="folder__stamp" />}
+  </div>
+</li>
+
+<style>
+  .folder {
+    --lift: 0px;
+    grid-area: stack;
+    position: relative;
+    z-index: calc(var(--z-folder) + var(--i));
+    /* back folders sit further inside the box, front folders closer to the walls */
+    margin-inline: calc(var(--inset-back) + 4px - var(--i) * (var(--inset-back) - var(--wall-front)) / 5);
+    translate: 0 calc(var(--i) * var(--step) - var(--lift));
+    transition: translate var(--d-hover) var(--ease-paper);
+  }
+  .folder__sheet {
+    position: relative;
+    min-block-size: 320px;
+    padding: 10px var(--s-6) var(--s-8);
+    border-radius: 14px;
+    background: var(--tone);
+    color: var(--c-ink);
+    box-shadow: var(--sh-folder);
+    cursor: pointer;
+  }
+  .folder__tab {
+    position: absolute;
+    inset-block-end: calc(100% - 1px);
+    inset-inline-start: calc(var(--tab-pad) + var(--slot) * (100% - var(--tab-w) - 2 * var(--tab-pad)) / 5);
+    inline-size: var(--tab-w);
+    min-block-size: var(--tap);
+    display: flex;
+    align-items: baseline;
+    gap: var(--s-3);
+    padding: var(--s-2) var(--s-4) 2px;
+    border: 0;
+    border-radius: var(--r-tab);
+    background: var(--tone);
+    color: var(--c-ink);
+    font: var(--fw-ui) var(--fs-meta) / 1.2 var(--font-ui);
+    text-align: start;
+    cursor: pointer;
+    transition: scale var(--d-press) var(--ease-paper);
+  }
+  .folder__tab:focus-visible {
+    outline: 3px solid var(--c-signal);
+    outline-offset: 2px;
+  }
+  .folder__tab:active {
+    scale: 0.98;
+  }
+  .folder__num {
+    font: var(--fw-display) var(--fs-folder-num) / 1 var(--font-display);
+  }
+  .folder__short {
+    min-inline-size: 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  /* The lock and the stamp come from other components, so they are reached through :global() */
+  .folder :global(.folder__lock) {
+    display: none;
+    inline-size: 16px;
+    block-size: 16px;
+    align-self: center;
+    color: var(--c-stamp);
+  }
+
+  @media (hover: hover) {
+    :global(.drawer:not([data-open])) .folder:hover {
+      --lift: var(--m-hover-lift);
+    }
+  }
+  :global(.drawer:not([data-open])) .folder:has(.folder__tab:focus-visible) {
+    --lift: var(--m-hover-lift);
+  }
+
+  /* Locked folder (not in the MVP): the stamp sits in its band, under its own tab */
+  .folder[data-locked] .folder__sheet,
+  .folder[data-locked] .folder__tab {
+    cursor: not-allowed;
+  }
+  .folder :global(.folder__stamp) {
+    position: absolute;
+    inset-block-start: 8px;
+    inset-inline-start: calc(
+      var(--tab-pad) + var(--slot) * (100% - var(--tab-w) - 2 * var(--tab-pad)) / 5 + var(--s-4)
+    );
+  }
+
+  /* First load, once per session: folders rise to their place in the drawer (MOTION.md sequence 1) */
+  @keyframes folder-rise {
+    from {
+      opacity: 0;
+      translate: 0 calc(var(--i) * var(--step) + 120px);
+    }
+    to {
+      opacity: 1;
+      translate: 0 calc(var(--i) * var(--step));
+    }
+  }
+  :global(.is-entering) .folder {
+    animation: folder-rise var(--d-enter) var(--ease-paper) backwards;
+    animation-delay: calc(150ms + var(--i) * var(--d-enter-stagger));
+  }
+
+  @media (max-width: 899px) {
+    .folder__sheet {
+      padding: 8px var(--s-4) var(--s-8);
+    }
+    .folder__tab {
+      gap: var(--s-2);
+      min-block-size: 54px;
+      padding: var(--s-2) var(--s-4) 4px;
+      align-items: center;
+      font-size: 1rem;
+    }
+    .folder__num {
+      font-size: 1.875rem;
+    }
+    /* No free band between tabs on a phone: a red lock inside the tab instead of the stamp */
+    .folder :global(.folder__stamp) {
+      display: none;
+    }
+    .folder :global(.folder__lock) {
+      display: inline-block;
+      inline-size: 18px;
+      block-size: 18px;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    :global(.is-entering) .folder {
+      animation: none;
+    }
+  }
+</style>
