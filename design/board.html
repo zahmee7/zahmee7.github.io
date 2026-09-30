@@ -1,0 +1,474 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Design board</title>
+<meta name="description" content="Visual board for DESIGN.md: palette, type, drawer, open file and demo sheet.">
+<style>
+  /* Fonts: the three files the site loads */
+  @font-face { font-family: "thmanyah Serif Display"; src: url("fonts/thmanyah/serif-display/thmanyahserifdisplay-Bold.woff2") format("woff2"); font-weight: 700; font-display: swap; }
+  @font-face { font-family: "thmanyah Sans"; src: url("fonts/thmanyah/sans/thmanyahsans-Regular.woff2") format("woff2"); font-weight: 400; font-display: swap; }
+  @font-face { font-family: "thmanyah Serif Text"; src: url("fonts/thmanyah/serif-text/thmanyahseriftext-Regular.woff2") format("woff2"); font-weight: 400; font-display: swap; }
+
+  /* Tokens from DESIGN.md */
+  :root {
+    --c-night: #080F1C; --c-night-2: #0F1A2F; --c-night-3: #0F1E3A;
+    --c-line: #1B2740; --c-line-2: #2A3A58; --c-line-3: #63728C;
+    --c-paper-hi: #FFFDF8; --c-mist: #B3B2AE; --c-mist-2: #8E97A6; --c-signal: #62C3DB;
+    --c-lamp: #F2D7A0;
+    --c-drawer: #12264A; --c-drawer-edge: #23426F; --c-drawer-handle: #0B1628;
+    --c-paper: #F4F0E8; --c-paper-line: #D9D2C4;
+    --c-folder-1: #F1EDE4; --c-folder-2: #E8E1D3; --c-folder-3: #EFE8DA; --c-folder-4: #E3DACA; --c-folder-5: #ECE5D6; --c-folder-6: #DED4C1;
+    --c-ink: #0B1628; --c-ink-2: #232C3B; --c-ink-muted: #5A6474; --c-teal: #1F6F86; --c-stamp: #9A3A24;
+    --c-ok: #2E6A4B; --c-warn: #8A5A00; --c-gap: var(--c-stamp);
+    --c-film: #12264A; --c-film-tile: #1B3358; --c-film-lit: #62C3DB;
+    --c-night-rgb: 8 15 28; --c-paper-rgb: 244 240 232; --c-ink-rgb: 11 22 40; --c-lamp-rgb: 242 215 160;
+    --focus: var(--c-signal);
+
+    --font-display: "thmanyah Serif Display", Georgia, serif;
+    --font-text: "thmanyah Serif Text", Georgia, serif;
+    --font-ui: "thmanyah Sans", system-ui, sans-serif;
+
+    --fs-display: clamp(2.5rem, 1.35rem + 4.6vw, 4.75rem);
+    --fs-title: clamp(1.875rem, 1.3rem + 2.2vw, 3rem);
+    --fs-folder-num: clamp(1.75rem, 1.2rem + 1.6vw, 2.5rem);
+    --fs-folder-title: 1.25rem;
+    --fs-lead: clamp(1.0625rem, 1rem + 0.3vw, 1.25rem);
+
+    --r-tab: 12px 12px 0 0; --r-folder: 4px 18px 18px 18px; --r-file: 0 18px 18px 18px;
+    --r-drawer: 22px; --r-sheet: 22px 22px 0 0; --r-btn: 12px; --r-pill: 999px;
+    --s-1: 4px; --s-2: 8px; --s-3: 12px; --s-4: 16px; --s-5: 24px; --s-6: 32px; --s-7: 44px; --s-8: 64px; --s-9: 80px;
+    --gutter: clamp(16px, 5vw, 80px); --tap: 44px;
+    --sh-folder: 0 -12px 28px rgb(0 0 0 / 0.35); --sh-drawer: 0 -18px 40px rgb(0 0 0 / 0.45); --sh-file: 0 30px 70px rgb(0 0 0 / 0.55);
+    --ease-paper: cubic-bezier(0.2, 0.7, 0.2, 1); --ease-settle: cubic-bezier(0.3, 1.35, 0.5, 1);
+    --d-press: 120ms; --d-hover: 350ms; --d-stamp: 260ms; --m-hover-lift: 16px;
+  }
+  [lang="en"] {
+    --fs-story: 1.125rem; --fs-ui: 0.9375rem; --fs-meta: 0.8125rem; --fs-kicker: 0.75rem;
+    --lh-display: 1.02; --lh-title: 1.08; --lh-lead: 1.6; --lh-story: 1.65; --lh-ui: 1.5;
+    --ls-display: -0.02em; --ls-title: -0.01em; --ls-kicker: 0.26em; --case: uppercase;
+  }
+  [lang="ar"] {
+    --fs-story: 1.1875rem; --fs-ui: 1rem; --fs-meta: 0.875rem; --fs-kicker: 0.9375rem;
+    --lh-display: 1.3; --lh-title: 1.35; --lh-lead: 1.85; --lh-story: 1.95; --lh-ui: 1.7;
+    --ls-display: 0; --ls-title: 0; --ls-kicker: 0; --case: none;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    :root { --d-hover: 0ms; --d-stamp: 0ms; --m-hover-lift: 0px; }
+    .film__tile { animation: none !important; }
+  }
+
+  /* Base */
+  *, *::before, *::after { box-sizing: border-box; }
+  html { font-family: var(--font-ui); font-weight: 400; font-synthesis: none; -webkit-font-smoothing: antialiased; text-size-adjust: 100%; }
+  body {
+    margin: 0; min-block-size: 100dvh; color: var(--c-paper);
+    background-color: var(--c-night);
+    background-image:
+      radial-gradient(ellipse 70% 55% at 50% -8%, rgb(var(--c-lamp-rgb) / 0.08), transparent 70%),
+      linear-gradient(180deg, var(--c-night-3) 0%, var(--c-night) 55%);
+    background-repeat: no-repeat;
+    font-size: var(--fs-ui); line-height: var(--lh-ui);
+  }
+  :where(a, button, [tabindex]):focus-visible { outline: 3px solid var(--focus); outline-offset: 2px; border-radius: 4px; }
+  .on-paper { --focus: var(--c-teal); }
+  .container { inline-size: min(100%, 1240px); margin-inline: auto; padding-inline: var(--gutter); }
+  .board-label { margin: 0 0 var(--s-4); color: var(--c-mist-2); font-size: var(--fs-meta); display: flex; gap: var(--s-3); align-items: center; }
+  .board-label::after { content: ""; flex: 1; block-size: 1px; background: var(--c-line); }
+  .board-section { padding-block: clamp(48px, 7vw, 112px) 0; }
+
+  /* Buttons */
+  .btn {
+    display: inline-flex; align-items: center; justify-content: center; gap: var(--s-2);
+    min-block-size: var(--tap); min-inline-size: var(--tap); padding-inline: var(--s-5);
+    border: 1px solid var(--c-line-3); border-radius: var(--r-btn); background: transparent; color: var(--c-paper);
+    font: 400 var(--fs-ui) / 1 var(--font-ui); text-decoration: none; cursor: pointer;
+    transition: background-color 200ms var(--ease-paper), border-color 200ms var(--ease-paper), scale var(--d-press) var(--ease-paper);
+  }
+  .btn:hover { border-color: var(--c-mist); background-color: rgb(var(--c-paper-rgb) / 0.06); }
+  .btn:active { scale: 0.98; }
+  .btn[aria-disabled="true"] { opacity: 0.45; cursor: not-allowed; background: transparent; border-color: var(--c-line-3); scale: 1; }
+  .btn--primary { background-color: var(--c-paper); border-color: var(--c-paper); color: var(--c-ink); }
+  .btn--primary:hover { background-color: var(--c-paper-hi); border-color: var(--c-paper-hi); }
+  .on-paper .btn { border-color: var(--c-ink-muted); color: var(--c-ink); }
+  .on-paper .btn:hover { border-color: var(--c-ink); background-color: rgb(var(--c-ink-rgb) / 0.05); }
+  .on-paper .btn--primary { background-color: var(--c-ink); border-color: var(--c-ink); color: var(--c-paper); }
+  .on-paper .btn--primary:hover { background-color: var(--c-ink-2); border-color: var(--c-ink-2); }
+  .btn svg { inline-size: 18px; block-size: 18px; flex: none; }
+  [dir="rtl"] .dir-icon { scale: -1 1; }
+
+  /* Masthead */
+  .masthead { display: flex; align-items: center; justify-content: space-between; gap: var(--s-4); padding-block: var(--s-5); }
+  .byline__name { margin: 0; font: 700 1.125rem / 1.3 var(--font-display); }
+  .byline__role { margin: 0; color: var(--c-mist-2); font-size: var(--fs-meta); }
+  .masthead__nav { display: flex; align-items: center; gap: var(--s-2); }
+
+  /* Hero */
+  .grid { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: clamp(16px, 2vw, 32px); }
+  .hero { padding-block: clamp(24px, 4vw, 48px) var(--s-5); }
+  .kicker { margin: 0 0 var(--s-3); color: var(--c-signal); font: 400 var(--fs-kicker) / 1.4 var(--font-ui); letter-spacing: var(--ls-kicker); text-transform: var(--case); }
+  .hero__kicker, .hero__title { grid-column: 1 / span 9; }
+  .hero__title { margin: 0 0 var(--s-5); font: 700 var(--fs-display) / var(--lh-display) var(--font-display); letter-spacing: var(--ls-display); text-wrap: balance; }
+  .hero__lead { grid-column: 1 / span 6; margin: 0; color: var(--c-mist); font-size: var(--fs-lead); line-height: var(--lh-lead); max-inline-size: 46ch; text-wrap: pretty; }
+
+  /* Drawer */
+  .drawer { position: relative; }
+  .drawer__stack {
+    --step: 42px; --tab-w: clamp(150px, 17%, 210px); --visible-front: 56px;
+    position: relative; display: grid; grid-template-areas: "stack";
+    block-size: calc(64px + 5 * var(--step) + var(--visible-front));
+    padding-block-start: 64px; margin: 0; list-style: none; padding-inline: 0;
+    clip-path: inset(-400px 0 18px 0);  /* hide folder bottoms and side shadow behind the drawer front */
+  }
+  .folder {
+    --lift: 0px; grid-area: stack; position: relative; z-index: calc(1 + var(--i));
+    translate: 0 calc(var(--i) * var(--step) - var(--lift));
+    transition: translate var(--d-hover) var(--ease-paper), filter 400ms var(--ease-paper);
+  }
+  .folder__sheet {
+    position: relative; min-block-size: 320px; padding: 10px var(--s-6) var(--s-8);
+    border-radius: var(--r-folder); background: var(--tone); color: var(--c-ink); box-shadow: var(--sh-folder); cursor: pointer;
+  }
+  [dir="rtl"] .folder__sheet { border-radius: 18px 4px 18px 18px; }
+  .folder__tab {
+    position: absolute; inset-block-end: calc(100% - 1px);
+    inset-inline-start: calc(var(--slot) * (100% - var(--tab-w)) / 5);
+    inline-size: var(--tab-w); min-block-size: var(--tap);
+    display: flex; align-items: baseline; gap: var(--s-3);
+    padding: var(--s-2) var(--s-4) 2px; border: 0; border-radius: var(--r-tab);
+    background: var(--tone); color: var(--c-ink); font: 400 var(--fs-meta) / 1.2 var(--font-ui); text-align: start; cursor: pointer;
+    transition: scale var(--d-press) var(--ease-paper);
+  }
+  .folder__tab:focus-visible { outline: 3px solid var(--c-signal); outline-offset: 2px; }
+  .folder__tab:active { scale: 0.98; }
+  .folder__num { font: 700 var(--fs-folder-num) / 1 var(--font-display); }
+  .folder__short { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .folder__title { margin: 0 0 var(--s-2); font: 700 var(--fs-folder-title) / 1.45 var(--font-display); text-wrap: balance; }
+  .folder__summary { margin: 0; max-inline-size: 48ch; color: var(--c-ink-2); }
+  @media (hover: hover) { .folder:hover { --lift: var(--m-hover-lift); } }
+  .folder:has(.folder__tab:focus-visible) { --lift: var(--m-hover-lift); }
+  .folder[data-locked] .folder__sheet, .folder[data-locked] .folder__tab { cursor: not-allowed; }
+  .folder[data-locked] .folder__title { color: var(--c-ink-2); }
+  .folder .stamp { position: absolute; inset-block-start: 9px; inset-inline-start: calc(var(--slot) * (100% - var(--tab-w)) / 5 + var(--s-4)); }
+  .sr-only { position: absolute; inline-size: 1px; block-size: 1px; margin: -1px; padding: 0; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0; }
+
+  .drawer__front {
+    position: relative; z-index: 12; margin-block-start: -18px; min-block-size: 132px;
+    display: grid; place-content: center; justify-items: center; gap: var(--s-3);
+    border-radius: var(--r-drawer); background: linear-gradient(180deg, var(--c-drawer-edge) 0, var(--c-drawer) 6px);
+    box-shadow: var(--sh-drawer);
+  }
+  .drawer__label {
+    padding: var(--s-2) var(--s-5); border: 2px solid var(--c-drawer-edge); border-radius: 6px;
+    background: var(--c-paper); color: var(--c-ink); font: 400 var(--fs-kicker) / 1.4 var(--font-ui);
+    letter-spacing: var(--ls-kicker); text-transform: var(--case);
+  }
+  .drawer__handle { inline-size: 120px; block-size: 12px; border-radius: var(--r-pill); background: var(--c-drawer-handle); box-shadow: inset 0 1px 0 rgb(var(--c-paper-rgb) / 0.08); }
+  .drawer__hint { margin: 0; color: var(--c-mist); font-size: var(--fs-meta); }
+  .drawer__caption { display: grid; justify-items: center; gap: 2px; min-block-size: 3.4em; text-align: center; }
+  .drawer__caption-title { margin: 0; font: 700 1.125rem / 1.45 var(--font-display); color: var(--c-paper); }
+  .drawer__caption-text { margin: 0; color: var(--c-mist); font-size: var(--fs-meta); }
+  .drawer__caption[hidden] { display: none; }
+
+  /* Stamp */
+  .stamp {
+    display: inline-flex; align-items: center; gap: 6px; padding: 4px 10px;
+    border: 1.5px solid currentColor; border-radius: 6px; color: var(--c-stamp);
+    font: 400 var(--fs-kicker) / 1.2 var(--font-ui); letter-spacing: 0.18em; text-transform: var(--case);
+    rotate: -3deg; mix-blend-mode: multiply; user-select: none;
+  }
+  [lang="ar"] .stamp { letter-spacing: 0; font-size: var(--fs-meta); }
+  [dir="rtl"] .stamp { rotate: 3deg; }
+
+  /* Open file spread */
+  .file {
+    --spine-dir: right; position: relative; display: grid; grid-template-columns: 1fr 1fr;
+    border-radius: var(--r-file); background: var(--c-paper); color: var(--c-ink); box-shadow: var(--sh-file);
+  }
+  [dir="rtl"] .file { --spine-dir: left; border-radius: 18px 0 18px 18px; }
+  .file__page { padding: clamp(24px, 4vw, 56px); }
+  .file__page + .file__page { border-inline-start: 1px solid var(--c-paper-line); background-image: linear-gradient(to var(--spine-dir), rgb(var(--c-ink-rgb) / 0.06), transparent 28px); }
+  .file__tag { margin: 0 0 var(--s-3); color: var(--c-teal); font: 400 var(--fs-kicker) / 1.4 var(--font-ui); letter-spacing: var(--ls-kicker); text-transform: var(--case); }
+  .file__title { margin: 0 0 var(--s-5); font: 700 var(--fs-title) / var(--lh-title) var(--font-display); letter-spacing: var(--ls-title); text-wrap: balance; max-inline-size: 16ch; }
+  .file__close { position: absolute; inset-block-start: var(--s-3); inset-inline-end: var(--s-3); padding-inline: 0; }
+  .story { display: grid; gap: var(--s-6); }
+  .story__block { padding-block-start: var(--s-4); border-block-start: 1px solid var(--c-paper-line); }
+  .story__label { margin: 0 0 var(--s-2); color: var(--c-ink-muted); font: 400 var(--fs-kicker) / 1.4 var(--font-ui); letter-spacing: var(--ls-kicker); text-transform: var(--case); }
+  .story__text { margin: 0; max-inline-size: 34em; color: var(--c-ink-2); font: 400 var(--fs-story) / var(--lh-story) var(--font-text); text-wrap: pretty; }
+  .file__actions { display: flex; flex-wrap: wrap; gap: var(--s-3); margin-block-start: var(--s-6); }
+  .file__footer {
+    grid-column: 1 / -1; display: flex; align-items: center; justify-content: space-between; gap: var(--s-4);
+    padding: var(--s-4) clamp(24px, 4vw, 56px); border-block-start: 1px solid var(--c-paper-line); color: var(--c-ink-muted); font-size: var(--fs-meta);
+  }
+  .file__footer nav { display: flex; gap: var(--s-2); }
+  .link { color: inherit; text-decoration-line: underline; text-decoration-thickness: 1px; text-underline-offset: 0.25em; text-decoration-color: color-mix(in srgb, currentColor 40%, transparent); transition: text-decoration-color 200ms var(--ease-paper), text-underline-offset 200ms var(--ease-paper); }
+  .link:hover { text-decoration-color: currentColor; text-underline-offset: 0.35em; }
+
+  .download { display: flex; align-items: center; gap: var(--s-3); min-block-size: var(--tap); padding-block: var(--s-2); margin-block-start: var(--s-4); color: var(--c-ink); text-decoration: none; border-block-end: 1px solid var(--c-paper-line); }
+  .download svg { inline-size: 18px; block-size: 18px; transition: translate 200ms var(--ease-paper); }
+  .download:hover svg { translate: 0 3px; }
+  .download:hover .download__label { text-decoration: underline; text-underline-offset: 0.25em; }
+  .download__kind { margin-inline-start: auto; color: var(--c-ink-muted); font-size: var(--fs-meta); }
+
+  /* Film */
+  .film { position: relative; aspect-ratio: 16 / 9; overflow: hidden; border-radius: 12px; background: var(--c-film); display: grid; place-items: center; }
+  .film__tiles { position: absolute; inset: 14%; display: grid; grid-template-columns: repeat(7, 1fr); gap: 8px; }
+  .film__tile { border-radius: 4px; background: var(--c-film-tile); animation: tile 4.2s ease-in-out infinite; animation-delay: calc(var(--t) * 0.3s); }
+  @keyframes tile { 0%, 100% { background: var(--c-film-tile); } 40% { background: var(--c-film-lit); } 60% { background: var(--c-film-tile); } }
+  .film__play { position: relative; inline-size: 64px; block-size: 64px; border: 0; border-radius: 50%; background: var(--c-paper); color: var(--c-ink); cursor: pointer; display: grid; place-items: center; transition: scale var(--d-press) var(--ease-paper), background-color 200ms; }
+  .film__play:hover { background: var(--c-paper-hi); }
+  .film__play:active { scale: 0.96; }
+  .film__play svg { inline-size: 22px; block-size: 22px; }
+  .film__summary { margin: var(--s-3) 0 0; color: var(--c-ink-muted); font-size: var(--fs-meta); }
+
+  /* Demo sheet */
+  .demo-sheet { position: relative; padding: clamp(24px, 4vw, 48px); border-radius: var(--r-file); background: var(--c-paper); color: var(--c-ink); box-shadow: var(--sh-file); }
+  [dir="rtl"] .demo-sheet { border-radius: 18px 0 18px 18px; }
+  .demo-sheet > .stamp { position: absolute; inset-block-start: var(--s-5); inset-inline-end: var(--s-5); animation: stamp-press var(--d-stamp) var(--ease-settle) 600ms backwards; }
+  @keyframes stamp-press { from { opacity: 0; scale: 1.14; } to { opacity: 1; scale: 1; } }
+  .demo-sheet h2 { margin: 0 0 var(--s-2); font: 700 1.5rem / 1.35 var(--font-display); }
+  .demo-note { margin: 0 0 var(--s-6); color: var(--c-ink-muted); font-size: var(--fs-meta); }
+  .rows { display: grid; gap: var(--s-3); margin: 0; padding: 0; list-style: none; }
+  .row { display: grid; grid-template-columns: 9em 1fr 3em 6em; align-items: center; gap: var(--s-4); padding-block: var(--s-2); border-block-end: 1px solid var(--c-paper-line); }
+  .bar { block-size: 10px; border-radius: 2px; background: rgb(var(--c-ink-rgb) / 0.08); overflow: hidden; }
+  .bar span { display: block; block-size: 100%; inline-size: var(--v); background: var(--c-ink-2); border-radius: 2px; }
+  .row--hl .bar span { background: var(--c-teal); }
+  .num { text-align: end; font-size: var(--fs-meta); }
+  .status { display: inline-flex; align-items: center; gap: 6px; font-size: var(--fs-meta); }
+  .status::before { content: ""; inline-size: 8px; block-size: 8px; border-radius: 50%; background: currentColor; }
+  .status--ok { color: var(--c-ok); } .status--warn { color: var(--c-warn); } .status--gap { color: var(--c-gap); }
+
+  /* Closing card */
+  .closing { display: grid; gap: var(--s-4); justify-items: start; padding: var(--s-7); border: 1px solid var(--c-line-2); border-radius: var(--r-drawer); background: var(--c-night-2); }
+  .closing__line { margin: 0; color: var(--c-mist); }
+  .closing__note { margin: 0; color: var(--c-mist-2); font-size: var(--fs-meta); }
+
+  /* Palette strip */
+  .swatches { display: grid; grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); gap: var(--s-3); }
+  .swatch { border-radius: 10px; overflow: hidden; border: 1px solid var(--c-line); background: var(--c-night-2); }
+  .swatch i { display: block; block-size: 56px; background: var(--sw); }
+  .swatch span { display: block; padding: 6px 10px; font-size: 0.75rem; color: var(--c-mist); direction: ltr; text-align: left; }
+
+  .board-foot { padding-block: var(--s-8); color: var(--c-mist-2); font-size: var(--fs-meta); }
+
+  /* Responsive */
+  @media (max-width: 1199px) { .drawer__stack { --step: 36px; } }
+  @media (max-width: 899px) {
+    .grid { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+    .hero__kicker, .hero__title, .hero__lead { grid-column: 1 / -1; }
+    .drawer__stack { --step: 0px; display: block; block-size: auto; padding-block-start: 0; clip-path: none; }
+    .folder { translate: 0 calc(0px - var(--lift)); }
+    .folder + .folder { margin-block-start: -12px; }
+    .folder__sheet { min-block-size: 0; padding: var(--s-3) var(--s-5) var(--s-5); border-radius: 18px; }
+    .folder__tab { position: static; inline-size: 100%; padding: 0; background: transparent; min-block-size: var(--tap); align-items: center; }
+    .folder .stamp { inset-block-start: 14px; inset-inline-start: auto; inset-inline-end: var(--s-5); }
+    .drawer__caption { display: none; }
+    .drawer__front { margin-block-start: -18px; min-block-size: 110px; }
+    .file { grid-template-columns: 1fr; }
+    .file__page + .file__page { border-inline-start: 0; border-block-start: 1px solid var(--c-paper-line); background-image: none; }
+    .row { grid-template-columns: 7em 1fr 2.5em; }
+    .row .status { grid-column: 1 / -1; }
+  }
+  @media (max-width: 389px) { .byline__role { display: none; } }
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="i-arrow" viewBox="0 0 20 20"><path d="M4 10h12M11 5l5 5-5 5" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+  <symbol id="i-download" viewBox="0 0 20 20"><path d="M10 3v10M5.5 8.5 10 13l4.5-4.5M4 16.5h12" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+  <symbol id="i-close" viewBox="0 0 20 20"><path d="M5 5l10 10M15 5 5 15" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></symbol>
+  <symbol id="i-play" viewBox="0 0 20 20"><path d="M7 4.5v11l9-5.5z" fill="currentColor"/></symbol>
+  <symbol id="i-external" viewBox="0 0 20 20"><path d="M8 4H4.5v11.5H16V12M11 4h5v5M16 4l-7 7" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+</svg>
+
+<header class="container masthead">
+  <div class="byline">
+    <p class="byline__name">محمد آل زاحمة</p>
+    <p class="byline__role">إدارة وحوكمة البيانات</p>
+  </div>
+  <nav class="masthead__nav" aria-label="الموقع">
+    <a class="btn" href="#closing">بطاقة التواصل</a>
+    <a class="btn lang-switch" href="#en" hreflang="en" lang="en">EN</a>
+  </nav>
+</header>
+
+<main>
+  <section class="container hero grid" aria-labelledby="h1">
+    <p class="kicker hero__kicker">ملفات المشاريع</p>
+    <h1 class="hero__title" id="h1">اسحب ملف أي مشروع.</h1>
+    <p class="hero__lead">كل ملف مشروع حقيقي من مكتب إدارة البيانات: فيلم قصير، والقصة، ونسخة حية تجربها، وقوالب للتحميل.</p>
+  </section>
+
+  <section class="container drawer" aria-label="درج المشاريع">
+    <ol class="drawer__stack">
+      <li class="folder" style="--i:0; --slot:0; --tone: var(--c-folder-1)">
+        <div class="folder__sheet">
+          <button class="folder__tab" type="button" aria-expanded="false"><span class="folder__num">٠١</span><span class="folder__short">الجاهزية للمؤشر</span></button>
+          <p class="folder__title sr-only">الجاهزية للمؤشر الوطني للبيانات</p>
+          <p class="folder__summary sr-only">من أدلة متفرقة إلى صورة جاهزية واحدة وخطة يعمل عليها الفريق.</p>
+        </div>
+      </li>
+      <li class="folder" style="--i:1; --slot:1; --tone: var(--c-folder-2)">
+        <div class="folder__sheet">
+          <button class="folder__tab" type="button" aria-expanded="false"><span class="folder__num">٠٢</span><span class="folder__short">تصنيف البيانات</span></button>
+          <p class="folder__title sr-only">تصنيف البيانات بشكل عملي</p>
+          <p class="folder__summary sr-only">سياسة وطنية تحولت إلى خطوات تستطيع أي إدارة تطبيقها.</p>
+        </div>
+      </li>
+      <li class="folder" style="--i:2; --slot:2; --tone: var(--c-folder-3)">
+        <div class="folder__sheet">
+          <button class="folder__tab" type="button" aria-expanded="false"><span class="folder__num">٠٣</span><span class="folder__short">اللوحة التنفيذية</span></button>
+          <p class="folder__title sr-only">لوحة المتابعة التنفيذية</p>
+          <p class="folder__summary sr-only">صورة حية واحدة لتقدم المكتب بدل ملفات متفرقة.</p>
+        </div>
+      </li>
+      <li class="folder" data-locked style="--i:3; --slot:3; --tone: var(--c-folder-4)">
+        <div class="folder__sheet">
+          <button class="folder__tab" type="button" aria-disabled="true"><span class="folder__num">٠٤</span><span class="folder__short">فهرس البيانات</span></button>
+          <p class="folder__title sr-only">الانضمام إلى فهرس البيانات الوطني</p>
+          <span class="stamp">قريباً</span>
+        </div>
+      </li>
+      <li class="folder" data-locked style="--i:4; --slot:4; --tone: var(--c-folder-5)">
+        <div class="folder__sheet">
+          <button class="folder__tab" type="button" aria-disabled="true"><span class="folder__num">٠٥</span><span class="folder__short">البيانات المفتوحة</span></button>
+          <p class="folder__title sr-only">البيانات المفتوحة طوال السنة</p>
+          <span class="stamp">قريباً</span>
+        </div>
+      </li>
+      <li class="folder" data-locked style="--i:5; --slot:5; --tone: var(--c-folder-6)">
+        <div class="folder__sheet">
+          <button class="folder__tab" type="button" aria-disabled="true"><span class="folder__num">٠٦</span><span class="folder__short">لجنة الحوكمة</span></button>
+          <p class="folder__title sr-only">لجنة حوكمة وإدارة البيانات</p>
+          <p class="folder__summary sr-only">متابعة قرارات اللجنة حتى تُنفَّذ فعلاً.</p>
+          <span class="stamp">قريباً</span>
+        </div>
+      </li>
+    </ol>
+    <div class="drawer__front">
+      <span class="drawer__label">درج المشاريع</span>
+      <p class="drawer__hint">اختر لسان الملف لتسحبه</p>
+      <div class="drawer__caption" aria-hidden="true" hidden><p class="drawer__caption-title"></p><p class="drawer__caption-text"></p></div>
+      <span class="drawer__handle" aria-hidden="true"></span>
+    </div>
+  </section>
+
+  <section class="container board-section">
+    <p class="board-label">الملف بعد سحبه</p>
+    <article class="file on-paper" aria-labelledby="t1">
+      <div class="file__page">
+        <p class="file__tag">المؤشر الوطني · الامتثال</p>
+        <h2 class="file__title" id="t1">الجاهزية للمؤشر الوطني للبيانات</h2>
+        <div class="film">
+          <div class="film__tiles" aria-hidden="true">
+            <i class="film__tile" style="--t:0"></i><i class="film__tile" style="--t:1"></i><i class="film__tile" style="--t:2"></i><i class="film__tile" style="--t:3"></i><i class="film__tile" style="--t:4"></i><i class="film__tile" style="--t:5"></i><i class="film__tile" style="--t:6"></i>
+            <i class="film__tile" style="--t:1"></i><i class="film__tile" style="--t:2"></i><i class="film__tile" style="--t:3"></i><i class="film__tile" style="--t:4"></i><i class="film__tile" style="--t:5"></i><i class="film__tile" style="--t:6"></i><i class="film__tile" style="--t:7"></i>
+          </div>
+          <button class="film__play" type="button" aria-label="شغّل الفيلم"><svg class="dir-icon"><use href="#i-play"/></svg></button>
+        </div>
+        <p class="film__summary"><a class="link" href="#t1">اقرأ الفيلم نصاً</a></p>
+      </div>
+      <div class="file__page">
+        <div class="story">
+          <section class="story__block">
+            <h3 class="story__label">السياق</h3>
+            <p class="story__text">كانت الجهة تشارك في المؤشر الوطني بينما مكتب إدارة البيانات ما زال في طور البناء، والأدلة موزعة في أماكن مختلفة.</p>
+          </section>
+          <section class="story__block">
+            <h3 class="story__label">ماذا فعلت</h3>
+            <p class="story__text">عملت مباشرة مع مدير المكتب على ربط الملاحظات السابقة بكل مجال، وترتيب الفجوات، وإعداد الأدلة ومراجعتها.</p>
+          </section>
+          <section class="story__block">
+            <h3 class="story__label">النتيجة</h3>
+            <p class="story__text">صورة جاهزية واحدة لكل مجال، وخطة معالجة يعمل عليها الفريق معاً.</p>
+          </section>
+        </div>
+        <div class="file__actions">
+          <a class="btn btn--primary" href="#demo">جرّب متتبع الجاهزية <svg class="dir-icon"><use href="#i-arrow"/></svg></a>
+          <a class="btn" href="#t1">افتح الملف كاملاً</a>
+        </div>
+        <a class="download" href="#t1"><svg><use href="#i-download"/></svg><span class="download__label">متتبع الجاهزية · إكسل</span><span class="download__kind" lang="en">XLSX</span></a>
+      </div>
+      <footer class="file__footer">
+        <span>٠١ / ٠٦</span>
+        <nav aria-label="الملفات">
+          <a class="btn" href="#t1" aria-disabled="true">الملف السابق</a>
+          <a class="btn" href="#t1">الملف التالي</a>
+        </nav>
+      </footer>
+      <button class="btn file__close" type="button" aria-label="إغلاق الملف"><svg><use href="#i-close"/></svg></button>
+    </article>
+  </section>
+
+  <section class="container board-section" id="demo">
+    <p class="board-label">صفحة النسخة التجريبية وعليها الختم</p>
+    <div class="demo-sheet on-paper">
+      <span class="stamp">بيانات افتراضية</span>
+      <h2>متتبع الجاهزية</h2>
+      <p class="demo-note">كل شيء هنا يعمل داخل متصفحك، ولا يُرفع أي ملف.</p>
+      <ol class="rows">
+        <li class="row"><span>المجال أ</span><span class="bar"><span style="--v:80%"></span></span><span class="num">٨٠٪</span><span class="status status--ok">جاهز</span></li>
+        <li class="row row--hl"><span>المجال ب</span><span class="bar"><span style="--v:60%"></span></span><span class="num">٦٠٪</span><span class="status status--warn">جزئي</span></li>
+        <li class="row"><span>المجال ج</span><span class="bar"><span style="--v:40%"></span></span><span class="num">٤٠٪</span><span class="status status--gap">فجوة</span></li>
+      </ol>
+    </div>
+  </section>
+
+  <section class="container board-section" id="en" lang="en" dir="ltr">
+    <p class="board-label" lang="ar" dir="rtl">الواجهة الإنجليزية</p>
+    <div class="grid">
+      <p class="kicker hero__kicker">Project files</p>
+      <h2 class="hero__title">Pull any project’s file.</h2>
+      <p class="hero__lead">Each file is a real project from a Data Management Office: a short film, the story, a live demo to try, and templates to take.</p>
+    </div>
+  </section>
+
+  <section class="container board-section" id="closing">
+    <div class="closing">
+      <p class="closing__line">محمد آل زاحمة · إدارة وحوكمة البيانات</p>
+      <a class="btn btn--primary" href="https://zahmee7.github.io/mohammed-card/">السيرة والتواصل في بطاقتي الرقمية <svg><use href="#i-external"/></svg></a>
+      <p class="closing__note">النسخ التجريبية ببيانات افتراضية</p>
+    </div>
+  </section>
+
+  <section class="container board-section">
+    <p class="board-label">الألوان</p>
+    <div class="swatches">
+      <div class="swatch"><i style="--sw: var(--c-night)"></i><span>night</span></div>
+      <div class="swatch"><i style="--sw: var(--c-drawer)"></i><span>drawer</span></div>
+      <div class="swatch"><i style="--sw: var(--c-paper)"></i><span>paper</span></div>
+      <div class="swatch"><i style="--sw: var(--c-folder-6)"></i><span>folder-6</span></div>
+      <div class="swatch"><i style="--sw: var(--c-ink)"></i><span>ink</span></div>
+      <div class="swatch"><i style="--sw: var(--c-signal)"></i><span>signal</span></div>
+      <div class="swatch"><i style="--sw: var(--c-teal)"></i><span>teal</span></div>
+      <div class="swatch"><i style="--sw: var(--c-stamp)"></i><span>stamp</span></div>
+      <div class="swatch"><i style="--sw: var(--c-lamp)"></i><span>lamp (glow only)</span></div>
+    </div>
+  </section>
+
+  <p class="container board-foot">لوحة تصميم للمراجعة فقط. ليست الموقع، ولا تحتوي على الحركة الكاملة لسحب الملف.</p>
+</main>
+<script>
+  // Board only: the drawer front captions the folder under the pointer or focus.
+  const front = document.querySelector(".drawer__front");
+  const hint = front.querySelector(".drawer__hint");
+  const cap = front.querySelector(".drawer__caption");
+  const show = (folder) => {
+    const title = folder.querySelector(".folder__title").textContent;
+    const summary = folder.querySelector(".folder__summary");
+    const locked = folder.hasAttribute("data-locked");
+    cap.querySelector(".drawer__caption-title").textContent = title;
+    cap.querySelector(".drawer__caption-text").textContent = locked ? "قريباً" : summary ? summary.textContent : "";
+    hint.hidden = true; cap.hidden = false;
+  };
+  const reset = () => { hint.hidden = false; cap.hidden = true; };
+  document.querySelectorAll(".folder").forEach((f) => {
+    f.addEventListener("pointerenter", () => show(f));
+    f.addEventListener("pointerleave", reset);
+    f.addEventListener("focusin", () => show(f));
+    f.addEventListener("focusout", reset);
+  });
+</script>
+</body>
+</html>

@@ -1,0 +1,147 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Cabinet prototype</title>
+<meta name="description" content="Interaction prototype for the file cabinet: folders inside the drawer, and the project opening as its own page.">
+<script>
+  // Set language and first-load entrance before first paint.
+  (function () {
+    var q = new URLSearchParams(location.search);
+    var en = q.get("lang") === "en";
+    var h = document.documentElement;
+    h.lang = en ? "en" : "ar";
+    h.dir = en ? "ltr" : "rtl";
+    if (q.get("reduce") === "1") h.classList.add("force-reduce");
+    try {
+      if (q.get("enter") !== "0" && !sessionStorage.getItem("entered")) { h.classList.add("is-entering"); sessionStorage.setItem("entered", "1"); }
+    } catch (e) {}
+  })();
+</script>
+<link rel="stylesheet" href="../tokens.css">
+<link rel="stylesheet" href="cabinet.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.13.0/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.13.0/CustomEase.min.js"></script>
+<script type="module" src="cabinet.js"></script>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+  <symbol id="i-arrow" viewBox="0 0 20 20"><path d="M4 10h12M11 5l5 5-5 5" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+  <symbol id="i-download" viewBox="0 0 20 20"><path d="M10 3v10M5.5 8.5 10 13l4.5-4.5M4 16.5h12" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+  <symbol id="i-close" viewBox="0 0 20 20"><path d="M5 5l10 10M15 5 5 15" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></symbol>
+  <symbol id="i-play" viewBox="0 0 20 20"><path d="M7 4.5v11l9-5.5z" fill="currentColor"/></symbol>
+  <symbol id="i-lock" viewBox="0 0 20 20"><path d="M6.5 9V6.5a3.5 3.5 0 0 1 7 0V9M5 9h10v7.5H5z" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/></symbol>
+  <symbol id="i-external" viewBox="0 0 20 20"><path d="M8 4H4.5v11.5H16V12M11 4h5v5M16 4l-7 7" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+</svg>
+
+<a class="skip" href="#drawer" data-t="skip"></a>
+
+<header class="container masthead">
+  <div class="byline">
+    <p class="byline__name" data-t="name"></p>
+    <p class="byline__role" data-t="role"></p>
+  </div>
+  <nav class="masthead__nav" id="nav">
+    <a class="btn" id="nav-card" data-t="nav.card"></a>
+    <a class="btn" id="nav-lang"></a>
+  </nav>
+</header>
+
+<main>
+  <section class="container hero grid" aria-labelledby="hero-title">
+    <p class="kicker hero__kicker" data-t="hero.kicker"></p>
+    <h1 class="hero__title" id="hero-title" data-t="hero.h1"></h1>
+    <p class="hero__lead" data-t="hero.lead"></p>
+  </section>
+
+  <section class="container drawer" id="drawer" tabindex="-1">
+    <div class="drawer__cabinet">
+      <div class="drawer__back" aria-hidden="true"></div>
+      <ol class="drawer__stack" id="stack"></ol>
+      <div class="drawer__depth" aria-hidden="true"></div>
+      <div class="drawer__walls" aria-hidden="true"></div>
+    </div>
+    <div class="drawer__front">
+      <span class="drawer__label" data-t="drawer.label"></span>
+      <p class="drawer__hint" id="hint"></p>
+      <div class="drawer__caption" id="caption" aria-hidden="true" hidden>
+        <p class="drawer__caption-title"></p>
+        <p class="drawer__caption-text"></p>
+      </div>
+      <span class="drawer__handle" aria-hidden="true"></span>
+    </div>
+  </section>
+
+  <section class="container closing-wrap">
+    <div class="closing">
+      <p class="closing__line" data-t="footer.line"></p>
+      <a class="btn btn--primary" id="closing-card"><span data-t="footer.cardCta"></span><svg class="icon"><use href="#i-external"/></svg></a>
+      <p class="closing__note" data-t="footer.sample"></p>
+    </div>
+  </section>
+</main>
+
+<!-- The open file: a full page on paper, shown above the cabinet -->
+<dialog class="file-dialog" id="file" aria-labelledby="file-title">
+  <div class="grow" aria-hidden="true"></div>
+  <article class="leaf on-paper">
+    <header class="leaf__bar">
+      <div class="container leaf__bar-inner">
+        <p class="leaf__folio"></p>
+        <button class="btn" type="button" id="close"><svg class="icon"><use href="#i-close"/></svg><span data-t="file.close"></span></button>
+      </div>
+    </header>
+    <div class="container leaf__body">
+      <div class="leaf__col leaf__col--a">
+        <p class="file__tag" data-rise></p>
+        <h2 class="file__title" id="file-title" tabindex="-1" data-rise></h2>
+        <div class="film" data-rise>
+          <div class="film__tiles" aria-hidden="true"></div>
+          <button class="film__play" type="button" data-proto><svg><use href="#i-play"/></svg></button>
+        </div>
+        <p class="film__summary" data-rise><a class="link" href="#" data-proto data-t="file.transcript"></a></p>
+      </div>
+      <div class="leaf__col leaf__col--b">
+        <div class="story"></div>
+        <div class="file__actions" data-rise>
+          <a class="btn btn--primary" href="#" data-proto id="demo-btn"><span></span><svg class="icon icon--dir"><use href="#i-arrow"/></svg></a>
+          <a class="btn" href="#" data-proto data-t="file.openFull"></a>
+        </div>
+        <a class="download" href="#" data-proto data-rise><svg class="icon"><use href="#i-download"/></svg><span class="download__label"></span><span class="download__kind" lang="en"></span></a>
+      </div>
+    </div>
+    <nav class="container file__nav" data-rise>
+      <button class="btn" type="button" id="prev" data-t="file.prev"></button>
+      <button class="btn" type="button" id="next" data-t="file.next"></button>
+    </nav>
+    <div class="lid" aria-hidden="true">
+      <div class="container lid__inner">
+        <p class="lid__kicker"></p>
+        <p class="lid__num"></p>
+        <div>
+          <p class="lid__title"></p>
+          <div class="lid__rule"></div>
+        </div>
+        <p class="lid__name"></p>
+      </div>
+    </div>
+  </article>
+</dialog>
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<div class="proto-bar" lang="ar" dir="rtl" aria-label="أدوات النموذج">
+  <span>الحركة:</span>
+  <a data-motion="1">١ صفحة تنسحب للأعلى (المعتمدة)</a>
+  <a data-motion="2">٢ غلاف ينفتح</a>
+  <a data-motion="3">٣ المجلد يصير صفحة</a>
+  <span>نموذج:</span>
+  <a id="pb-lang"></a>
+  <a id="pb-slow"></a>
+  <a id="pb-reduce"></a>
+  <button type="button" id="pb-replay">أعد حركة الدخول</button>
+  <a id="pb-view">قارن الجوال والحاسوب</a>
+</div>
+</body>
+</html>

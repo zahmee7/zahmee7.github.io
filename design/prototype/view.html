@@ -1,0 +1,136 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Prototype viewer</title>
+<meta name="description" content="Compare the cabinet prototype on a phone and on a desktop, with any of the motion styles under review.">
+<link rel="stylesheet" href="../tokens.css">
+<style>
+  @font-face { font-family: "thmanyah Sans"; src: url("../fonts/thmanyah/sans/thmanyahsans-Regular.woff2") format("woff2"); font-weight: 400; font-display: swap; }
+  *, *::before, *::after { box-sizing: border-box; }
+  html { color-scheme: dark; font-family: var(--font-ui); font-synthesis: none; }
+  body {
+    margin: 0; min-block-size: 100dvh; display: grid; justify-items: center; align-content: start; gap: 12px;
+    padding: 16px 16px 32px; background: #05080F; color: var(--c-mist); font-size: 0.9375rem;
+  }
+  .bar { display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 8px; }
+  .bar__label { color: var(--c-mist-2); font-size: 0.8125rem; }
+  button {
+    min-block-size: 40px; padding-inline: 14px; border: 1px solid var(--c-line-2); border-radius: 10px;
+    background: transparent; color: var(--c-mist); font: inherit; cursor: pointer;
+    transition: border-color 200ms var(--ease-paper), color 200ms var(--ease-paper), background-color 200ms var(--ease-paper);
+  }
+  button:hover { border-color: var(--c-line-3); color: var(--c-paper); }
+  button[aria-pressed="true"] { border-color: var(--c-signal); color: var(--c-paper); }
+  button:focus-visible { outline: 3px solid var(--c-signal); outline-offset: 2px; }
+
+  /* The device switch is the main control */
+  .switch { display: inline-grid; grid-template-columns: 1fr 1fr; padding: 4px; border: 1px solid var(--c-line-2); border-radius: 14px; background: var(--c-night-2); }
+  .switch button { min-inline-size: 120px; min-block-size: 44px; border: 0; border-radius: 10px; font-size: 1rem; }
+  .switch button[aria-pressed="true"] { background: var(--c-paper); color: var(--c-ink); }
+
+  .stage { display: grid; justify-items: center; inline-size: 100%; }
+  .device { transform-origin: top center; }
+  .device--phone { padding: 12px; border-radius: 52px; background: #1A1F2A; box-shadow: 0 0 0 2px #2A3140, 0 40px 80px rgb(0 0 0 / 0.6); }
+  .device--phone iframe { inline-size: 390px; block-size: 844px; border-radius: 40px; }
+  .device--desktop { padding: 28px 10px 10px; border-radius: 16px; background: #1A1F2A; box-shadow: 0 0 0 2px #2A3140, 0 40px 80px rgb(0 0 0 / 0.6); position: relative; }
+  .device--desktop::before { content: ""; position: absolute; inset-block-start: 10px; inset-inline-start: 16px; inline-size: 44px; block-size: 8px; border-radius: 4px; background: #2A3140; }
+  .device--desktop iframe { inline-size: 1440px; block-size: 900px; border-radius: 8px; }
+  iframe { display: block; border: 0; background: var(--c-night); }
+  .note { margin: 0; max-inline-size: 640px; text-align: center; color: var(--c-mist-2); font-size: 0.8125rem; line-height: 1.7; }
+</style>
+</head>
+<body>
+  <div class="switch" role="group" aria-label="المنظور">
+    <button type="button" data-device="phone">الجوال</button>
+    <button type="button" data-device="desktop">الحاسوب</button>
+  </div>
+
+  <div class="bar" role="group" aria-label="أسلوب الحركة">
+    <span class="bar__label">الحركة:</span>
+    <button type="button" data-motion="1">١ صفحة تنسحب للأعلى (المعتمدة)</button>
+    <button type="button" data-motion="2">٢ غلاف ينفتح</button>
+    <button type="button" data-motion="3">٣ المجلد يصير صفحة</button>
+  </div>
+
+  <div class="bar" role="group" aria-label="خيارات العرض">
+    <button type="button" data-lang="ar">العربية</button>
+    <button type="button" data-lang="en">English</button>
+    <button type="button" id="slow">حركة بطيئة</button>
+    <button type="button" id="reduce">تقليل الحركة</button>
+    <button type="button" id="reload">أعد من البداية</button>
+  </div>
+
+  <div class="stage" id="stage">
+    <div class="device" id="device"><iframe id="screen" title="النموذج"></iframe></div>
+  </div>
+
+  <p class="note" id="note"></p>
+
+<script>
+  const q = new URLSearchParams(location.search);
+  const state = {
+    device: q.get("device") === "desktop" ? "desktop" : "phone",
+    motion: ["1", "2", "3"].includes(q.get("motion")) ? q.get("motion") : "1",
+    lang: q.get("lang") === "en" ? "en" : "ar",
+    slow: q.get("slow") === "1",
+    reduce: q.get("reduce") === "1",
+  };
+  const SIZE = { phone: [414, 868], desktop: [1460, 938] };   // outer size of each frame
+  const NOTE = {
+    phone: "المس أي مجلد من الثلاثة الأولى. للإغلاق اضغط زر «إغلاق الملف» في أعلى الصفحة.",
+    desktop: "اضغط أي مجلد من الثلاثة الأولى. للإغلاق اضغط زر «إغلاق الملف» أو مفتاح الخروج.",
+  };
+  const screen = document.getElementById("screen");
+  const device = document.getElementById("device");
+  const stage = document.getElementById("stage");
+
+  function sync() {
+    // Buttons, URL and note follow the state, so a refresh keeps the same view
+    document.querySelectorAll("[data-device]").forEach((b) => b.setAttribute("aria-pressed", String(b.dataset.device === state.device)));
+    document.querySelectorAll("[data-motion]").forEach((b) => b.setAttribute("aria-pressed", String(b.dataset.motion === state.motion)));
+    document.querySelectorAll("[data-lang]").forEach((b) => b.setAttribute("aria-pressed", String(b.dataset.lang === state.lang)));
+    document.getElementById("slow").setAttribute("aria-pressed", String(state.slow));
+    document.getElementById("reduce").setAttribute("aria-pressed", String(state.reduce));
+    const u = new URLSearchParams({ device: state.device, motion: state.motion, lang: state.lang });
+    if (state.slow) u.set("slow", "1");
+    if (state.reduce) u.set("reduce", "1");
+    history.replaceState(null, "", "?" + u.toString());
+    document.getElementById("note").textContent = NOTE[state.device];
+  }
+
+  function load() {
+    const u = new URLSearchParams({ bar: "0", motion: state.motion });
+    if (state.device === "phone") u.set("touch", "1");
+    if (state.lang === "en") u.set("lang", "en");
+    if (state.slow) u.set("slow", "4");
+    if (state.reduce) u.set("reduce", "1");
+    try { screen.contentWindow && screen.contentWindow.sessionStorage.removeItem("entered"); } catch (e) {}
+    device.className = "device device--" + state.device;
+    screen.src = "cabinet.html?" + u.toString();
+    sync();
+    fit();
+  }
+
+  // Scale the device to fit the window; the page inside keeps its real viewport size.
+  function fit() {
+    const [w, h] = SIZE[state.device];
+    const top = stage.getBoundingClientRect().top;
+    const k = Math.min(1, (innerWidth - 32) / w, (innerHeight - top - 56) / h);
+    device.style.transform = `scale(${k})`;
+    stage.style.blockSize = `${Math.ceil(h * k)}px`;
+  }
+  addEventListener("resize", fit);
+
+  document.querySelectorAll("[data-device]").forEach((b) => b.addEventListener("click", () => { state.device = b.dataset.device; load(); }));
+  document.querySelectorAll("[data-motion]").forEach((b) => b.addEventListener("click", () => { state.motion = b.dataset.motion; load(); }));
+  document.querySelectorAll("[data-lang]").forEach((b) => b.addEventListener("click", () => { state.lang = b.dataset.lang; load(); }));
+  for (const id of ["slow", "reduce"]) {
+    document.getElementById(id).addEventListener("click", () => { state[id] = !state[id]; load(); });
+  }
+  document.getElementById("reload").addEventListener("click", load);
+  load();
+</script>
+</body>
+</html>

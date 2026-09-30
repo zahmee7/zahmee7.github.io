@@ -1,0 +1,24 @@
+# thmanyah font files: the licence forbids uploading or hosting them on any platform.
+# Keep them out of every repository. See CLAUDE.md > Fonts.
+design/fonts/
+src/assets/fonts/thmanyah/
+*.woff2
+*.otf
+
+# Build and tooling output
+node_modules/
+dist/
+.astro/
+test-results/
+playwright-report/
+blob-report/
+playwright/.cache/
+
+# Local settings and secrets
+.env
+.env.*
+.claude/settings.local.json
+
+# OS files
+.DS_Store
+Thumbs.db
