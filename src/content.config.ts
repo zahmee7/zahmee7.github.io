@@ -35,7 +35,21 @@ const projects = defineCollection({
     order: z.number().int().min(1).max(6),
     mvp: z.boolean(),
     tone: z.string().regex(/^#[0-9A-Fa-f]{6}$/),
-    demo: z.object({ type: z.string().min(1), status }),
+    // The demo is the project's own file in a sample version (owner's decision, Phase 6): a published
+    // Power BI report, an Excel workbook (OneDrive embed, or a file on this site shown in Microsoft's
+    // viewer) or a PDF on this site. A link can differ by language.
+    demo: z
+      .object({
+        type: z.string().min(1),
+        status,
+        kind: z.enum(["powerbi", "excel-onedrive", "excel-viewer", "pdf"]).optional(),
+        url: z
+          .union([z.string().min(1), z.object({ en: z.string().min(1), ar: z.string().min(1) })])
+          .optional(),
+      })
+      .refine((demo) => demo.status !== "ready" || (demo.kind && demo.url), {
+        message: "A demo marked ready needs its kind and url.",
+      }),
     film: z
       .object({
         dir: z.string().startsWith("/films/"),

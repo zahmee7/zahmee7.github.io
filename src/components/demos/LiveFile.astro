@@ -1,0 +1,139 @@
+---
+// The project's own file, shown live on its demo page (owner's decision, Phase 6): a published Power BI
+// report, an Excel workbook (a OneDrive embed, or a file on this site in Microsoft's viewer) or a PDF on
+// this site. Nothing loads until the visitor asks: the frame waits behind "Open the live file", so the
+// page stays light and Microsoft sets no cookies unless the visitor chooses to open it.
+import Icon from "../ui/Icon.astro";
+import { t, type Locale } from "../../i18n/utils";
+
+type Kind = "powerbi" | "excel-onedrive" | "excel-viewer" | "pdf";
+
+interface Props {
+  lang: Locale;
+  kind: Kind;
+  /** A full link (Power BI, OneDrive) or a path on this site (Excel for the viewer, PDF). */
+  url: string;
+  /** The frame's name for screen readers. */
+  title: string;
+}
+
+const { lang, kind, url, title } = Astro.props;
+const copy = t(lang);
+
+const onSite = kind === "excel-viewer" || kind === "pdf";
+const absolute = new URL(url, Astro.site).href;
+const office = (mode: "embed" | "view") =>
+  `https://view.officeapps.live.com/op/${mode}.aspx?src=${encodeURIComponent(absolute)}`;
+const src = kind === "excel-viewer" ? office("embed") : url;
+const newTab = kind === "excel-viewer" ? office("view") : url;
+const from = kind === "pdf" ? copy.demo.fromSite : copy.demo.fromMicrosoft;
+---
+
+<figure class="live" data-kind={kind}>
+  <div class="live__frame" data-live-frame data-src={src} data-title={title}>
+    <button class="btn btn--primary live__open" type="button" data-live-open>
+      <Icon name="play" />
+      <span>{copy.demo.open}</span>
+    </button>
+    <p class="live__from">{from}</p>
+  </div>
+  <figcaption class="live__links">
+    <a class="link" href={newTab} target="_blank" rel="noopener">
+      <span>{copy.demo.newTab}</span>
+      <Icon name="external" />
+    </a>
+    {onSite && (
+      <a class="link" href={url} download>
+        <span>{copy.file.download}</span>
+        <Icon name="download" />
+      </a>
+    )}
+  </figcaption>
+</figure>
+
+<script>
+  // Swap the waiting panel for the live frame on request, and move focus into it
+  for (const frame of document.querySelectorAll<HTMLElement>("[data-live-frame]")) {
+    frame.querySelector("[data-live-open]")?.addEventListener(
+      "click",
+      () => {
+        const live = document.createElement("iframe");
+        live.src = frame.dataset.src ?? "";
+        live.title = frame.dataset.title ?? "";
+        live.allowFullscreen = true;
+        live.referrerPolicy = "strict-origin-when-cross-origin";
+        frame.replaceChildren(live);
+        frame.dataset.open = "";
+        live.focus();
+      },
+      { once: true },
+    );
+  }
+</script>
+
+<style>
+  .live {
+    margin: 0;
+  }
+  /* Each kind in its own shape: a report is wide, a workbook squarer, a document a page */
+  .live__frame {
+    --ratio: 16 / 9.4;
+    position: relative;
+    display: grid;
+    place-content: center;
+    justify-items: center;
+    gap: var(--s-3);
+    aspect-ratio: var(--ratio);
+    max-block-size: 85svh;
+    inline-size: 100%;
+    overflow: hidden;
+    border: 1px solid var(--c-paper-line);
+    border-radius: 12px;
+    background:
+      repeating-linear-gradient(0deg, transparent 0 31px, rgb(var(--c-ink-rgb) / 0.04) 31px 32px),
+      var(--c-paper-hi);
+  }
+  .live[data-kind^="excel"] .live__frame {
+    --ratio: 4 / 3;
+  }
+  .live[data-kind="pdf"] .live__frame {
+    --ratio: 3 / 4;
+    margin-inline: auto;
+    inline-size: min(100%, 820px);
+  }
+  .live__frame[data-open] {
+    display: block;
+    background: var(--c-paper-hi);
+  }
+  .live__frame :global(iframe) {
+    display: block;
+    inline-size: 100%;
+    block-size: 100%;
+    border: 0;
+  }
+  .live__from {
+    margin: 0;
+    color: var(--c-ink-muted);
+    font-size: var(--fs-meta);
+  }
+  .live__links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--s-2) var(--s-6);
+    margin-block-start: var(--s-3);
+    font-size: var(--fs-meta);
+  }
+  .live__links a {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--s-2);
+    min-block-size: var(--tap);
+  }
+
+  @media (max-width: 899px) {
+    .live[data-kind^="excel"] .live__frame,
+    .live[data-kind="pdf"] .live__frame {
+      --ratio: 3 / 4;
+    }
+  }
+</style>

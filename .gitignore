@@ -29,3 +29,6 @@ films/*/loop-master*
 # Web films are made by `npm run films`. For now there are only local sample films (npm run films:sample),
 # which must never reach the live site. Remove this line when the real films arrive.
 src/assets/films/
+
+# Local preview files for the demo frame, never committed
+public/downloads/_preview*

@@ -1,0 +1,137 @@
+---
+// A project's live demo (DESIGN.md > Page anatomy, Demo sheet): one paper sheet on night with the
+// "Sample data" stamp, the project's own file in a sample version (LiveFile.astro), and a way back to
+// the file. A page exists once its demo is marked ready, with a kind and a link, in content/projects.json.
+import type { GetStaticPaths, InferGetStaticPropsType } from "astro";
+import { getCollection } from "astro:content";
+import Base from "../../../layouts/Base.astro";
+import Closing from "../../../components/site/Closing.astro";
+import LiveFile from "../../../components/demos/LiveFile.astro";
+import Icon from "../../../components/ui/Icon.astro";
+import LangSwitch from "../../../components/ui/LangSwitch.astro";
+import Stamp from "../../../components/ui/Stamp.astro";
+import { locales, pageTitle, t } from "../../../i18n/utils";
+
+export const getStaticPaths = (async () => {
+  const projects = (await getCollection("projects")).map((entry) => entry.data);
+  const ready = projects.filter((project) => project.mvp && project.demo.status === "ready");
+  return locales.flatMap((lang) =>
+    ready.map((project) => ({ params: { lang, id: project.id }, props: { lang, project } })),
+  );
+}) satisfies GetStaticPaths;
+
+type Props = InferGetStaticPropsType<typeof getStaticPaths>;
+
+const { lang, project } = Astro.props;
+const copy = t(lang);
+const text = project[lang];
+const path = `demos/${project.id}/`;
+const kind = project.demo.kind!;
+const link = project.demo.url!;
+const url = typeof link === "string" ? link : link[lang];
+const kindName = copy.demo.kinds[kind];
+---
+
+<Base
+  lang={lang}
+  path={path}
+  title={pageTitle(`${text.title} · ${kindName}`, lang)}
+  description={text.summary}
+  image={project.id}
+>
+  <header class="container demo-bar">
+    <a class="btn demo-back" href={`/${lang}/projects/${project.id}/`}>
+      <Icon name="arrow" class="demo-back__icon" />
+      <span>{copy.demo.back}</span>
+    </a>
+    <LangSwitch lang={lang} path={path} />
+  </header>
+
+  <main class="container demo-main">
+    <article class="demo-sheet on-paper" aria-labelledby="demo-title">
+      <Stamp text={copy.demo.badge} class="demo-sheet__stamp" />
+      <p class="demo-sheet__kicker">{kindName}</p>
+      <h1 class="demo-sheet__title" id="demo-title">
+        {text.title}
+      </h1>
+      <p class="demo-sheet__note">{text.summary}</p>
+      <LiveFile lang={lang} kind={kind} url={url} title={`${text.title} · ${kindName}`} />
+    </article>
+  </main>
+
+  <Closing lang={lang} />
+</Base>
+
+<style>
+  .demo-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--s-4);
+    min-block-size: 88px;
+  }
+  /* The arrow points back: towards the start of the line in either direction */
+  :global([dir="ltr"]) .demo-back :global(.demo-back__icon) {
+    scale: -1 1;
+  }
+
+  .demo-main {
+    padding-block-end: var(--s-8);
+  }
+  .demo-sheet {
+    color-scheme: light;
+    position: relative;
+    padding: clamp(24px, 4vw, 48px);
+    border-radius: 18px;
+    border-start-start-radius: 0;
+    background: var(--c-paper);
+    color: var(--c-ink);
+    box-shadow: var(--sh-file);
+  }
+  /* The stamp is always visible, and presses in once when the page opens */
+  .demo-sheet :global(.demo-sheet__stamp) {
+    position: absolute;
+    inset-block-start: var(--s-5);
+    inset-inline-end: var(--s-5);
+    animation: stamp-press var(--d-stamp) var(--ease-settle) 300ms backwards;
+  }
+  @keyframes stamp-press {
+    from {
+      opacity: 0;
+      scale: 1.12;
+    }
+    to {
+      opacity: 1;
+      scale: 1;
+    }
+  }
+  .demo-sheet__kicker {
+    margin: 0 0 var(--s-2);
+    color: var(--c-teal);
+    font-size: var(--fs-meta);
+  }
+  .demo-sheet__title {
+    max-inline-size: 16ch;
+    margin: 0 0 var(--s-3);
+    padding-inline-end: 9rem;
+    font: var(--fw-display) var(--fs-title) / var(--lh-title) var(--font-display);
+    text-wrap: balance;
+  }
+  .demo-sheet__note {
+    max-inline-size: 40em;
+    margin: 0 0 var(--s-6);
+    color: var(--c-ink-2);
+    font-size: var(--fs-lead);
+    line-height: 1.6;
+  }
+
+  @media (max-width: 899px) {
+    .demo-bar {
+      min-block-size: 72px;
+    }
+    .demo-sheet__title {
+      padding-inline-end: 0;
+      padding-block-start: var(--s-6);
+    }
+  }
+</style>

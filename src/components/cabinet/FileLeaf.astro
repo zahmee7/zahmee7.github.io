@@ -3,7 +3,8 @@
 // film, the demo and download under them, then the story across the page in three columns. Phones: one column.
 // In the DOM the story comes before the actions, so it is read first; the grid places them.
 // Used in the home page's closed templates (FileSheet.astro) and on the project page.
-// Parts not built yet (demo, download, a film without its files) carry data-soon: a click shows "Coming soon".
+// Parts not ready yet (a demo without its file, downloads, a film without its files) carry data-soon: a
+// click shows "Coming soon".
 // --rise orders the blocks for the project page's entrance (global.css); the dialog animates them with GSAP.
 import type { CollectionEntry } from "astro:content";
 import Film from "../film/Film.astro";
@@ -54,7 +55,11 @@ const storyParts = ["context", "did", "result"] as const;
 
   <div class="file__act" data-rise style="--rise: 4;">
     <div class="file__actions">
-      <a class="btn btn--primary" href={`/${lang}/demos/${project.id}/`} data-soon>
+      <a
+        class="btn btn--primary"
+        href={`/${lang}/demos/${project.id}/`}
+        data-soon={project.demo.status === "ready" ? undefined : ""}
+      >
         <span>{text.demoLabel}</span>
         <Icon name="arrow" directional />
       </a>
