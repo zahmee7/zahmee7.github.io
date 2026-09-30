@@ -1,15 +1,37 @@
-// The drawer's behaviour on the home page (DESIGN.md > Drawer front, MOTION.md sequence 2).
+// The drawer's behaviour on the home page (DESIGN.md > Drawer front, MOTION.md sequences 2 and 3).
 // - The drawer front captions the folder under the mouse or keyboard focus.
 // - The whole folder face acts as its tab.
-// - Locked folders say "Coming soon"; open folders announce cabinet:open (Phase 3 opens the page).
+// - Locked folders say "Coming soon"; open folders open their page (file.ts).
+// The motion code and the story font load on first intent, so the first view stays light.
 import { showToast } from "../ui/toast";
+import type { FileSheet } from "./file";
+
+let fileModule: Promise<typeof import("./file")> | undefined;
+let sheet: FileSheet | undefined;
+
+function warmStoryFont(): void {
+  const family = getComputedStyle(document.documentElement)
+    .getPropertyValue("--font-thmanyah-text")
+    .split(",")[0]
+    ?.trim();
+  if (family) document.fonts.load(`1em ${family}`).catch(() => undefined);
+}
+
+function prepare(): Promise<typeof import("./file")> {
+  if (!fileModule) {
+    fileModule = import("./file");
+    warmStoryFont();
+  }
+  return fileModule;
+}
 
 function setUp(drawer: HTMLElement): void {
   const hint = drawer.querySelector<HTMLElement>("[data-hint]");
   const caption = drawer.querySelector<HTMLElement>("[data-caption]");
   const captionTitle = drawer.querySelector<HTMLElement>("[data-caption-title]");
   const captionText = drawer.querySelector<HTMLElement>("[data-caption-text]");
-  if (!hint || !caption || !captionTitle || !captionText) return;
+  const dialog = document.querySelector<HTMLDialogElement>("[data-file-sheet]");
+  if (!hint || !caption || !captionTitle || !captionText || !dialog) return;
 
   const show = (folder: HTMLElement): void => {
     if (drawer.hasAttribute("data-open")) return;
@@ -23,6 +45,17 @@ function setUp(drawer: HTMLElement): void {
     caption.hidden = true;
   };
 
+  const openFolder = async (folder: HTMLElement): Promise<void> => {
+    const { createFileSheet } = await prepare();
+    sheet ??= createFileSheet(dialog, drawer);
+    hide();
+    sheet.open(folder);
+  };
+
+  for (const event of ["pointerenter", "focusin", "touchstart"] as const) {
+    drawer.addEventListener(event, () => void prepare(), { once: true, passive: true });
+  }
+
   for (const folder of drawer.querySelectorAll<HTMLElement>(".folder")) {
     folder.addEventListener("pointerenter", (event) => {
       if (event.pointerType === "mouse") show(folder);
@@ -32,13 +65,8 @@ function setUp(drawer: HTMLElement): void {
     folder.addEventListener("focusout", hide);
 
     folder.querySelector(".folder__sheet")?.addEventListener("click", () => {
-      if (folder.hasAttribute("data-locked")) {
-        showToast(drawer.dataset.lockedText ?? "");
-        return;
-      }
-      drawer.dispatchEvent(
-        new CustomEvent("cabinet:open", { bubbles: true, detail: { id: folder.dataset.id } }),
-      );
+      if (folder.hasAttribute("data-locked")) showToast(drawer.dataset.lockedText ?? "");
+      else void openFolder(folder);
     });
   }
 }
