@@ -31,7 +31,8 @@ const ready = Boolean(film.h264 && loop.h264 && poster);
 
 const scenes = project.film.scenes ?? [];
 const tiles = Array.from({ length: 14 }, (_, index) => (index % 7) + Math.floor(index / 7));
-// Page language first, so it is the default caption track
+// The film already shows its lines on screen, so captions start off: a track in the film's own language
+// would print every line twice. Both languages wait in the player's menu, the page's first.
 const tracks = [lang, ...locales.filter((item) => item !== lang)];
 ---
 
@@ -68,7 +69,6 @@ const tracks = [lang, ...locales.filter((item) => item !== lang)];
             srclang={track}
             label={languages[track]}
             src={`${project.film.dir}captions.${track}.vtt`}
-            default={track === lang}
           />
         ))}
       </video>
