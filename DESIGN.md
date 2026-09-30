@@ -355,7 +355,7 @@ A folder is a `<li>` with a real `<button>` tab. Clicking anywhere on the folder
 ```css
 .drawer__cabinet {
   --step: 42px;                  /* vertical offset between folders */
-  --tab-w: clamp(150px, 17%, 210px);
+  --tab-w: clamp(184px, 18.5%, 220px);   /* wide enough for the longest short title with Latin digits */
   --visible-front: 84px;         /* the front folder shows the most paper */
   --wall-front: 26px;            /* side wall thickness at the front */
   --wall-back: 8px;              /* side wall thickness at the back */
@@ -1087,6 +1087,10 @@ Test widths: 360, 390, 430, landscape 740, plus 1440 × 900 desktop.
 
 @media (max-width: 389px) {
   .byline__role { display: none; }
+  /* narrowest phones: a slightly wider, tighter tab so the longest short title still fits */
+  .drawer__cabinet { --tab-w: clamp(210px, 72%, 250px); }
+  .folder__tab { gap: 6px; padding-inline: var(--s-3); }
+  .folder__num { font-size: 1.5rem; }
 }
 ```
 

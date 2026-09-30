@@ -63,7 +63,7 @@ const projects = (await getCollection("projects")).sort((a, b) => a.data.order -
 
   .drawer__cabinet {
     --step: 42px; /* vertical offset between folders */
-    --tab-w: clamp(150px, 17%, 210px);
+    --tab-w: clamp(184px, 18.5%, 220px); /* wide enough for the longest short title with Latin digits */
     --visible-front: 84px; /* the front folder shows the most paper */
     --wall-front: 26px; /* side wall thickness at the front */
     --wall-back: 8px; /* side wall thickness at the back */
