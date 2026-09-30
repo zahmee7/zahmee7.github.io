@@ -70,7 +70,10 @@ Rules that keep them from conflicting:
   - Preload only the two weights used above the fold. No Google Fonts requests in production.
   - **Licence (hard rules).** Web embedding is allowed only as part of the built site. Never commit the font files to any repository that is public, never upload them anywhere else, never link to them or list them as downloads. The deploy workflow gets them from a private source (set up in Phase 1). Do not subset, convert or edit the files, or change the font names inside them: the licence forbids any modification, so use the woff2 files exactly as delivered (hashed file names from the build are fine). Do not use the thmanyah name or logo in a way that suggests endorsement. The owner decided on 2026-09-30 not to ask thmanyah for written confirmation for now, so follow these rules strictly.
 - **Demos**: Preact islands (`client:visible`) with sample data from `src/data/samples/*.json`. Charts: hand-built SVG or Observable Plot. Ask before adding anything over 40 KB gzipped.
-- **Video**: self-hosted `<video>`. Loops are muted, `playsinline`, start only when in view and when reduced motion is off. Sources: AV1 MP4 first, H.264 MP4 fallback, AVIF poster. Captions as WebVTT in EN and AR. `preload="none"` on mobile.
+- **Video**: self-hosted `<video>` (`src/components/film/`). Loops are muted, `playsinline`, start only when at least half in view and when reduced motion is off. Sources: AV1 MP4 first, H.264 MP4 fallback, AVIF poster, all `preload="none"`. Each film has an EN and an AR version (on-screen text, films/SCRIPTS.md); the loop has no text and serves both.
+  - Scene lines and timings live in `content/projects.json` (`film.scenes`). They build the WebVTT captions (`/films/<id>/captions.<lang>.vtt`) and the text under the film.
+  - Masters go in `films/<id>/` (`master-en`, `master-ar`, optional text-free `loop-master`, mp4 or mov) and are never committed. `npm run films` makes the web files in `src/assets/films/<id>/` and checks their size budgets. Film.astro shows a film only when its files exist, else the tile placeholder.
+  - `npm run films:sample` draws sample films (marked "Sample film", no sound) for testing. `src/assets/films/` is git-ignored while only samples exist, so they never reach the live site. When the real films arrive, remove that line from `.gitignore` and commit the web files.
 - **Images**: `astro:assets` (`<Picture>` with AVIF and WebP).
 - **Share images**: `npm run og` (`scripts/og.mjs`) draws `public/og/<lang>/<name>.png` (1200×630, home and each open project) in headless Chromium with the local font files, which never leave the machine. The PNGs are committed. Rerun it after a title, tag or name changes.
 - **Hosting**: GitHub Pages through GitHub Actions (`withastro/action`). Repo name `zahmee7.github.io`, so the site is served at `https://zahmee7.github.io/` with no base path.
@@ -145,6 +148,7 @@ src/
   components/
     cabinet/   Cabinet.astro, Folder.astro, FileSheet.astro, cabinet.ts
     film/      Film.astro, film.ts
+  assets/films/<id>/  film-<lang>.mp4, film-av1-<lang>.mp4, loop.mp4, loop-av1.mp4, poster.avif (npm run films)
     ui/        LangSwitch.astro, Button.astro, SampleBadge.astro
     demos/     one folder per demo (Preact)
   content.config.ts
@@ -157,9 +161,9 @@ src/
     [lang]/index.astro
     [lang]/projects/[id].astro
     [lang]/demos/[id].astro
+    films/[id]/captions.[lang].vtt.ts
   styles/      tokens.css, global.css
 public/
-  films/<id>/  loop-av1.mp4, loop.mp4, poster.avif, film-av1.mp4, film.mp4, captions.en.vtt, captions.ar.vtt
   downloads/
 tests/
 content/  design/  docs/  films/   (kit files, keep them)

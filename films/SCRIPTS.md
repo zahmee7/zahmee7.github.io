@@ -28,13 +28,26 @@ Film scripts · MVP (3 films)
 | Audio | AAC 128 kbps, around −16 LUFS |
 | Language | `-en` and `-ar` versions of film and poster |
 
-أوامر التصدير (يشغّلها لك مساعد البرمجة إذا وضعت الملف الأصلي في المجلد):
+التصدير والضغط بأمر واحد. ضع الملفات الأصلية في مجلد المشروع بهذه الأسماء، ومقطع الحلقة بلا نص اختياري:
 
 ```
-ffmpeg -i master-en.mov -c:v libx264 -preset slow -crf 22 -pix_fmt yuv420p -movflags +faststart -c:a aac -b:a 128k film-en.mp4
-ffmpeg -i master-en.mov -c:v libsvtav1 -preset 6 -crf 34 -pix_fmt yuv420p -movflags +faststart -c:a aac -b:a 128k film-av1-en.mp4
-ffmpeg -ss 00:00:14 -t 6 -i master-en.mov -vf scale=1280:-2 -an -c:v libx264 -crf 26 -pix_fmt yuv420p -movflags +faststart loop.mp4
-ffmpeg -ss 00:00:14 -t 6 -i master-en.mov -vf scale=1280:-2 -an -c:v libsvtav1 -crf 38 -pix_fmt yuv420p loop-av1.mp4
+films/<project-id>/master-en.mp4
+films/<project-id>/master-ar.mp4
+films/<project-id>/loop-master.mp4
+```
+
+ثم شغّل:
+
+```
+npm run films
+```
+
+الأمر يصنع الفيلم بصيغتين لكل لغة، ومقطع الحلقة، والصورة الثابتة، ثم يتأكد من الأحجام أعلاه. إذا لم يوجد مقطع حلقة منفصل، يُقتطع من النسخة الإنجليزية عند بداية المشهد الثالث.
+
+نصوص المشاهد وتوقيتها محفوظة أيضاً في ملف المحتوى، ومنها تُصنع الترجمة والنص المقروء تحت الفيلم. إذا تغيّر توقيت مشهد في الفيلم الحقيقي، يُعدَّل هناك:
+
+```
+content/projects.json → film.scenes
 ```
 
 الأدوات المقترحة، واحدة منها تكفي:
@@ -117,8 +130,9 @@ executive-dashboard · 60 s · loop from scene 3
 
 ٤. اقتطع مقطع الحلقة.
 
-٥. ضع الملفات الأصلية في هذا المجلد، واطلب من مساعد البرمجة التصدير والضغط:
+٥. ضع الملفات الأصلية في مجلد المشروع، ثم شغّل أمر التصدير المذكور في مواصفات التصدير:
 
 ```
 films/<project-id>/
+npm run films
 ```

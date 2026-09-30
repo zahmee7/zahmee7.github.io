@@ -614,7 +614,10 @@ html:has(dialog[open]) { overflow: hidden; }
 .film__play:hover { background: var(--c-paper-hi); }
 .film__play:active { scale: 0.96; }
 .film__play:focus-visible { outline: 3px solid var(--c-signal); outline-offset: 3px; }
-.film__summary { margin: var(--s-3) 0 0; color: var(--c-ink-muted); font-size: var(--fs-meta); }
+/* The film as text: a <details> under the frame, listing each scene's on-screen lines */
+.film__text { margin-block-start: var(--s-3); color: var(--c-ink-muted); font-size: var(--fs-meta); }
+.film__text summary { min-block-size: var(--tap); text-decoration: underline; }   /* reads as a link */
+.film__scenes { display: grid; gap: var(--s-3); color: var(--c-ink-2); font-size: var(--fs-ui); }
 ```
 
 ### Links

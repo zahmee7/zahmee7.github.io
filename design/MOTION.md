@@ -64,7 +64,8 @@ Close is a link back to the drawer. The paper slides down over the cabinet (view
 
 - Placeholder: 14 tiles light up in a slow wave (4.2 s loop, 0.3 s offset each), only while the page is open and the film is in view.
 - Real film loop: autoplay muted only when ≥ 50 % visible, pause when hidden.
-- Play opens the full film with sound and captions.
+- Play swaps the loop for the full film in the same frame, with the browser's controls (sound, captions in both languages, full screen). The film starts at once; focus moves to it.
+- With reduced motion nothing plays or loads by itself: the poster stands still until Play.
 
 ### 8. Micro-interactions
 
