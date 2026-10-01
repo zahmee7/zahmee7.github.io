@@ -1,6 +1,7 @@
 ---
 // The root sends visitors to /ar/ or /en/ from the browser language, with plain links as a fallback.
 import "../styles/tokens.css";
+import { launched } from "../i18n/ui";
 import { t } from "../i18n/utils";
 
 const ar = t("ar");
@@ -14,6 +15,7 @@ const en = t("en");
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>{ar.meta.title}</title>
     <meta name="description" content={ar.meta.description} />
+    {!launched && <meta name="robots" content="noindex" />}
     <link rel="alternate" hreflang="ar" href="/ar/" />
     <link rel="alternate" hreflang="en" href="/en/" />
     <link rel="alternate" hreflang="x-default" href="/ar/" />

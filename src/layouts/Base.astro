@@ -2,6 +2,7 @@
 import { Font } from "astro:assets";
 import "../styles/tokens.css";
 import "../styles/global.css";
+import { launched } from "../i18n/ui";
 import { dir, otherLocale, t, type Locale } from "../i18n/utils";
 
 interface Props {
@@ -36,6 +37,7 @@ const ogLocale = { ar: "ar_SA", en: "en_US" } as const;
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
     <title>{pageTitle}</title>
     <meta name="description" content={pageDescription} />
+    {!launched && !noindex && <meta name="robots" content="noindex" />}
     {noindex ? (
       <meta name="robots" content="noindex" />
     ) : (
