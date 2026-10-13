@@ -78,8 +78,9 @@ Rules that keep them from conflicting:
   - `npm run films:sample` draws sample films (marked "Sample film", no sound) for testing. `src/assets/films/` is git-ignored while only samples exist, so they never reach the live site. When the real films arrive, remove that line from `.gitignore` and commit the web files.
 - **Images**: `astro:assets` (`<Picture>` with AVIF and WebP).
 - **Share images**: `npm run og` (`scripts/og.mjs`) draws `public/og/<lang>/<name>.png` (1200×630, home and each open project) in headless Chromium with the local font files, which never leave the machine. The PNGs are committed. Rerun it after a title, tag or name changes.
-- **Hosting**: GitHub Pages through GitHub Actions (`withastro/action`). Repo name `zahmee7.github.io`, so the site is served at `https://zahmee7.github.io/` with no base path.
-  - The digital card is a separate repo served at `/mohammed-card/`. Never create a route or folder named `mohammed-card`, and never edit that repo.
+- **Hosting**: GitHub Pages through GitHub Actions (`withastro/action`), repo `zahmee7.github.io`, on the owner's domain `https://alzahmah.com/` (registered and DNS at Cloudflare, records unproxied to GitHub Pages; the custom domain is set in the repo's Pages settings). No base path.
+  - The digital card is a separate repo, `card`, served at `/card/`. Never create a route or folder named `card`, and never edit that repo.
+  - `/mohammed-card/` is the card's old address: `public/mohammed-card/index.html` is the owner's redirect page to `/card/`, kept so old links still work. Do not build anything else there.
 - **Tests**: Playwright (`@playwright/test`) with projects `desktop` (Chromium 1440×900), `pixel` (Pixel 7) and `iphone` (iPhone 15, WebKit), each run in `en` and `ar`. `@axe-core/playwright` for accessibility. Lighthouse CI for budgets. The tests build the site and serve `dist/` with `scripts/serve.mjs` on port 4330, which answers like GitHub Pages (`astro preview` sends headers that make WebKit fetch preloaded fonts twice).
 - **Tooling**: npm, Node LTS (22 or newer), Prettier, `astro check`.
 

@@ -1,6 +1,6 @@
 name: Deploy to GitHub Pages
 
-# Builds the site and publishes it to https://zahmee7.github.io/.
+# Builds the site and publishes it to https://alzahmah.com/ (the custom domain of zahmee7.github.io).
 # The thmanyah font files are never in this repository: the build fetches them
 # from the owner's private fonts repository with a read-only token (docs/DEPLOY.md).
 

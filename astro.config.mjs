@@ -5,7 +5,7 @@ const thmanyah = "./src/assets/fonts/thmanyah";
 
 // https://astro.build/config
 export default defineConfig({
-  site: "https://zahmee7.github.io",
+  site: "https://alzahmah.com",
   trailingSlash: "always",
 
   i18n: {

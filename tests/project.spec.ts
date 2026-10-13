@@ -14,7 +14,7 @@ const last = openProjects[openProjects.length - 1]!;
 /** The share image named in og:image: served from this build, a PNG of 1200 × 630. */
 async function expectShareImage(page: Page, name: string, lang: string): Promise<void> {
   const url = await page.locator('meta[property="og:image"]').getAttribute("content");
-  expect(url).toBe(`https://zahmee7.github.io/og/${lang}/${name}.png`);
+  expect(url).toBe(`https://alzahmah.com/og/${lang}/${name}.png`);
 
   const response = await page.request.get(new URL(url!).pathname);
   expect(response.status()).toBe(200);
@@ -50,11 +50,11 @@ for (const lang of locales) {
         await expect(page.locator('meta[name="description"]')).toHaveAttribute("content", text.summary);
         await expect(page.locator('link[rel="canonical"]')).toHaveAttribute(
           "href",
-          `https://zahmee7.github.io${path}`,
+          `https://alzahmah.com${path}`,
         );
         await expect(page.locator(`link[rel="alternate"][hreflang="${other}"]`)).toHaveAttribute(
           "href",
-          `https://zahmee7.github.io/${other}/projects/${project.id}/`,
+          `https://alzahmah.com/${other}/projects/${project.id}/`,
         );
         await expect(page.locator('meta[property="og:title"]')).toHaveAttribute(
           "content",
