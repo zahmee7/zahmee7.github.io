@@ -5,7 +5,10 @@ export const locales = ["ar", "en"] as const;
 /** axe rule tags for WCAG 2.2 AA (CLAUDE.md > Accessibility). */
 export const axeTags = ["wcag2a", "wcag2aa", "wcag21a", "wcag21aa", "wcag22aa"];
 
-/** Marks the session as entered with the drawer opened, so the home page shows the open drawer at once. */
+/**
+ * Marks the session as entered and asks for the open drawer (a one-time flag the home page reads), on
+ * every page load, so tests reach the folders at once.
+ */
 export async function skipEntrance(page: Page): Promise<void> {
   await page.addInitScript(() => {
     try {

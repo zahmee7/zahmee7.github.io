@@ -504,9 +504,9 @@ The drawer front is a caption plate. At rest it shows the label card and the hin
 .drawer__caption-text { margin: 0; color: var(--c-mist); font-size: var(--fs-meta); }
 ```
 
-### Closed drawer (until the visitor opens it)
+### Closed drawer (the visitor opens it)
 
-Approved by the owner on 2026-10-01 from the `pull` and `sound` variants in `design/prototype/home/`. The drawer starts closed in its cabinet and stays closed, across reloads and the language switch, until the visitor opens it (owner's correction, 2026-10-13). After that, and once a project page has been seen, it is open for the rest of the session (`sessionStorage` flag `drawer-open`). Without JavaScript it is open.
+Approved by the owner on 2026-10-01 from the `pull` and `sound` variants in `design/prototype/home/`. The drawer starts closed in its cabinet every time the home page loads, including reloads, the language switch and the way back from a project page, and the visitor opens it (owner's rule, 2026-10-13). Opening a file and closing it again happens on the open drawer. Without JavaScript it is open. A one-time `drawer-open` flag in `sessionStorage` lands on the open drawer instead; nothing on the site sets it, the tests do.
 
 - **Closed**: the drawer front sits right under the title, tucked under the cabinet's top edge (a 9 px metal lip). Below it, more drawers down to the bottom edge, each a front with an empty label holder and a metal pull, dimmer further from the lamp. The folders are inside, out of sight and out of reach (`visibility: hidden`, then `inert`). The lamp is off.
 - **The front is the button**: a transparent `<button>` over the whole front, labelled "Open the project drawer" (`aria-controls` the stack, `aria-expanded`). The hint reads "Press to open the drawer". Pressed, the front gives a little (scale 0.992) and the pull drops 2 px. On hover the pull glows with lamp light. Now and then the closed front gives a small tug (section 7).

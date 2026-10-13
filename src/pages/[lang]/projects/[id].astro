@@ -42,11 +42,10 @@ const path = `projects/${project.id}/`;
   image={project.id}
   story
 >
-  <!-- Coming back to the drawer from here finds it open, without its first-load entrance (MOTION.md 1) -->
+  <!-- Coming back to the drawer from here never replays its first-load entrance (MOTION.md sequence 1) -->
   <script is:inline slot="head">
     try {
       sessionStorage.setItem("entered", "1");
-      sessionStorage.setItem("drawer-open", "1");
     } catch (error) {}
   </script>
   <main class="on-paper" data-project-page data-soon-text={copy.drawer.locked}>

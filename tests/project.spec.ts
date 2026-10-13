@@ -81,12 +81,15 @@ for (const lang of locales) {
       await expect(page.getByRole("heading", { level: 1 })).toHaveText(site.ar.notFound.title);
     });
 
-    test("close goes back to the drawer, without its first-load entrance", async ({ page }) => {
+    test("close goes back to the drawer, closed for the visitor to open, without the entrance", async ({
+      page,
+    }) => {
       await page.goto(`/${lang}/projects/${first.id}/`);
 
       await page.getByRole("link", { name: copy.file.close }).click();
       await expect(page).toHaveURL(new RegExp(`/${lang}/$`));
       await expect(page.locator("html")).not.toHaveClass(/is-entering/);
+      await page.getByRole("button", { name: copy.drawer.open }).click();
       await expect(page.locator(`#tab-${first.id}`)).toBeVisible();
     });
 

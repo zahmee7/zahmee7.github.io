@@ -165,26 +165,24 @@ test.describe("first visit of a session: the closed drawer", () => {
     });
   }
 
-  test("stays closed until opened, across a reload and the language switch, then stays open", async ({
+  test("starts closed every time: after opening, a reload and the language switch find it closed", async ({
     page,
   }) => {
     const html = page.locator("html");
     await page.goto("/en/");
     await expect(html).toHaveClass(/drawer-closed/);
+    await page.getByRole("button", { name: site.en.drawer.open }).click();
+    await expect(html).not.toHaveClass(/drawer-closed/);
+
     await page.reload();
     await expect(html).toHaveClass(/drawer-closed/);
+    await page.getByRole("button", { name: site.en.drawer.open }).click();
+    await expect(html).not.toHaveClass(/drawer-closed/);
+
     await page.getByRole("link", { name: site.en.nav.langLabel }).click();
     await expect(page).toHaveURL(/\/ar\/$/);
     await expect(html).toHaveClass(/drawer-closed/);
-
-    await page.getByRole("button", { name: site.ar.drawer.open }).click();
-    await expect(html).not.toHaveClass(/drawer-closed/);
-    await page.reload();
-    await expect(html).not.toHaveClass(/drawer-closed/);
-    await page.getByRole("link", { name: site.ar.nav.langLabel }).click();
-    await expect(page).toHaveURL(/\/en\/$/);
-    await expect(html).not.toHaveClass(/drawer-closed/);
-    await expect(page.locator(".folder__tab").first()).toBeVisible();
+    await expect(page.getByRole("button", { name: site.ar.drawer.open })).toBeVisible();
   });
 
   test("the entrance plays once per session", async ({ page }) => {

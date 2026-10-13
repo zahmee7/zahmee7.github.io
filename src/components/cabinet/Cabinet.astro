@@ -1,7 +1,7 @@
 ---
 // The drawer: an open box seen from the front and a little above (DESIGN.md > Drawer and folders).
 // Layers, back to front: back wall, folders, depth shade, side walls, drawer front.
-// Until the visitor opens it in a session it is closed, in its cabinet: the drawers below it, the cabinet's
+// It always starts closed, in its cabinet, and the visitor opens it: the drawers below it, the cabinet's
 // top edge and the shadow that edge throws show only then, and pressing the front pulls it out
 // (DESIGN.md > Closed drawer, pull.ts).
 import { getCollection } from "astro:content";
@@ -342,7 +342,7 @@ const projects = (await getCollection("projects")).sort((a, b) => a.data.order -
     }
   }
 
-  /* ---------- Closed, until the visitor opens it (DESIGN.md > Closed drawer) ----------
+  /* ---------- Closed, until the visitor opens it, on every visit (DESIGN.md > Closed drawer) ----------
      index.astro puts the classes on <html> before the first paint, and pull.ts takes them off:
      .drawer-closed   the front sits under the cabinet's top edge, the box is hidden inside
      .drawer-pulling  pressed: the front and the box travel out together (Web Animations, pull.ts)

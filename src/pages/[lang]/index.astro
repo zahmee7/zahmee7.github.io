@@ -16,15 +16,21 @@ const copy = t(lang);
 ---
 
 <Base lang={lang}>
-  <!-- Before the first paint: the sound switch shows where the browser can play sound; the drawer is closed
-       until the visitor opens it, across reloads and the language switch (pull.ts); and the first view of a
-       session plays the entrance, never with reduced motion (MOTION.md sequence 1). -->
+  <!-- Before the first paint: the sound switch shows where the browser can play sound; the drawer starts
+       closed every time and the visitor opens it (pull.ts, owner's rule); and the first view of a session
+       plays the entrance, never with reduced motion (MOTION.md sequence 1). A one-time "drawer-open" flag in
+       sessionStorage lands on the open drawer instead: nothing on the site sets it, the tests do. -->
   <script is:inline slot="head">
     (function () {
       var root = document.documentElement;
       if ("AudioContext" in window) root.classList.add("can-sound");
+      var open = false;
       try {
-        if (!sessionStorage.getItem("drawer-open")) root.classList.add("drawer-closed", "drawer-cased");
+        open = Boolean(sessionStorage.getItem("drawer-open"));
+        sessionStorage.removeItem("drawer-open");
+      } catch (error) {}
+      if (!open) root.classList.add("drawer-closed", "drawer-cased");
+      try {
         if (sessionStorage.getItem("entered")) return;
         sessionStorage.setItem("entered", "1");
         if (matchMedia("(prefers-reduced-motion: reduce)").matches) return;

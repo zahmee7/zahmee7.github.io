@@ -1,6 +1,6 @@
-// The closed drawer (DESIGN.md > Closed drawer, MOTION.md sequence 1). Until the visitor opens it in this
-// session, index.astro puts .drawer-closed and .drawer-cased on <html> before the first paint; pressing the
-// front pulls the drawer out like a real one, and it stays open for the rest of the session. The motion comes from simple physics, so its parts agree with each
+// The closed drawer (DESIGN.md > Closed drawer, MOTION.md sequence 1). The home page always starts with it
+// closed (index.astro puts .drawer-closed and .drawer-cased on <html> before the first paint), and the
+// visitor opens it (owner's rule): pressing the front pulls the drawer out like a real one. The motion comes from simple physics, so its parts agree with each
 // other and with the sound (synth.ts):
 // - the pull: a heavy start, full speed in the middle, and still moving when it reaches the stop;
 // - the stop: a stiff rubber bumper, so the drawer gives a few pixels and rebounds once;
@@ -106,11 +106,6 @@ export function setUpPull(drawer: HTMLElement, onPull: (start: PullStart) => voi
     "click",
     () => {
       const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
-      try {
-        sessionStorage.setItem("drawer-open", "1"); // reloads and the other language find it open
-      } catch {
-        // storage is blocked: the next page shows the drawer closed again
-      }
       opener.setAttribute("aria-expanded", "true");
       release();
       const open = () => {

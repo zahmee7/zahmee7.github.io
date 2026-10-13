@@ -19,7 +19,7 @@ Tokens live in `design/tokens.css`.
 
 ### 1. First load (home, once per session): the closed drawer
 
-The drawer is closed until the visitor opens it, across reloads and the language switch (`DESIGN.md` > Closed drawer). Two `sessionStorage` flags: `entered` skips the entrance after the first view, `drawer-open` keeps the drawer open once it has been opened or a project page has been seen.
+The drawer starts closed every time the home page loads, and the visitor opens it (`DESIGN.md` > Closed drawer). A `sessionStorage` flag, `entered`, skips the entrance after the first view of a session.
 
 | Step | Element | Motion | Duration | Delay |
 |---|---|---|---|---|
