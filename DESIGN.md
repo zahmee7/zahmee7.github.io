@@ -235,7 +235,7 @@ html {
 **Typography rules**
 
 - Hierarchy comes from family, size, color, case and space. Never from weight: each family has one weight.
-- Headings (H1, H2, H3, folder numbers) always use Serif Display. The project story (context, what I did, result) always uses Serif Text. Everything else uses Sans.
+- Headings (H1, H2, H3) and the folder tabs (number and name, owner's choice 2026-10-13) always use Serif Display. The project story (context, what I did, result) always uses Serif Text. Everything else uses Sans.
 - Story measure: 34 to 40 em in EN, 30 to 36 em in AR. Lead measure: 46 ch max.
 - Arabic never gets letter-spacing, uppercase or italic. Arabic UI digits are Arabic-Indic (٠١٢٣), including folder numbers (١-).
 - Digits are proportional (no `tnum`). Number columns in demos sit in fixed-width cells aligned to `end`.
@@ -441,8 +441,8 @@ A folder is a `<li>` with a real `<button>` tab. Clicking anywhere on the folder
   cursor: pointer;
   transition: scale var(--d-press) var(--ease-paper);
 }
-.folder__num { font: var(--fw-display) 2.25rem / 1 var(--font-display); }
-.folder__short { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.folder__num { font: var(--fw-display) 1.875rem / 1 var(--font-display); }   /* phone 1.75rem, under 390 px 1.5rem */
+.folder__short { font: var(--fw-display) 1.125rem / 1.2 var(--font-display); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }   /* phone 1.3125rem, under 390 px 1.1875rem */
 .folder__lock { display: none; inline-size: 16px; block-size: 16px; flex: none; align-self: center; color: var(--c-stamp); }
 
 @media (hover: hover) {

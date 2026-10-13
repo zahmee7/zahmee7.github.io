@@ -111,11 +111,14 @@ const note = locked ? copy.drawer.locked : text.summary;
   .folder__tab:active {
     scale: 0.98;
   }
+  /* The number and the name read as one title, both in the heading face (owner's choice, 2026-10-13).
+     Sizes leave the longest name, "Exec dashboard", a few pixels to spare at every width. */
   .folder__num {
-    font: var(--fw-display) 2.25rem / 1 var(--font-display);
+    font: var(--fw-display) 1.875rem / 1 var(--font-display);
   }
   .folder__short {
     min-inline-size: 0;
+    font: var(--fw-display) 1.125rem / 1.2 var(--font-display);
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -162,7 +165,10 @@ const note = locked ? copy.drawer.locked : text.summary;
       font-size: 1.0625rem;
     }
     .folder__num {
-      font-size: 2rem;
+      font-size: 1.75rem;
+    }
+    .folder__short {
+      font-size: 1.3125rem;
     }
     /* No free band between tabs on a phone: a red lock inside the tab instead of the stamp */
     .folder :global(.folder__stamp) {
@@ -183,6 +189,9 @@ const note = locked ? copy.drawer.locked : text.summary;
     }
     .folder__num {
       font-size: 1.5rem;
+    }
+    .folder__short {
+      font-size: 1.1875rem;
     }
   }
 </style>

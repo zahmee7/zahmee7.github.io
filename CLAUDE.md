@@ -64,7 +64,7 @@ Rules that keep them from conflicting:
   - dotLottie (`@lottiefiles/dotlottie-web`) for small vector animations exported from After Effects.
 - **Fonts**: the **thmanyah** typeface, chosen by the owner. Source files: `design/fonts/thmanyah/` (woff2 as delivered, plus `LICENSE.pdf` and `LICENSE-ar.pdf`; the Arabic licence prevails).
   - Three families, weights 300, 400, 500, 700, 900 (no 600): `thmanyah Serif Display` (headings), `thmanyah Serif Text` (long reading), `thmanyah Sans` (screen and UI). Each file covers Arabic and Latin, so EN and AR use the same stack.
-  - Owner decisions: all headings use `thmanyah Serif Display`. The project story (context, what I did, result) uses `thmanyah Serif Text`. Everything else (UI, labels, lead, demos) uses `thmanyah Sans`.
+  - Owner decisions: all headings use `thmanyah Serif Display`, and so do the folder tabs, number and name (2026-10-13). The project story (context, what I did, result) uses `thmanyah Serif Text`. Everything else (UI, labels, lead, demos) uses `thmanyah Sans`.
   - Digits are proportional (no `tnum`). Align number columns by design, not by font feature.
   - Swash letters and the slanted kashida are for display only, once per word at most, never in two neighbouring words, never in body text.
   - No other typeface. `DESIGN.md` dropped IBM Plex Mono; file kinds use Sans.
