@@ -1,5 +1,5 @@
 // The drawer's behaviour on the home page (DESIGN.md > Drawer front, MOTION.md sequences 1 to 3).
-// - On the first visit of a session the drawer starts closed and is pulled out when pressed (pull.ts).
+// - The drawer is closed until the visitor opens it in this session, then pulled out (pull.ts).
 // - The drawer front captions the folder under the mouse or keyboard focus.
 // - The whole folder face acts as its tab.
 // - Locked folders say "Coming soon"; open folders open their page (file.ts).

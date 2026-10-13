@@ -59,7 +59,7 @@ Rules that keep them from conflicting:
 - **Motion**:
   - GSAP (core and CustomEase) for the page pull: the picked folder nudges up and a full page of paper is pulled up from the bottom of the screen over the cabinet. No Flip.
   - CSS transitions for hover, focus and press micro-interactions.
-  - The closed drawer's pull on the first visit of a session (owner decision, 2026-10-01): Web Animations keyframes sampled from simple physics in `src/components/cabinet/pull.ts`, transform only.
+  - The closed drawer's pull, until the visitor opens it in a session (owner decisions, 2026-10-01 and 2026-10-13): Web Animations keyframes sampled from simple physics in `src/components/cabinet/pull.ts`, transform only.
   - The browser's own cross-document view transitions between pages (`@view-transition` in `global.css`), not Astro's `<ClientRouter />`: the open file uses the back button, which the router would take over (owner decision, Phase 4). A project page's paper is named `leaf`: leaving for the cabinet it slides down, and the language switch and previous / next cross-fade. Browsers without support change page at once.
   - dotLottie (`@lottiefiles/dotlottie-web`) for small vector animations exported from After Effects.
 - **Fonts**: the **thmanyah** typeface, chosen by the owner. Source files: `design/fonts/thmanyah/` (woff2 as delivered, plus `LICENSE.pdf` and `LICENSE-ar.pdf`; the Arabic licence prevails).

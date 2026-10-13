@@ -5,11 +5,12 @@ export const locales = ["ar", "en"] as const;
 /** axe rule tags for WCAG 2.2 AA (CLAUDE.md > Accessibility). */
 export const axeTags = ["wcag2a", "wcag2aa", "wcag21a", "wcag21aa", "wcag22aa"];
 
-/** Marks the session as already entered, so the first-load entrance does not run. */
+/** Marks the session as entered with the drawer opened, so the home page shows the open drawer at once. */
 export async function skipEntrance(page: Page): Promise<void> {
   await page.addInitScript(() => {
     try {
       sessionStorage.setItem("entered", "1");
+      sessionStorage.setItem("drawer-open", "1");
     } catch {
       // storage can be blocked; the entrance then simply plays
     }

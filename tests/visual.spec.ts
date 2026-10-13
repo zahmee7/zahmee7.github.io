@@ -18,7 +18,10 @@ test("review screenshots of the home page, closed and with a file open", async (
   for (const [name, options] of sizes) {
     for (const lang of locales) {
       const context = await browser.newContext({ ...options, baseURL });
-      await context.addInitScript(() => sessionStorage.setItem("entered", "1"));
+      await context.addInitScript(() => {
+        sessionStorage.setItem("entered", "1");
+        sessionStorage.setItem("drawer-open", "1");
+      });
       const page = await context.newPage();
       await page.goto(`/${lang}/`);
       await page.evaluate(() => document.fonts.ready);

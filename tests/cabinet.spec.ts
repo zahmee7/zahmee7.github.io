@@ -165,11 +165,25 @@ test.describe("first visit of a session: the closed drawer", () => {
     });
   }
 
-  test("a later visit in the same session finds it open", async ({ page }) => {
+  test("stays closed until opened, across a reload and the language switch, then stays open", async ({
+    page,
+  }) => {
+    const html = page.locator("html");
     await page.goto("/en/");
-    await expect(page.locator("html")).toHaveClass(/drawer-closed/);
+    await expect(html).toHaveClass(/drawer-closed/);
     await page.reload();
-    await expect(page.locator("html")).not.toHaveClass(/drawer-closed/);
+    await expect(html).toHaveClass(/drawer-closed/);
+    await page.getByRole("link", { name: site.en.nav.langLabel }).click();
+    await expect(page).toHaveURL(/\/ar\/$/);
+    await expect(html).toHaveClass(/drawer-closed/);
+
+    await page.getByRole("button", { name: site.ar.drawer.open }).click();
+    await expect(html).not.toHaveClass(/drawer-closed/);
+    await page.reload();
+    await expect(html).not.toHaveClass(/drawer-closed/);
+    await page.getByRole("link", { name: site.ar.nav.langLabel }).click();
+    await expect(page).toHaveURL(/\/en\/$/);
+    await expect(html).not.toHaveClass(/drawer-closed/);
     await expect(page.locator(".folder__tab").first()).toBeVisible();
   });
 
