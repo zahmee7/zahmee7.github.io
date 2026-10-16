@@ -136,11 +136,12 @@ const door = `(function () {
       0 5px 10px rgb(0 0 0 / 0.55),
       inset 0 1px 0 rgb(255 255 255 / 0.7);
   }
-  /* The stamp sits across the label's corner, larger than on a folder, in the paper's ink red */
-  .soon__front :global(.soon__stamp) {
+  /* The stamp lands on the label's corner and leaves its words clear, larger than on a folder, in the paper's ink red. .soon gives
+     this rule more weight than the stamp's own Arabic size (Stamp.astro). */
+  .soon .soon__front :global(.soon__stamp) {
     position: absolute;
-    inset-block-start: 26px;
-    inset-inline-start: calc(50% + 36px);
+    inset-block-start: 10px;
+    inset-inline-start: calc(50% + 52px);
     padding: 6px 20px;
     border-width: 2px;
     background: rgb(var(--c-paper-rgb) / 0.94);
@@ -154,7 +155,7 @@ const door = `(function () {
     }
   }
   @media (prefers-reduced-motion: no-preference) {
-    .soon__front :global(.soon__stamp) {
+    .soon .soon__front :global(.soon__stamp) {
       animation: stamp-press var(--d-stamp) var(--ease-settle) 500ms backwards;
     }
   }
@@ -207,9 +208,9 @@ const door = `(function () {
       margin-inline: calc(var(--gutter) * -1 + 6px);
       border-radius: 8px;
     }
-    .soon__front :global(.soon__stamp) {
-      inset-block-start: 16px;
-      inset-inline-start: calc(50% + 24px);
+    .soon .soon__front :global(.soon__stamp) {
+      inset-block-start: 6px;
+      inset-inline-start: calc(50% + 46px);
       font-size: 1.125rem;
     }
     .soon__pull {
