@@ -13,5 +13,12 @@ export const links = site.links;
  */
 export const launched = false;
 
+/**
+ * True while the owner wants visitors to see only the "Coming soon" page at the root (src/pages/index.astro).
+ * Every other page sends visitors there, unless this browser opened /?preview once (the owner's own view;
+ * /?public turns it off again). Set to false at launch with launched (docs/PLAN.md, phase 8).
+ */
+export const comingSoon = true;
+
 /** Each language named in itself, e.g. for caption tracks. */
 export const languages = site.languages;

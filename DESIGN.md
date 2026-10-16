@@ -36,6 +36,7 @@ Inputs: `docs/BRIEF.md`, `CLAUDE.md`, `design/tokens.css`, `design/MOTION.md`, `
 | Share image (1200 × 630) | Night room. Home: byline, kicker, H1 and the six folders in their drawer. Project: its folder pulled half out, tab with folio and short title, tag, title, byline. Made by `npm run og`. |
 | Demo `/[lang]/demos/[id]/` | One paper sheet on night, a back link and the language switch above it. Stamp at the top inline-end, the file's kind as a kicker, the project title and summary, then the project's own file in a frame (owner's decision): a waiting panel with "Open the live file" and where it loads from, swapped for the live frame on request. Under the frame: open in a new tab, and download for files on this site. The closing card follows. |
 | 404 | An empty drawer slot and one line: "This file is not in the drawer." with a link back. |
+| Coming soon `/` (for now, owner's request 2026-10-16) | While `comingSoon` is true (`src/i18n/ui.ts`), the root is the only page visitors see: the byline in both languages, the closed drawer front with a red "Coming soon" stamp pressed on its label, then "Coming soon." and one note in Arabic and in English side by side (stacked on phones), each with the link to the digital card. Every other page sends visitors there; the owner opens `/?preview` once to see the whole site and `/?public` to see it as a visitor again. |
 
 ---
 

@@ -15,6 +15,12 @@ export default defineConfig({
   use: {
     baseURL: "http://127.0.0.1:4330",
     trace: "retain-on-failure",
+    // The owner's preview (src/i18n/ui.ts → comingSoon): tests see the whole site; tests/soon.spec.ts
+    // clears it to check what visitors see
+    storageState: {
+      cookies: [],
+      origins: [{ origin: "http://127.0.0.1:4330", localStorage: [{ name: "preview", value: "1" }] }],
+    },
   },
   projects: [
     { name: "desktop", use: { ...devices["Desktop Chrome"], viewport: { width: 1440, height: 900 } } },

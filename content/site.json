@@ -51,6 +51,11 @@
     },
     "footer": { "line": "Mohammed Alzahmah · Data management & governance", "sample": "Demos use sample data", "cardCta": "CV and contact on my digital card" },
     "notFound": { "title": "This file is not in the drawer.", "back": "Back to the drawer" },
+    "soon": {
+      "title": "Coming soon.",
+      "lead": "I am putting my data management and governance project files in order, and they open here soon. Until then, my CV and contact details are on my digital card.",
+      "description": "Mohammed Alzahmah's project files in data management and governance open here soon."
+    },
     "reduceMotion": "Reduce motion"
   },
   "ar": {
@@ -99,6 +104,11 @@
     },
     "footer": { "line": "محمد آل زاحمة · إدارة وحوكمة البيانات", "sample": "النسخ التجريبية ببيانات افتراضية", "cardCta": "السيرة والتواصل في بطاقتي الرقمية" },
     "notFound": { "title": "هذا الملف ليس في الدرج.", "back": "العودة إلى الدرج" },
+    "soon": {
+      "title": "قريباً.",
+      "lead": "أرتّب ملفات مشاريعي في إدارة وحوكمة البيانات، وتُفتح هنا قريباً. إلى ذلك الحين، تجد سيرتي ووسائل التواصل في بطاقتي الرقمية.",
+      "description": "ملفات مشاريع محمد آل زاحمة في إدارة وحوكمة البيانات تُفتح هنا قريباً."
+    },
     "reduceMotion": "تقليل الحركة"
   }
 }
