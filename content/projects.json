@@ -96,7 +96,12 @@
     "order": 3,
     "mvp": true,
     "tone": "#EFE8DA",
-    "demo": { "type": "executive-dashboard", "status": "planned" },
+    "demo": {
+      "type": "executive-dashboard",
+      "status": "ready",
+      "kind": "powerbi",
+      "url": "https://app.powerbi.com/view?r=eyJrIjoiMDc2YTUyZWMtMGE1Ny00Mzg5LWE0MTYtM2U4NTY4OTRiM2VhIiwidCI6IjBjMzg1MGY4LTY2MjgtNDJmNS04NjkwLWFjM2VmMjgwZTViMiJ9"
+    },
     "film": {
       "dir": "/films/executive-dashboard/",
       "status": "planned",
