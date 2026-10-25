@@ -94,7 +94,7 @@ Routes:
 - `/[lang]/projects/[id]/` the opened file (one static page per project, shareable, own OG image). While a file is open on the cabinet, the address bar and tab title show this page (`pushState`), so a reload or a copied link lands here.
 - `/[lang]/demos/[id]/` the live demo
 - `/404`
-- `/` is the "Coming soon" page while `comingSoon` is true in `src/i18n/ui.ts` (owner's request, 2026-10-16): every other page sends visitors there, unless this browser opened `/?preview` (`/?public` undoes it). The tests set the preview flag in `playwright.config.ts`. At launch set `comingSoon` and `launched` together.
+- `/` sends the visitor to `/ar/` or `/en/`. The site is launched (owner, 2026-10-25): `launched` is true and `comingSoon` false in `src/i18n/ui.ts`, so every visitor sees the whole site and search engines may index it. The "Coming soon" page (owner's request, 2026-10-16) is kept: with `comingSoon` true, every other page sends visitors to it unless this browser opened `/?preview` (`/?public` undoes it). `tests/soon.spec.ts` checks whichever state is set.
 
 Only projects with `"mvp": true` are published until Phase 9 (others render as locked folders marked "Coming soon").
 
