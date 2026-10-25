@@ -92,7 +92,9 @@ for (const lang of locales) {
         expect(problems).toEqual([]);
       });
 
-      test("Play shows the full film with captions in both languages, off at first", async ({ page }) => {
+      test("Play shows the full film with captions in both languages, the page's on only for a film in the other", async ({
+        page,
+      }) => {
         await page.getByRole("button", { name: copy.file.playFilm }).click();
 
         const full = page.locator(".film__full");
@@ -106,9 +108,16 @@ for (const lang of locales) {
           .evaluateAll((items) =>
             items.map((track) => [(track as HTMLTrackElement).srclang, (track as HTMLTrackElement).default]),
           );
-        // off at first: the film already shows its lines on screen
+        // off at first when the film already shows its lines on screen in the page's language; a film made in
+        // the other language only (the owner's own Arabic film) starts with the page's captions on
+        const sources = await full
+          .locator("source")
+          .evaluateAll((items) => items.map((item) => item.getAttribute("src") ?? ""));
+        const filmInLang = sources.some(
+          (src) => src.includes(`film-${lang}.`) || src.includes(`film-av1-${lang}.`),
+        );
         expect(tracks).toEqual([
-          [lang, false],
+          [lang, !filmInLang],
           [lang === "ar" ? "en" : "ar", false],
         ]);
         if (await canPlay(page)) await expect.poll(() => paused(page, ".film__full")).toBe(false);

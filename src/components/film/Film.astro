@@ -24,7 +24,10 @@ const files = import.meta.glob<string>("/src/assets/films/*/*.{mp4,avif}", {
   eager: true,
 });
 const file = (name: string): string | undefined => files[`/src/assets/films/${project.id}/${name}`];
-const film = { av1: file(`film-av1-${lang}.mp4`), h264: file(`film-${lang}.mp4`) };
+const filmIn = (code: Locale) => ({ av1: file(`film-av1-${code}.mp4`), h264: file(`film-${code}.mp4`) });
+// A film made in one language plays on both pages (owner's decision, 2026-10-25)
+const filmLang = filmIn(lang).h264 ? lang : (locales.find((code) => filmIn(code).h264) ?? lang);
+const film = filmIn(filmLang);
 const loop = { av1: file("loop-av1.mp4"), h264: file("loop.mp4") };
 const poster = file("poster.avif");
 const ready = Boolean(film.h264 && loop.h264 && poster);
@@ -32,8 +35,10 @@ const ready = Boolean(film.h264 && loop.h264 && poster);
 const scenes = project.film.scenes ?? [];
 const tiles = Array.from({ length: 14 }, (_, index) => (index % 7) + Math.floor(index / 7));
 // The film already shows its lines on screen, so captions start off: a track in the film's own language
-// would print every line twice. Both languages wait in the player's menu, the page's first.
+// would print every line twice. Both languages wait in the player's menu, the page's first. A film in the
+// other language starts with the page's own captions on.
 const tracks = [lang, ...locales.filter((item) => item !== lang)];
+const captionsOn = filmLang !== lang;
 ---
 
 <div class="film" data-film={ready ? "" : undefined}>
@@ -69,6 +74,7 @@ const tracks = [lang, ...locales.filter((item) => item !== lang)];
             srclang={track}
             label={languages[track]}
             src={`${project.film.dir}captions.${track}.vtt`}
+            default={captionsOn && track === lang}
           />
         ))}
       </video>

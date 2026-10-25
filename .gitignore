@@ -26,9 +26,10 @@ Thumbs.db
 # Film masters are large and stay on the owner's machine (films/SCRIPTS.md).
 films/*/master*
 films/*/loop-master*
-# Web films are made by `npm run films`. For now there are only local sample films (npm run films:sample),
-# which must never reach the live site. Remove this line when the real films arrive.
-src/assets/films/
+# Web films are made by `npm run films`. Sample films (npm run films:sample) must never reach the live site,
+# so only the projects whose real films have arrived are let through, one line each.
+src/assets/films/*
+!src/assets/films/executive-dashboard/
 
 # Local preview files for the demo frame, never committed
 public/downloads/_preview*

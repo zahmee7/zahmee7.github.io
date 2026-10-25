@@ -7,7 +7,7 @@ import { locales, type Locale } from "../../../i18n/utils";
 export const getStaticPaths = (async () => {
   const projects = await getCollection("projects");
   return projects
-    .filter((entry) => entry.data.film.scenes?.length)
+    .filter((entry) => entry.data.mvp && entry.data.film.scenes?.length)
     .flatMap((entry) => locales.map((lang) => ({ params: { id: entry.data.id, lang }, props: { entry } })));
 }) satisfies GetStaticPaths;
 
