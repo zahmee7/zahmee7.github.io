@@ -8,7 +8,7 @@
   "en": {
     "meta": {
       "title": "Project Files · Mohammed Alzahmah",
-      "description": "Real data management and governance projects from a Saudi Data Management Office: a short film, the story, a live demo with sample data, and templates to download."
+      "description": "Data management and governance projects by Mohammed Alzahmah: a short film, the story, a live demo with sample data, and templates to download."
     },
     "skip": "Skip to the project drawer",
     "name": "Mohammed Alzahmah",
@@ -17,7 +17,7 @@
     "hero": {
       "kicker": "PROJECT FILES",
       "h1": "Pull any project’s file.",
-      "lead": "Each file is a real project from a Data Management Office: a short film, the story, a live demo to try, and templates to take."
+      "lead": "From idea to delivery, and from data to impact. Explore my data management and governance projects, the stories behind them and the solutions I built, through interactive demos, short films and resources to download."
     },
     "drawer": {
       "label": "THE PROJECT DRAWER",
@@ -72,7 +72,7 @@
   "ar": {
     "meta": {
       "title": "ملفات المشاريع · محمد آل زاحمة",
-      "description": "مشاريع حقيقية في إدارة وحوكمة البيانات من مكتب إدارة بيانات سعودي: فيلم قصير، والقصة، ونسخة حية ببيانات افتراضية، وقوالب للتحميل."
+      "description": "مشاريع محمد آل زاحمة في إدارة وحوكمة البيانات: فيلم قصير، والقصة، ونسخة حية ببيانات افتراضية، وقوالب للتحميل."
     },
     "skip": "انتقل إلى درج المشاريع",
     "name": "محمد آل زاحمة",
@@ -81,7 +81,7 @@
     "hero": {
       "kicker": "ملفات المشاريع",
       "h1": "اسحب ملف أي مشروع.",
-      "lead": "كل ملف مشروع حقيقي من مكتب إدارة البيانات: فيلم قصير، والقصة، ونسخة حية تجربها، وقوالب للتحميل."
+      "lead": "من الفكرة إلى التنفيذ، ومن البيانات إلى الأثر. استكشف مشاريعي في إدارة البيانات وحوكمتها، وتعرّف على القصص وراءها، والحلول التي طوّرتها، من خلال تجارب تفاعلية وأفلام قصيرة وموارد قابلة للتحميل."
     },
     "drawer": {
       "label": "درج المشاريع",
