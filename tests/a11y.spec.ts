@@ -68,7 +68,9 @@ for (const lang of locales) {
         await expect(page.locator(".demo-sheet .stamp")).toHaveCSS("opacity", "1");
         expect(await violations(page)).toEqual([]);
 
-        await page.locator("[data-live-open]").click();
+        // a report opens by itself (autoload); other kinds wait for the press
+        if ((await page.locator(".live iframe").count()) === 0)
+          await page.locator("[data-live-open]").click();
         await expect(page.locator(".live iframe")).toHaveCount(1);
         const results = await new AxeBuilder({ page }).withTags(axeTags).exclude(".live iframe").analyze();
         expect(results.violations.map((violation) => violation.id)).toEqual([]);

@@ -23,10 +23,13 @@ for (const lang of locales) {
         const tab = tabs.nth(index);
         const number = `${project.order}-`;
         const note = project.mvp ? project[lang].summary : copy.drawer.locked;
+        // A redacted folder keeps its name out of the page: a black bar on the tab, "Classified file" for readers
+        const title = project.redacted ? copy.drawer.redacted : project[lang].title;
 
         await expect(tab).toContainText(lang === "ar" ? arabicDigits(number) : number);
-        await expect(tab).toContainText(project[lang].short);
-        await expect(tab).toHaveAccessibleDescription(`${project[lang].title}. ${note}`);
+        if (project.redacted) await expect(tab).not.toContainText(project[lang].short);
+        else await expect(tab).toContainText(project[lang].short);
+        await expect(tab).toHaveAccessibleDescription(`${title}. ${note}`);
         if (project.mvp) await expect(tab).not.toHaveAttribute("aria-disabled");
         else await expect(tab).toHaveAttribute("aria-disabled", "true");
       }

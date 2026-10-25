@@ -1,8 +1,64 @@
 [
   {
-    "id": "ndi-readiness",
+    "id": "executive-dashboard",
     "order": 1,
     "mvp": true,
+    "tone": "#EFE8DA",
+    "demo": { "type": "executive-dashboard", "status": "ready", "kind": "powerbi", "page": "a0100000000000000001", "url": "https://app.powerbi.com/view?r=eyJrIjoiMDc2YTUyZWMtMGE1Ny00Mzg5LWE0MTYtM2U4NTY4OTRiM2VhIiwidCI6IjBjMzg1MGY4LTY2MjgtNDJmNS04NjkwLWFjM2VmMjgwZTViMiJ9" },
+    "film": {
+      "dir": "/films/executive-dashboard/",
+      "status": "ready",
+      "lengthSec": 100,
+      "loopScene": 9,
+      "scenes": [
+        { "start": 0, "end": 3.5, "en": "While working on the Nudhee requirements...", "ar": "خلال عملي على متطلبات نضيء..." },
+        { "start": 3.5, "end": 7, "en": "I was working across files, evidence and matrices that overlapped.", "ar": "كنت أتعامل مع ملفات وأدلة ومصفوفات... متداخلة" },
+        { "start": 7, "end": 11, "en": "The information was there, but the picture was scattered.", "ar": "المعلومات متاحة... لكن الصورة متفرقة." },
+        { "start": 11.5, "end": 16, "en": "A whole year of effort...", "ar": "جهد طوال العام..." },
+        { "start": 16, "end": 19, "en": "and a result no one knows until it is announced.", "ar": "ونتيجة لا تُعرف إلا عند إعلانها." },
+        { "start": 19, "end": 23, "en": "Many scattered requirements · No single view · A result hard to estimate · Priorities hard to set · Little visibility for decision makers", "ar": "تعدد المتطلبات وتشتتها · غياب الرؤية الموحدة · صعوبة تقدير النتيجة · صعوبة تحديد الأولويات · رؤية محدودة لصانع القرار" },
+        { "start": 23, "end": 29, "en": "The idea: the document's standards and requirements in one reference", "ar": "الفكرة: معايير الوثيقة ومتطلباتها... في مرجع واحد" },
+        { "start": 29, "end": 38, "en": "The index's many requirements become one tracking system", "ar": "تحويل متطلبات المؤشر المتشعبة... إلى منظومة متابعة موحدة" },
+        { "start": 40, "end": 46, "en": "An early view of the result, updated with every piece of progress.", "ar": "تصوّر مبكر للنتيجة... يتحدّث مع كل إنجاز." },
+        { "start": 46, "end": 52, "en": "The official record of past cycles, and an estimate for the current one.", "ar": "سجل رسمي للدورات السابقة... وتقدير للدورة الحالية." },
+        { "start": 53, "end": 58.5, "en": "Where the entity stands, and the result it could reach.", "ar": "أين تقف الجهة... وما النتيجة التي قد تحققها." },
+        { "start": 58.5, "end": 64, "en": "From a number to clear steps for improvement.", "ar": "من رقم... إلى خطوات تحسين واضحة." },
+        { "start": 64.5, "end": 70, "en": "From the overall score to the detail of every specification.", "ar": "من الدرجة الإجمالية... إلى تفاصيل كل مواصفة." },
+        { "start": 70.5, "end": 77, "en": "How operational performance moves the expected result.", "ar": "أثر الأداء التشغيلي... على النتيجة المتوقعة." },
+        { "start": 77.5, "end": 84, "en": "It fits every entity, whichever cycle it joined in.", "ar": "تناسب كل جهة... مهما كانت دورة انضمامها." },
+        { "start": 84.5, "end": 89.5, "en": "Detail for the specialist, and an executive view for the decision maker.", "ar": "تفاصيل للمختص... ورؤية تنفيذية لصانع القرار." },
+        { "start": 90, "end": 95, "en": "Instead of waiting for the end of the year... · follow the path all year.", "ar": "بدلاً من انتظار نهاية العام... · متابعة المسار طوال العام." },
+        { "start": 95, "end": 100, "en": "NDI performance dashboard · Open the sample dashboard", "ar": "لوحة أداء المؤشر الوطني للبيانات · افتح اللوحة التجريبية" }
+      ]
+    },
+    "downloads": [
+      { "file": "/downloads/dmo-dashboard-template.pbit", "kind": "pbit", "status": "planned" }
+    ],
+    "en": {
+      "short": "NDI dashboard",
+      "title": "NDI performance dashboard",
+      "summary": "The entity's maturity, compliance and operational excellence in one dashboard, with the next step for each.",
+      "context": "The National Data Index (Nudhee) spreads its requirements across many domains, evidence items and matrices, and official results only come out at the end of each measurement cycle. That makes it hard to follow performance or estimate the result in advance.",
+      "did": "Built an interactive dashboard that brings maturity, compliance and operational excellence into one view, estimates results against the index’s criteria, analyzes the gaps and tracks performance across measurement cycles.",
+      "result": "A continuous view of where the entity stands and the score it can expect, so specialists and decision makers can set priorities, follow improvement and prepare for the measurement results.",
+      "demoLabel": "Open the sample dashboard",
+      "downloadLabel": "Dashboard template · Power BI"
+    },
+    "ar": {
+      "short": "لوحة أداء المؤشر",
+      "title": "لوحة أداء المؤشر الوطني للبيانات",
+      "summary": "أداء الجهة في النضج والامتثال والتميز التشغيلي بلوحة واحدة، مع الخطوة التالية لكل مكوّن.",
+      "context": "تتوزع متطلبات المؤشر الوطني نضيء بين مجالات وأدلة ومصفوفات متعددة، بينما لا تصدر النتائج الرسمية إلا بنهاية دورة القياس، مما يصعّب متابعة الأداء وتقدير النتيجة مسبقاً.",
+      "did": "طوّرت لوحة تفاعلية تجمع النضج والامتثال والتميز التشغيلي في واجهة موحدة، وتقدّر النتائج وفق معايير المؤشر، مع تحليل الفجوات وتتبع الأداء عبر دورات القياس.",
+      "result": "رؤية مستمرة لوضع الجهة ودرجتها المتوقعة، تساعد المختصين وصُنّاع القرار على تحديد الأولويات، ومتابعة التحسن، والاستعداد لنتائج القياس.",
+      "demoLabel": "افتح اللوحة التجريبية",
+      "downloadLabel": "قالب اللوحة · باور بي آي"
+    }
+  },
+  {
+    "id": "ndi-readiness",
+    "order": 2,
+    "mvp": false,
     "tone": "#F1EDE4",
     "demo": { "type": "readiness-tracker", "status": "planned" },
     "film": {
@@ -47,8 +103,8 @@
   },
   {
     "id": "data-classification",
-    "order": 2,
-    "mvp": true,
+    "order": 3,
+    "mvp": false,
     "tone": "#E8E1D3",
     "demo": { "type": "classification-helper", "status": "planned" },
     "film": {
@@ -92,93 +148,8 @@
     }
   },
   {
-    "id": "executive-dashboard",
-    "order": 3,
-    "mvp": true,
-    "tone": "#EFE8DA",
-    "demo": {
-      "type": "executive-dashboard",
-      "status": "ready",
-      "kind": "powerbi",
-      "url": "https://app.powerbi.com/view?r=eyJrIjoiMDc2YTUyZWMtMGE1Ny00Mzg5LWE0MTYtM2U4NTY4OTRiM2VhIiwidCI6IjBjMzg1MGY4LTY2MjgtNDJmNS04NjkwLWFjM2VmMjgwZTViMiJ9"
-    },
-    "film": {
-      "dir": "/films/executive-dashboard/",
-      "status": "planned",
-      "lengthSec": 60,
-      "loopScene": 3,
-      "scenes": [
-        { "start": 0, "end": 7, "en": "Progress lived in separate spreadsheets.", "ar": "كان التقدم موزعاً على ملفات منفصلة." },
-        { "start": 7, "end": 18, "en": "Bring them into one model.", "ar": "جمعها في نموذج واحد." },
-        { "start": 18, "end": 32, "en": "Operational excellence · Maturity · Compliance", "ar": "التميز التشغيلي · النضج · الامتثال" },
-        { "start": 32, "end": 44, "en": "One view, up to date, easy to filter.", "ar": "صورة واحدة محدّثة وسهلة التصفية." },
-        { "start": 44, "end": 52, "en": "The view management uses to follow the office.", "ar": "الصورة التي تتابع بها الإدارة المكتب." },
-        { "start": 52, "end": 60, "en": "Open the sample dashboard", "ar": "افتح اللوحة التجريبية" }
-      ]
-    },
-    "downloads": [
-      { "file": "/downloads/dmo-dashboard-template.pbit", "kind": "pbit", "status": "planned" }
-    ],
-    "en": {
-      "short": "Exec dashboard",
-      "tag": "BI · REPORTING",
-      "title": "DMO executive dashboard",
-      "summary": "One live view of the office’s progress, replacing separate spreadsheets.",
-      "context": "The office’s progress was tracked across several separate spreadsheets.",
-      "did": "Built the dashboard from scratch to follow NDI progress across operational excellence, maturity and compliance, alongside the office’s plans.",
-      "result": "One up-to-date source that management uses to follow the office.",
-      "demoLabel": "Open the sample dashboard",
-      "downloadLabel": "Dashboard template · Power BI"
-    },
-    "ar": {
-      "short": "اللوحة التنفيذية",
-      "tag": "ذكاء الأعمال",
-      "title": "لوحة المتابعة التنفيذية",
-      "summary": "صورة حية واحدة لتقدم المكتب بدل ملفات متفرقة.",
-      "context": "كانت متابعة تقدم المكتب موزعة على عدة ملفات إكسل منفصلة.",
-      "did": "بنيت اللوحة من الصفر لتتابع تقدم المؤشر الوطني في التميز التشغيلي والنضج والامتثال، مع خطط المكتب ومبادراته.",
-      "result": "مصدر واحد محدّث تتابع به الإدارة تقدم المكتب.",
-      "demoLabel": "افتح اللوحة التجريبية",
-      "downloadLabel": "قالب اللوحة · باور بي آي"
-    }
-  },
-  {
-    "id": "national-data-catalog",
-    "order": 4,
-    "mvp": false,
-    "tone": "#E3DACA",
-    "demo": { "type": "glossary-builder", "status": "later" },
-    "film": { "dir": "/films/national-data-catalog/", "status": "later", "lengthSec": 45 },
-    "downloads": [
-      { "file": "/downloads/business-glossary-template.xlsx", "kind": "xlsx", "status": "later" },
-      { "file": "/downloads/data-dictionary-template.xlsx", "kind": "xlsx", "status": "later" }
-    ],
-    "en": {
-      "short": "Data catalog",
-      "tag": "METADATA",
-      "title": "National Data Catalog onboarding",
-      "summary": "Registering the entity’s systems and documenting what the data means.",
-      "context": "The entity was joining the national catalog with nothing documented yet.",
-      "did": "Registered the in-scope systems and their technical metadata, then documented the glossary, datasets, business attributes and KPIs.",
-      "result": "Coverage well beyond the required minimum.",
-      "demoLabel": "Try the glossary builder",
-      "downloadLabel": "Glossary and data dictionary templates"
-    },
-    "ar": {
-      "short": "فهرس البيانات",
-      "tag": "البيانات الوصفية",
-      "title": "الانضمام إلى فهرس البيانات الوطني",
-      "summary": "تسجيل أنظمة الجهة وتوثيق معنى بياناتها.",
-      "context": "كانت الجهة تنضم إلى فهرس البيانات الوطني ولا يوجد أي توثيق جاهز.",
-      "did": "سجلت الأنظمة المشمولة وخصائصها التقنية، ثم وثقت المسرد ومجموعات البيانات والخصائص الوظيفية ومؤشرات الأداء.",
-      "result": "تغطية تجاوزت الحد المطلوب بكثير.",
-      "demoLabel": "جرّب أداة بناء المسرد",
-      "downloadLabel": "قوالب المسرد وقاموس البيانات"
-    }
-  },
-  {
     "id": "open-data",
-    "order": 5,
+    "order": 4,
     "mvp": false,
     "tone": "#ECE5D6",
     "demo": { "type": "dataset-checker", "status": "later" },
@@ -210,9 +181,45 @@
     }
   },
   {
+    "id": "national-data-catalog",
+    "order": 5,
+    "mvp": false,
+    "redacted": true,
+    "tone": "#E3DACA",
+    "demo": { "type": "glossary-builder", "status": "later" },
+    "film": { "dir": "/films/national-data-catalog/", "status": "later", "lengthSec": 45 },
+    "downloads": [
+      { "file": "/downloads/business-glossary-template.xlsx", "kind": "xlsx", "status": "later" },
+      { "file": "/downloads/data-dictionary-template.xlsx", "kind": "xlsx", "status": "later" }
+    ],
+    "en": {
+      "short": "Data catalog",
+      "tag": "METADATA",
+      "title": "National Data Catalog onboarding",
+      "summary": "Registering the entity’s systems and documenting what the data means.",
+      "context": "The entity was joining the national catalog with nothing documented yet.",
+      "did": "Registered the in-scope systems and their technical metadata, then documented the glossary, datasets, business attributes and KPIs.",
+      "result": "Coverage well beyond the required minimum.",
+      "demoLabel": "Try the glossary builder",
+      "downloadLabel": "Glossary and data dictionary templates"
+    },
+    "ar": {
+      "short": "فهرس البيانات",
+      "tag": "البيانات الوصفية",
+      "title": "الانضمام إلى فهرس البيانات الوطني",
+      "summary": "تسجيل أنظمة الجهة وتوثيق معنى بياناتها.",
+      "context": "كانت الجهة تنضم إلى فهرس البيانات الوطني ولا يوجد أي توثيق جاهز.",
+      "did": "سجلت الأنظمة المشمولة وخصائصها التقنية، ثم وثقت المسرد ومجموعات البيانات والخصائص الوظيفية ومؤشرات الأداء.",
+      "result": "تغطية تجاوزت الحد المطلوب بكثير.",
+      "demoLabel": "جرّب أداة بناء المسرد",
+      "downloadLabel": "قوالب المسرد وقاموس البيانات"
+    }
+  },
+  {
     "id": "governance-committee",
     "order": 6,
     "mvp": false,
+    "redacted": true,
     "tone": "#DED4C1",
     "demo": { "type": "decision-tracker", "status": "later" },
     "film": { "dir": "/films/governance-committee/", "status": "later", "lengthSec": 45 },

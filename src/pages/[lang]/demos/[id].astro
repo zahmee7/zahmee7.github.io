@@ -2,7 +2,7 @@
 // A project's live demo (DESIGN.md > Page anatomy, Demo sheet): one paper sheet on night with the
 // "Sample data" stamp, the project's own file in a sample version (LiveFile.astro), and a way back to
 // the file. A page exists once its demo is marked ready, with a kind and a link, in content/projects.json.
-import type { GetStaticPaths, InferGetStaticPropsType } from "astro";
+import type { GetStaticPaths, ImageMetadata, InferGetStaticPropsType } from "astro";
 import { getCollection } from "astro:content";
 import Base from "../../../layouts/Base.astro";
 import Closing from "../../../components/site/Closing.astro";
@@ -11,6 +11,9 @@ import Icon from "../../../components/ui/Icon.astro";
 import LangSwitch from "../../../components/ui/LangSwitch.astro";
 import Stamp from "../../../components/ui/Stamp.astro";
 import { locales, pageTitle, t } from "../../../i18n/utils";
+
+// Report snapshots drawn by npm run boards (FileLeaf.astro shows the same board on the file)
+const snapshots = import.meta.glob<{ default: ImageMetadata }>("/src/assets/boards/*.png", { eager: true });
 
 export const getStaticPaths = (async () => {
   const projects = (await getCollection("projects")).map((entry) => entry.data);
@@ -30,6 +33,7 @@ const kind = project.demo.kind!;
 const link = project.demo.url!;
 const url = typeof link === "string" ? link : link[lang];
 const kindName = copy.demo.kinds[kind];
+const poster = kind === "powerbi" ? snapshots[`/src/assets/boards/${project.id}.png`]?.default : undefined;
 ---
 
 <Base
@@ -39,7 +43,7 @@ const kindName = copy.demo.kinds[kind];
   description={text.summary}
   image={project.id}
 >
-  <header class="container demo-bar">
+  <header class:list={["container demo-bar", { "demo-wide": kind === "powerbi" }]}>
     <a class="btn demo-back" href={`/${lang}/projects/${project.id}/`}>
       <Icon name="arrow" class="demo-back__icon" />
       <span>{copy.demo.back}</span>
@@ -47,7 +51,7 @@ const kindName = copy.demo.kinds[kind];
     <LangSwitch lang={lang} path={path} />
   </header>
 
-  <main class="container demo-main">
+  <main class:list={["container demo-main", { "demo-wide": kind === "powerbi" }]}>
     <article class="demo-sheet on-paper" aria-labelledby="demo-title">
       <Stamp text={copy.demo.badge} class="demo-sheet__stamp" />
       <p class="demo-sheet__kicker">{kindName}</p>
@@ -55,7 +59,15 @@ const kindName = copy.demo.kinds[kind];
         {text.title}
       </h1>
       <p class="demo-sheet__note">{text.summary}</p>
-      <LiveFile lang={lang} kind={kind} url={url} title={`${text.title} · ${kindName}`} />
+      <LiveFile
+        lang={lang}
+        kind={kind}
+        url={url}
+        page={project.demo.page}
+        title={`${text.title} · ${kindName}`}
+        poster={poster}
+        autoload={kind === "powerbi"}
+      />
     </article>
   </main>
 
@@ -123,6 +135,27 @@ const kindName = copy.demo.kinds[kind];
     color: var(--c-ink-2);
     font-size: var(--fs-lead);
     line-height: 1.6;
+  }
+
+  /* A report gets the room to be read on the page itself (owner's request, 2026-10-24): a wider sheet,
+     a lighter header, and the report across the sheet at its own 16:9, numbers at full size */
+  .demo-wide {
+    --container: 1680px;
+    --gutter: clamp(16px, 2.5vw, 40px);
+  }
+  /* as wide as the sheet allows, but never taller than the screen under the bar */
+  .demo-wide :global(.live--board) {
+    max-inline-size: calc((100svh - 140px) * 16 / 9);
+    margin-inline: auto;
+  }
+  .demo-wide .demo-sheet {
+    padding: clamp(20px, 2.4vw, 36px);
+  }
+  .demo-wide .demo-sheet__title {
+    font-size: clamp(1.75rem, 1.2rem + 1.4vw, 2.5rem);
+  }
+  .demo-wide .demo-sheet__note {
+    margin-block-end: var(--s-5);
   }
 
   @media (max-width: 899px) {

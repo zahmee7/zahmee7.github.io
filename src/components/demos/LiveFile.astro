@@ -1,8 +1,13 @@
 ---
-// The project's own file, shown live on its demo page (owner's decision, Phase 6): a published Power BI
-// report, an Excel workbook (a OneDrive embed, or a file on this site in Microsoft's viewer) or a PDF on
-// this site. Nothing loads until the visitor asks: the frame waits behind "Open the live file", so the
-// page stays light and Microsoft sets no cookies unless the visitor chooses to open it.
+// The project's own file, shown live (owner's decision, Phase 6): a published Power BI report, an Excel
+// workbook (a OneDrive embed, or a file on this site in Microsoft's viewer) or a PDF on this site. Nothing
+// loads until the visitor asks: the frame waits behind "Open the live file", so the page stays light and
+// Microsoft sets no cookies unless the visitor chooses to open it.
+// A Power BI report can show as a board (owner's request, 2026-10-24): its snapshot fills the frame at the
+// report's own size, numbers readable at once (npm run boards), and the live report takes its place, at
+// the same size, when asked.
+import type { ImageMetadata } from "astro";
+import { Picture } from "astro:assets";
 import Icon from "../ui/Icon.astro";
 import { t, type Locale } from "../../i18n/utils";
 
@@ -13,33 +18,60 @@ interface Props {
   kind: Kind;
   /** A full link (Power BI, OneDrive) or a path on this site (Excel for the viewer, PDF). */
   url: string;
+  /** Power BI: the report page to open first. */
+  page?: string | undefined;
   /** The frame's name for screen readers. */
   title: string;
+  /** A snapshot of the report, shown until the live one is asked for (a board). */
+  poster?: ImageMetadata | undefined;
+  /** Open as soon as the page loads: the visitor came here to see it (the demo page). */
+  autoload?: boolean;
 }
 
-const { lang, kind, url, title } = Astro.props;
+const { lang, kind, url, page, title, poster, autoload = false } = Astro.props;
 const copy = t(lang);
 
 const onSite = kind === "excel-viewer" || kind === "pdf";
 const absolute = new URL(url, Astro.site).href;
 const office = (mode: "embed" | "view") =>
   `https://view.officeapps.live.com/op/${mode}.aspx?src=${encodeURIComponent(absolute)}`;
-const src = kind === "excel-viewer" ? office("embed") : url;
-const newTab = kind === "excel-viewer" ? office("view") : url;
+const report = kind === "powerbi" && page ? `${url}&pageName=${page}` : url;
+const src = kind === "excel-viewer" ? office("embed") : report;
+const newTab = kind === "excel-viewer" ? office("view") : report;
 const from = kind === "pdf" ? copy.demo.fromSite : copy.demo.fromMicrosoft;
+const board = Boolean(poster);
 ---
 
-<figure class="live" data-kind={kind}>
-  <div class="live__frame" data-live-frame data-src={src} data-title={title}>
-    <button class="btn btn--primary live__open" type="button" data-live-open>
-      <Icon name="play" />
-      <span>{copy.demo.open}</span>
-    </button>
-    <p class="live__from">{from}</p>
+<figure class:list={["live", { "live--board": board }]} data-kind={kind}>
+  <div
+    class="live__frame"
+    data-live-frame
+    data-src={src}
+    data-title={title}
+    data-autoload={autoload ? "" : undefined}
+    data-loading-text={copy.demo.loading}
+  >
+    {poster && (
+      <Picture
+        class="live__poster"
+        src={poster}
+        alt={copy.demo.snapshot}
+        widths={[800, 1200, 1600, 2400]}
+        sizes="(min-width: 1440px) 1120px, 92vw"
+        formats={["avif", "webp"]}
+      />
+    )}
+    <div class="live__wait">
+      <button class="btn btn--primary live__open" type="button" data-live-open>
+        <Icon name="play" />
+        <span>{copy.demo.open}</span>
+      </button>
+      <p class="live__from">{from}</p>
+    </div>
   </div>
   <figcaption class="live__links">
     <a class="link" href={newTab} target="_blank" rel="noopener">
-      <span>{copy.demo.newTab}</span>
+      <span>{kind === "powerbi" ? copy.demo.openPowerBI : copy.demo.newTab}</span>
       <Icon name="external" />
     </a>
     {onSite && (
@@ -52,22 +84,73 @@ const from = kind === "pdf" ? copy.demo.fromSite : copy.demo.fromMicrosoft;
 </figure>
 
 <script>
-  // Swap the waiting panel for the live frame on request, and move focus into it
-  for (const frame of document.querySelectorAll<HTMLElement>("[data-live-frame]")) {
-    frame.querySelector("[data-live-open]")?.addEventListener(
-      "click",
-      () => {
-        const live = document.createElement("iframe");
-        live.src = frame.dataset.src ?? "";
-        live.title = frame.dataset.title ?? "";
-        live.allowFullscreen = true;
-        live.referrerPolicy = "strict-origin-when-cross-origin";
-        frame.replaceChildren(live);
-        frame.dataset.open = "";
-        live.focus();
-      },
+  // Swap the waiting panel (or the snapshot) for the live frame on request, and move focus into it. One
+  // listener on the document, so files the cabinet fills in later (FileSheet.astro) work the same.
+  const open = (frame: HTMLElement, focus: boolean): void => {
+    if (frame.dataset.open !== undefined || frame.dataset.loading !== undefined) return;
+    const live = document.createElement("iframe");
+    live.src = frame.dataset.src ?? "";
+    live.title = frame.dataset.title ?? "";
+    live.allowFullscreen = true;
+    live.referrerPolicy = "strict-origin-when-cross-origin";
+    try {
+      sessionStorage.setItem(`live:${frame.dataset.src}`, "1");
+    } catch {
+      // storage is blocked: the next page waits for a press again
+    }
+    // the frame is already where the press was, so focus moves without scrolling
+    const settle = () => focus && live.focus({ preventScroll: true });
+    if (!frame.querySelector(".live__poster")) {
+      frame.replaceChildren(live);
+      frame.dataset.open = "";
+      settle();
+      return;
+    }
+    // A board keeps its snapshot in view while the report loads under it, then lets it fade, so the
+    // visitor never sees a blank frame.
+    frame.dataset.loading = "";
+    const button = frame.querySelector<HTMLButtonElement>("[data-live-open]");
+    if (button) {
+      button.disabled = true;
+      button.lastElementChild!.textContent = frame.dataset.loadingText ?? "";
+    }
+    frame.prepend(live);
+    let shown = false;
+    const reveal = () => {
+      if (shown) return;
+      shown = true;
+      frame.dataset.open = "";
+      delete frame.dataset.loading;
+      settle();
+      setTimeout(() => frame.replaceChildren(live), 500);
+    };
+    // No signal says when Power BI has drawn, and its frame can load from cache well before the data
+    // arrives, so the snapshot stays at least 10 s and 6 s past the load (20 s at most). A press on the
+    // snapshot shows the live report at once.
+    const started = performance.now();
+    live.addEventListener(
+      "load",
+      () => setTimeout(reveal, Math.max(6000, 10000 - (performance.now() - started))),
       { once: true },
     );
+    setTimeout(reveal, 20000);
+    frame.querySelector(".live__poster")?.addEventListener("pointerdown", reveal, { once: true });
+  };
+
+  document.addEventListener("click", (event) => {
+    const button = event.target instanceof Element ? event.target.closest("[data-live-open]") : null;
+    const frame = button?.closest<HTMLElement>("[data-live-frame]");
+    if (frame) open(frame, true);
+  });
+
+  // Another script can ask for a frame: the file's demo page does when the visitor turns to it (pages.ts)
+  document.addEventListener("live:open", (event) => {
+    if (event.target instanceof HTMLElement) open(event.target, false);
+  });
+
+  // The demo page opens its file at once: the visitor pressed the demo card to come here
+  for (const frame of document.querySelectorAll<HTMLElement>("[data-live-frame][data-autoload]")) {
+    open(frame, false);
   }
 </script>
 
@@ -92,6 +175,11 @@ const from = kind === "pdf" ? copy.demo.fromSite : copy.demo.fromMicrosoft;
     background:
       repeating-linear-gradient(0deg, transparent 0 31px, rgb(var(--c-ink-rgb) / 0.04) 31px 32px),
       var(--c-paper-hi);
+  }
+  .live__wait {
+    display: grid;
+    justify-items: center;
+    gap: var(--s-3);
   }
   .live[data-kind^="excel"] .live__frame {
     --ratio: 4 / 3;
@@ -130,10 +218,78 @@ const from = kind === "pdf" ? copy.demo.fromSite : copy.demo.fromMicrosoft;
     min-block-size: var(--tap);
   }
 
+  /* The board: the report page at its own 16:9 with Power BI's own bar under it (zoom and pages, about
+     56 px), so the snapshot and the live report sit in the same place at the same size */
+  .live--board {
+    --bar: 56px;
+    container-type: inline-size;
+  }
+  .live--board .live__frame {
+    display: grid;
+    grid-template-rows: auto var(--bar);
+    place-content: stretch;
+    gap: 0;
+    aspect-ratio: auto;
+    block-size: calc(100cqi * 9 / 16 + var(--bar));
+    max-block-size: none;
+    background: var(--c-paper-hi);
+    box-shadow: 0 18px 40px -24px rgb(var(--c-ink-rgb) / 0.45);
+  }
+  /* the live report sits under the snapshot while it loads, then the snapshot and the bar fade away */
+  .live--board .live__frame :global(iframe) {
+    position: absolute;
+    inset: 0;
+  }
+  .live--board :global(.live__poster),
+  .live--board .live__wait {
+    position: relative;
+    z-index: 1;
+    transition: opacity 450ms var(--ease-paper);
+  }
+  .live--board .live__frame[data-open] :global(.live__poster),
+  .live--board .live__frame[data-open] .live__wait {
+    opacity: 0;
+  }
+  .live--board :global(.live__poster) {
+    display: block;
+    inline-size: 100%;
+    block-size: calc(100cqi * 9 / 16);
+    object-fit: cover;
+  }
+  .live--board .live__wait {
+    background: var(--c-paper-hi);
+  }
+  .live--board .live__frame[data-loading] :global(.live__poster) {
+    cursor: pointer;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .live--board :global(.live__poster),
+    .live--board .live__wait {
+      transition-duration: var(--d-fade);
+    }
+  }
+  .live--board .live__wait {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--s-4);
+    padding-inline: var(--s-4);
+    border-block-start: 1px solid var(--c-paper-line);
+  }
+  .live--board .live__open {
+    min-block-size: 40px;
+  }
+
   @media (max-width: 899px) {
     .live[data-kind^="excel"] .live__frame,
     .live[data-kind="pdf"] .live__frame {
       --ratio: 3 / 4;
+    }
+    .live--board {
+      --bar: 64px;
+    }
+    .live--board .live__from {
+      display: none;
     }
   }
 </style>

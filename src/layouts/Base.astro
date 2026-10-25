@@ -39,7 +39,8 @@ const canonical = new URL(root ? "/" : `/${lang}/${path}`, Astro.site);
 const twin = new URL(`/${other}/${path}`, Astro.site);
 const shareImage = new URL(`/og/${lang}/${image}.png`, Astro.site);
 const ogLocale = { ar: "ar_SA", en: "en_US" } as const;
-// While the site says "Coming soon", visitors who reach any other page go to the root (src/i18n/ui.ts)
+// While the site says "Coming soon", visitors who reach any other page go to the root (src/i18n/ui.ts).
+// The dev server never sends anyone away, so the owner can open any page there in any browser.
 const sendToSoon = `try {
   if (!localStorage.getItem("preview")) {
     document.documentElement.style.visibility = "hidden";
@@ -55,7 +56,7 @@ const sendToSoon = `try {
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-    {comingSoon && !root && <script is:inline set:html={sendToSoon} />}
+    {comingSoon && !root && import.meta.env.PROD && <script is:inline set:html={sendToSoon} />}
     <title>{pageTitle}</title>
     <meta name="description" content={pageDescription} />
     {!launched && !noindex && <meta name="robots" content="noindex" />}

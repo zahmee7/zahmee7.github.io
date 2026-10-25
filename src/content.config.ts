@@ -18,7 +18,8 @@ const scene = z.object({
 
 const copy = z.object({
   short: z.string().min(1),
-  tag: z.string().min(1),
+  /** The small line over the title. Optional: the owner left it off the dashboard (2026-10-25). */
+  tag: z.string().min(1).optional(),
   title: z.string().min(1),
   summary: z.string().min(1),
   context: z.string().min(1),
@@ -34,6 +35,8 @@ const projects = defineCollection({
     id: z.string().regex(/^[a-z0-9-]+$/),
     order: z.number().int().min(1).max(6),
     mvp: z.boolean(),
+    /** A locked folder whose name is blacked out on its tab, like a classified file (owner, 2026-10-25). */
+    redacted: z.boolean().optional(),
     tone: z.string().regex(/^#[0-9A-Fa-f]{6}$/),
     // The demo is the project's own file in a sample version (owner's decision, Phase 6): a published
     // Power BI report, an Excel workbook (OneDrive embed, or a file on this site shown in Microsoft's
@@ -43,6 +46,8 @@ const projects = defineCollection({
         type: z.string().min(1),
         status,
         kind: z.enum(["powerbi", "excel-onedrive", "excel-viewer", "pdf"]).optional(),
+        // Power BI: the report page to open first (and to draw for the file's board, npm run boards)
+        page: z.string().min(1).optional(),
         url: z
           .union([z.string().min(1), z.object({ en: z.string().min(1), ar: z.string().min(1) })])
           .optional(),

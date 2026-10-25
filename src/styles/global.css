@@ -53,6 +53,10 @@ body {
 ::view-transition-new(leaf):only-child {
   animation: leaf-in var(--d-page-in) var(--ease-paper) both;
 }
+/* Turning a file's page (pages.ts) replays its blocks' rise, so the page's own entrance stays out of it */
+[data-pages][data-turned] [data-rise] {
+  animation: none !important;
+}
 
 /* The open file locks the page behind. file.ts sets --scroll-gap to the scrollbar's width, so the
    page does not shift when its scrollbar goes away. */

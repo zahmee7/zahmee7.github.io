@@ -8,6 +8,7 @@
 import { bindSoon } from "../ui/soon";
 import { showToast } from "../ui/toast";
 import type { FileSheet } from "./file";
+import "./pages";
 import { setUpPull } from "./pull";
 import { setUpSound } from "./sound";
 import type { SoundName, SoundOptions } from "./synth";

@@ -12,7 +12,7 @@
     },
     "skip": "Skip to the project drawer",
     "name": "Mohammed Alzahmah",
-    "role": "Data management & governance",
+    "role": "Data Management & Governance Specialist",
     "nav": { "card": "Contact card", "langLabel": "Switch to Arabic", "langShort": "عربي" },
     "hero": {
       "kicker": "PROJECT FILES",
@@ -24,6 +24,7 @@
       "hint": "Pick a tab to pull a file",
       "hintTouch": "Tap a file to pull it out",
       "locked": "Coming soon",
+      "redacted": "Classified file",
       "open": "Open the project drawer",
       "pressToOpen": "Press to open the drawer"
     },
@@ -37,7 +38,12 @@
       "download": "Download",
       "openFull": "Open the full file",
       "prev": "Previous file",
-      "next": "Next file"
+      "next": "Next file",
+      "turn": "The demo and the files",
+      "turnBack": "Back to page one",
+      "turnBackTwo": "Back to the demo and the files",
+      "pageTwo": "Try the project",
+      "downloads": "Files to download"
     },
     "demo": {
       "badge": "Sample data",
@@ -47,9 +53,14 @@
       "fromMicrosoft": "It loads from Microsoft's servers.",
       "fromSite": "It opens in your browser's own viewer.",
       "newTab": "Open in a new tab",
+      "snapshot": "A snapshot of the live file, with sample data",
+      "loading": "Loading the live file…",
+      "inSite": "It runs here on the site, with sample data.",
+      "title": "The live demo",
+      "openPowerBI": "Open in Power BI",
       "kinds": { "powerbi": "Power BI report", "excel-onedrive": "Excel workbook", "excel-viewer": "Excel workbook", "pdf": "PDF document" }
     },
-    "footer": { "line": "Mohammed Alzahmah · Data management & governance", "sample": "Demos use sample data", "cardCta": "CV and contact on my digital card" },
+    "footer": { "line": "Mohammed Alzahmah · Data Management & Governance Specialist", "sample": "Demos use sample data", "cardCta": "CV and contact on my digital card" },
     "notFound": { "title": "This file is not in the drawer.", "back": "Back to the drawer" },
     "soon": {
       "title": "Coming soon.",
@@ -65,7 +76,7 @@
     },
     "skip": "انتقل إلى درج المشاريع",
     "name": "محمد آل زاحمة",
-    "role": "إدارة وحوكمة البيانات",
+    "role": "أخصائي إدارة وحوكمة البيانات",
     "nav": { "card": "بطاقة التواصل", "langLabel": "التبديل إلى الإنجليزية", "langShort": "EN" },
     "hero": {
       "kicker": "ملفات المشاريع",
@@ -77,6 +88,7 @@
       "hint": "اختر لسان الملف لتسحبه",
       "hintTouch": "المس الملف لتسحبه",
       "locked": "قريباً",
+      "redacted": "ملف سري",
       "open": "افتح درج المشاريع",
       "pressToOpen": "اضغط لتفتح الدرج"
     },
@@ -90,7 +102,12 @@
       "download": "تحميل",
       "openFull": "افتح الملف كاملاً",
       "prev": "الملف السابق",
-      "next": "الملف التالي"
+      "next": "الملف التالي",
+      "turn": "التجربة والملفات",
+      "turnBack": "العودة إلى الصفحة الأولى",
+      "turnBackTwo": "العودة إلى التجربة والملفات",
+      "pageTwo": "جرّب المشروع",
+      "downloads": "ملفات للتحميل"
     },
     "demo": {
       "badge": "بيانات افتراضية",
@@ -100,9 +117,14 @@
       "fromMicrosoft": "يُحمَّل من خوادم مايكروسوفت.",
       "fromSite": "يُفتح في عارض المتصفح نفسه.",
       "newTab": "افتح في صفحة مستقلة",
+      "snapshot": "لقطة من الملف الحي ببيانات افتراضية",
+      "loading": "يُحمَّل الملف الحي…",
+      "inSite": "تعمل هنا داخل الموقع، ببيانات افتراضية.",
+      "title": "التجربة الحية",
+      "openPowerBI": "افتح في باور بي آي",
       "kinds": { "powerbi": "تقرير باور بي آي", "excel-onedrive": "ملف إكسل", "excel-viewer": "ملف إكسل", "pdf": "ملف بي دي إف" }
     },
-    "footer": { "line": "محمد آل زاحمة · إدارة وحوكمة البيانات", "sample": "النسخ التجريبية ببيانات افتراضية", "cardCta": "السيرة والتواصل في بطاقتي الرقمية" },
+    "footer": { "line": "محمد آل زاحمة · أخصائي إدارة وحوكمة البيانات", "sample": "النسخ التجريبية ببيانات افتراضية", "cardCta": "السيرة والتواصل في بطاقتي الرقمية" },
     "notFound": { "title": "هذا الملف ليس في الدرج.", "back": "العودة إلى الدرج" },
     "soon": {
       "title": "قريباً.",

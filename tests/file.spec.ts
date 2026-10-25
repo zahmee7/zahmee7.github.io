@@ -14,6 +14,13 @@ async function openFile(page: Page, id: string): Promise<void> {
   await expect(page.locator(`#file-title-${id}`)).toBeFocused();
 }
 
+/** Turns the open file to page two, where the demo and the files are (owner, 2026-10-24). */
+async function turnToPageTwo(page: Page, lang: "ar" | "en"): Promise<void> {
+  const dialog = page.locator("dialog#file");
+  await dialog.getByRole("button", { name: site[lang].file.turn }).click();
+  await expect(dialog.locator('[data-page="2"]')).toBeVisible();
+}
+
 async function expectClosedOn(page: Page, id: string): Promise<void> {
   await expect(page.locator("dialog#file")).toBeHidden();
   await expect(page.locator(`#tab-${id}`)).toBeFocused();
@@ -41,10 +48,13 @@ for (const lang of locales) {
         await expect(page.locator("dialog#file")).toHaveAccessibleName(text.title);
         await expect(page.locator(".leaf__folio")).toContainText(copy.hero.kicker);
         await expect(page.locator("[data-folio]")).toHaveText(/^\S+ \/ \S+$/);
-        for (const part of [text.tag, text.summary, text.context, text.did, text.result]) {
+        for (const part of [text.tag, text.summary, text.context, text.did, text.result].filter(
+          Boolean,
+        ) as string[]) {
           await expect(page.locator("dialog#file").getByText(part, { exact: true })).toBeVisible();
         }
-        // the demo's label also closes the film's text, so find it as the link it is
+        // the demo is a large card on page two; its label also closes the film's text, so find it as the link it is
+        await turnToPageTwo(page, lang);
         await expect(page.locator("dialog#file").getByRole("link", { name: text.demoLabel })).toBeVisible();
 
         await page.getByRole("button", { name: copy.file.close }).click();
@@ -71,20 +81,24 @@ for (const lang of locales) {
       await expect(page).toHaveURL(new RegExp(`/${lang}/projects/${first!.id}/$`));
       await expect(page).toHaveTitle(`${first![lang].title} · ${copy.name}`);
 
-      await page.getByRole("button", { name: copy.file.next }).click();
-      await expect(page.locator(`#file-title-${second!.id}`)).toBeFocused();
-      await expect(page).toHaveURL(new RegExp(`/${lang}/projects/${second!.id}/$`));
+      // with a second open file, next moves the address along with it
+      const shown = second ?? first!;
+      if (second) {
+        await page.getByRole("button", { name: copy.file.next }).click();
+        await expect(page.locator(`#file-title-${second.id}`)).toBeFocused();
+        await expect(page).toHaveURL(new RegExp(`/${lang}/projects/${second.id}/$`));
+      }
 
       await page.keyboard.press("Escape");
-      await expectClosedOn(page, second!.id);
+      await expectClosedOn(page, shown.id);
       await expect(page).toHaveURL(new RegExp(`/${lang}/$`));
       await expect(page).toHaveTitle(copy.meta.title);
 
       // forward brings the file back, and a reload lands on its own page
       await page.goForward();
-      await expect(page.locator(`#file-title-${second!.id}`)).toBeFocused();
+      await expect(page.locator(`#file-title-${shown.id}`)).toBeFocused();
       await page.reload();
-      await expect(page.getByRole("heading", { level: 1 })).toHaveText(second![lang].title);
+      await expect(page.getByRole("heading", { level: 1 })).toHaveText(shown[lang].title);
     });
 
     test("previous and next move between open projects", async ({ page }) => {
@@ -93,6 +107,14 @@ for (const lang of locales) {
 
       await openFile(page, first!.id);
       await expect(prev).toHaveAttribute("aria-disabled", "true");
+
+      // a single open file has nowhere to go either way
+      if (!second) {
+        await expect(next).toHaveAttribute("aria-disabled", "true");
+        await page.getByRole("button", { name: copy.file.close }).click();
+        await expectClosedOn(page, first!.id);
+        return;
+      }
 
       await next.click();
       await expect(page.locator(`#file-title-${second!.id}`)).toBeFocused();
@@ -122,6 +144,7 @@ for (const lang of locales) {
 
     test("parts built later say Coming soon", async ({ page }) => {
       await openFile(page, first!.id);
+      await turnToPageTwo(page, lang);
       await page.getByRole("link", { name: first![lang].downloadLabel }).click();
 
       const toast = page.locator("dialog#file #toast");

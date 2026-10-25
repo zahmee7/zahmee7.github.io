@@ -31,7 +31,7 @@ Inputs: `docs/BRIEF.md`, `CLAUDE.md`, `design/tokens.css`, `design/MOTION.md`, `
 | Page | Composition |
 |---|---|
 | Home `/[lang]/` | Masthead (name and role as a byline, card link, language). Hero: kicker, then the H1 and the lead side by side (owner's choice, design A), so the drawer takes most of the first view: an open box (dark back wall, slanted side walls) with six folders standing inside, their tabs climbing in a staircase above the rim. The drawer front carries a cream label card in a metal holder, a caption line and a metal pull. On desktop the page is exactly one screen: the drawer fills what the masthead and the title leave, and its front meets the bottom edge like a drawer pulled out towards you (the cabinet is a size container; `--step` and `--visible-front` follow its height). Wide screens (≥ 1600 px) widen the container to 1440 px; short ones (≤ 820 px tall) tighten the masthead, title and front. Warm lamp light falls on the folders; paper has a lit top edge and a faint grain. No closing card: the masthead's card link is the one way to the card on this page (owner's decision). The drawer starts closed and is pulled out when pressed (Closed drawer). A switch for the drawer's sounds sits by the language switch, off at first (section 7, Sound). |
-| Open file (full-screen dialog) | A full page of paper that covers the cabinet, like a new page. A sticky top bar: folio (`Project files · 1 / 6`) and the close button. Desktop, the spread (owner's choice): tag, title and the project summary at inline-start, a larger film beside them, the demo and download at the foot of that column; then the story across the page in three columns under an ink rule. Previous / next at the bottom. Phone: one column: tag, title, summary, film, story, demo and download. While it is open, the address bar shows the project page. |
+| Open file (full-screen dialog) | A full page of paper that covers the cabinet, like a new page. A sticky top bar: folio (`Project files · 1 / 6`) and the close button. Desktop, the spread (owner's choice): tag, title and the project summary at inline-start, a larger film beside them, the turn to the demo and files right under the summary (owner, 2026-10-25); then the story across the page in three columns under an ink rule. Previous / next at the bottom. Phone: one column: tag, title, summary, film, story, demo and download. While it is open, the address bar shows the project page. |
 | Project `/[lang]/projects/[id]/` | The same paper page at its own URL, for direct visits and sharing. The top bar adds the language switch, and its close becomes a link back to the drawer. Below 480 px the folio shows only its number. The closing card follows the page. |
 | Share image (1200 × 630) | Night room. Home: byline, kicker, H1 and the six folders in their drawer. Project: its folder pulled half out, tab with folio and short title, tag, title, byline. Made by `npm run og`. |
 | Demo `/[lang]/demos/[id]/` | One paper sheet on night, a back link and the language switch above it. Stamp at the top inline-end, the file's kind as a kicker, the project title and summary, then the project's own file in a frame (owner's decision): a waiting panel with "Open the live file" and where it loads from, swapped for the live frame on request. Under the frame: open in a new tab, and download for files on this site. The closing card follows. |
@@ -181,7 +181,7 @@ Home and demo pages: 156 KB (limit 160). Project pages: 234 KB (limit 240). The 
   --fs-folder-num: clamp(1.75rem, 1.2rem + 1.6vw, 2.5rem); /* 28 → 40 px */
   --fs-folder-title: 1.25rem;                               /* 20 px */
   --fs-lead: clamp(1.0625rem, 1rem + 0.3vw, 1.25rem);       /* 17 → 20 px */
-  --fs-story: 1.125rem;                                     /* 18 px */
+  --fs-story: clamp(1.1875rem, 1.05rem + 0.45vw, 1.375rem); /* 19 → 22 px, owner 2026-10-25 */
   --fs-ui: 0.9375rem;                                       /* 15 px */
   --fs-meta: 0.8125rem;                                     /* 13 px */
   --fs-kicker: 0.75rem;                                     /* 12 px */
@@ -198,7 +198,7 @@ Home and demo pages: 156 KB (limit 160). Project pages: 234 KB (limit 240). The 
 }
 
 :root:lang(ar) {
-  --fs-story: 1.1875rem;       /* 19 px */
+  --fs-story: clamp(1.25rem, 1.1rem + 0.5vw, 1.5rem); /* 20 → 24 px, owner 2026-10-25 */
   --fs-ui: 1rem;               /* 16 px */
   --fs-meta: 0.875rem;         /* 14 px */
   --fs-kicker: 0.9375rem;      /* 15 px */
@@ -228,10 +228,11 @@ html {
 | Folder number | Serif Display | `--fs-folder-num` | 700 | 1 | 0 |
 | Folder title H3 | Serif Display | 20 px | 700 | 1.2 / 1.45 | 0 |
 | Lead | Sans | `--fs-lead` | 400 | 1.6 / 1.85 | 0 |
-| Story body | Serif Text | 18 / 19 px | 400 | 1.65 / 1.95 | 0 |
+| Story body | Serif Text | 19 → 22 / 20 → 24 px (owner, 2026-10-25) | 400 | 1.65 / 1.95 | 0 |
 | UI, buttons, body | Sans | 15 / 16 px | 400 | 1.5 / 1.7 | 0 |
 | Meta, captions | Sans | 13 / 14 px | 400 | 1.5 / 1.7 | 0.01em |
-| Kicker, story labels, tags | Sans, uppercase in EN | 12 / 15 px | 400 | 1.4 | 0.26em |
+| Kicker, tags | Sans, uppercase in EN | 12 / 15 px | 400 | 1.4 | 0.26em |
+| Story labels | Sans, uppercase in EN | 15 / 16 px (owner, 2026-10-25) | 400 | 1.4 | 0.26em |
 
 **Typography rules**
 
@@ -461,6 +462,17 @@ A folder is a `<li>` with a real `<button>` tab. Clicking anywhere on the folder
   inset-block-start: 8px;
   inset-inline-start: calc(var(--tab-pad) + var(--slot) * (100% - var(--tab-w) - 2 * var(--tab-pad)) / 5 + var(--s-4));
 }
+
+/* Redacted folder (owner, 2026-10-25): a locked folder whose name is blacked out like a classified file in a
+   film. The number stays; each word of the name becomes an ink bar about as long as the word, slightly uneven.
+   The name never reaches the page: the tab, its description and the drawer-front caption say "Classified file". */
+.folder__bar {
+  inline-size: var(--w);
+  block-size: 1.05em;
+  background-color: var(--c-ink);
+  clip-path: polygon(0 8%, 22% 0, 61% 6%, 100% 2%, 99% 92%, 70% 100%, 34% 94%, 1% 100%);
+  rotate: var(--tilt);
+}
 ```
 
 ### Drawer front
@@ -547,11 +559,11 @@ html:has(dialog[open]) { overflow: hidden; }
   grid-template-rows: auto 1fr auto;
   grid-template-areas: "head film" "act film" "story story";
   column-gap: clamp(40px, 5vw, 88px);
-  padding-block: clamp(40px, 4.5vw, 64px) clamp(48px, 5vw, 80px);
+  padding-block: clamp(40px, 4.5vw, 64px) clamp(40px, 4vw, 64px);
 }
 .file__head { grid-area: head; }
 .file__film { grid-area: film; }
-.file__act { grid-area: act; align-self: end; padding-block-start: var(--s-6); }
+.file__act { grid-area: act; align-self: start; padding-block-start: var(--s-6); }
 .file__lead { max-inline-size: 30em; margin: 0; color: var(--c-ink-2); font: var(--fw-ui) var(--fs-lead) / 1.6 var(--font-ui); }
 
 .file__tag {
@@ -572,14 +584,14 @@ html:has(dialog[open]) { overflow: hidden; }
 .file__title:focus-visible { outline: 3px solid var(--focus); outline-offset: 4px; }
 
 /* Three columns under an ink rule, split by hairlines */
-.story { grid-area: story; display: grid; grid-template-columns: repeat(3, 1fr); margin-block-start: clamp(48px, 5vw, 72px); border-block-start: 1px solid var(--c-ink); }
-.story__block { padding: var(--s-5) clamp(20px, 2.4vw, 40px) 0; border-inline-start: 1px solid var(--c-paper-line); }
+.story { grid-area: story; display: grid; grid-template-columns: repeat(3, 1fr); margin-block-start: clamp(64px, 6vw, 96px); border-block-start: 1px solid var(--c-ink); }
+.story__block { padding: var(--s-6) clamp(24px, 2.5vw, 44px) 0; border-inline-start: 1px solid var(--c-paper-line); }
 .story__block:first-child { padding-inline-start: 0; border-inline-start: 0; }
 .story__block:last-child { padding-inline-end: 0; }
 .story__label {
-  margin: 0 0 var(--s-2);
+  margin: 0 0 var(--s-3);
   color: var(--c-ink-muted);
-  font: var(--fw-ui) var(--fs-kicker) / 1.4 var(--font-ui);
+  font: var(--fw-ui) var(--fs-ui) / 1.4 var(--font-ui);
   letter-spacing: var(--ls-kicker);
   text-transform: uppercase;
 }
@@ -780,7 +792,7 @@ The live frame (`LiveFile.astro`) holds the project's own file: 1 px `--c-paper-
 
 **Container**
 
-- Max width: 1240 px, centered with `margin-inline: auto`.
+- Max width: 1240 px, centered with `margin-inline: auto`. The open file (bar, body, previous / next) runs to 1440 px, so the story's three columns have room (owner, 2026-10-25).
 - Side padding: `--gutter: clamp(16px, 5vw, 80px)`.
 - Narrow text column: 38 em (story), 46 ch (lead).
 

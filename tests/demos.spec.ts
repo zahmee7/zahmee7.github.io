@@ -66,33 +66,51 @@ for (const lang of locales) {
           `/${lang}/projects/${project.id}/`,
         );
 
-        // nothing from the file loads with the page
-        await expect(page.locator(".live iframe")).toHaveCount(0);
-        await expect(
-          page.getByText(kind === "pdf" ? copy.demo.fromSite : copy.demo.fromMicrosoft),
-        ).toBeVisible();
-        expect(calls).toEqual([]);
-
-        await page.getByRole("button", { name: copy.demo.open }).click();
         const frame = page.locator(".live iframe");
-        await expect(frame).toHaveAttribute("title", `${text.title} · ${kindName}`);
-        await expect(frame).toBeFocused();
-        const src = await frame.getAttribute("src");
         const url = linkOf(project, lang);
-        if (kind === "excel-viewer") expect(src).toContain(encodeURIComponent(url));
-        else expect(src).toBe(url);
+        const first = (project.demo as { page?: string }).page;
+        const report = kind === "powerbi" && first ? `${url}&pageName=${first}` : url;
+        if (kind === "powerbi") {
+          // A report opens at once, on its first page: the visitor came here to see it (owner, 2026-10-24).
+          // Its snapshot holds the frame until the report has drawn.
+          await expect(frame).toHaveCount(1);
+          await expect(page.locator(".live__poster")).toBeVisible();
+        } else {
+          // nothing from the file loads with the page
+          await expect(frame).toHaveCount(0);
+          await expect(
+            page.getByText(kind === "pdf" ? copy.demo.fromSite : copy.demo.fromMicrosoft),
+          ).toBeVisible();
+          expect(calls).toEqual([]);
 
-        await expect(page.getByRole("link", { name: copy.demo.newTab })).toHaveAttribute("target", "_blank");
+          await page.getByRole("button", { name: copy.demo.open }).click();
+          await expect(frame).toBeFocused();
+        }
+        await expect(frame).toHaveAttribute("title", `${text.title} · ${kindName}`);
+        const src = await frame.getAttribute("src");
+        if (kind === "excel-viewer") expect(src).toContain(encodeURIComponent(url));
+        else expect(src).toBe(report);
+
+        const newTab = kind === "powerbi" ? copy.demo.openPowerBI : copy.demo.newTab;
+        await expect(page.getByRole("link", { name: newTab })).toHaveAttribute("target", "_blank");
         if (kind === "pdf" || kind === "excel-viewer") {
           await expect(page.getByRole("link", { name: copy.file.download })).toHaveAttribute("href", url);
         }
         expect(problems).toEqual([]);
       });
 
-      test(`${project.id}: the demo button in the file leads to it`, async ({ page }) => {
+      test(`${project.id}: the demo card in the file opens it live on page three`, async ({ page }) => {
+        await stubMicrosoft(page);
         await page.goto(`/${lang}/projects/${project.id}/`);
-        await page.getByRole("link", { name: text.demoLabel }).click();
-        await expect(page).toHaveURL(new RegExp(`/${lang}/demos/${project.id}/$`));
+        await page.getByRole("button", { name: copy.file.turn }).click();
+        // the card still links to the demo page, for a browser without scripts
+        const card = page.getByRole("link", { name: text.demoLabel });
+        await expect(card).toHaveAttribute("href", `/${lang}/demos/${project.id}/`);
+
+        await card.click();
+        await expect(page.locator('[data-page="3"]')).toBeVisible();
+        await expect(page.locator('[data-page="3"] .live iframe')).toHaveCount(1);
+        await expect(page).toHaveURL(new RegExp(`/${lang}/projects/${project.id}/$`));
       });
     }
 

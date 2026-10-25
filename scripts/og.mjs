@@ -88,7 +88,7 @@ function projectImage(project, lang) {
   const body = `
     <div class="folder">
       <div class="tab"><span class="num">${number(project.order, lang)}</span><span class="short">${escape(text.short)}</span></div>
-      <p class="tag">${escape(text.tag)}</p>
+      ${text.tag ? `<p class="tag">${escape(text.tag)}</p>` : ""}
       <h1>${escape(text.title)}</h1>
       <div class="by"><span>${escape(copy.name)} · ${escape(copy.role)}</span><span>${escape(copy.hero.kicker)}</span></div>
     </div>

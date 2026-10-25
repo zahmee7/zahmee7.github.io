@@ -2,6 +2,8 @@
 // One folder standing in the drawer (DESIGN.md > Drawer and folders).
 // The edge carries no text: the tab holds the number and short title; the full title and
 // summary are for screen readers (aria-describedby) and the drawer-front caption.
+// A redacted folder (owner, 2026-10-25) keeps its name out of the page entirely: a black bar over each
+// word on the tab, like a classified file in a film, and "Classified file" wherever the name would be.
 import type { CollectionEntry } from "astro:content";
 import Icon from "../ui/Icon.astro";
 import Stamp from "../ui/Stamp.astro";
@@ -18,13 +20,19 @@ const copy = t(lang);
 const text = project[lang];
 const locked = !project.mvp;
 const note = locked ? copy.drawer.locked : text.summary;
+const redacted = Boolean(project.redacted);
+const title = redacted ? copy.drawer.redacted : text.title;
+// One bar per word, about as long as the word; nothing of the name itself reaches the page
+const bars = text.short
+  .split(" ")
+  .map((word, index) => ({ width: 0.56 * word.length + 0.5, tilt: index % 2 ? 0.5 : -0.7 }));
 ---
 
 <li
   class="folder"
   data-id={project.id}
   data-locked={locked ? "" : undefined}
-  data-title={text.title}
+  data-title={title}
   data-note={note}
   style={`--i: ${index}; --slot: ${index}; --tone: ${project.tone};`}
 >
@@ -40,10 +48,23 @@ const note = locked ? copy.drawer.locked : text.summary;
       aria-expanded={locked ? undefined : "false"}
     >
       <span class="folder__num">{projectNumber(project.order, lang)}</span>
-      <span class="folder__short">{text.short}</span>
+      {redacted ? (
+        <span class="folder__short folder__redacted">
+          <span class="sr-only">{copy.drawer.redacted}</span>
+          {bars.map((bar) => (
+            <span
+              class="folder__bar"
+              aria-hidden="true"
+              style={`--w: ${bar.width}em; --tilt: ${bar.tilt}deg;`}
+            />
+          ))}
+        </span>
+      ) : (
+        <span class="folder__short">{text.short}</span>
+      )}
       {locked && <Icon name="lock" class="folder__lock" />}
     </button>
-    <p class="sr-only" id={`desc-${project.id}`}>{`${text.title}. ${note}`}</p>
+    <p class="sr-only" id={`desc-${project.id}`}>{`${title}. ${note}`}</p>
     {locked && <Stamp text={copy.drawer.locked} decorative class="folder__stamp" />}
   </div>
 </li>
@@ -122,6 +143,25 @@ const note = locked ? copy.drawer.locked : text.summary;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
+  }
+  /* Redacted: ink bars over the name, slightly uneven like a marker pass; the paper grain shows through */
+  .folder__redacted {
+    display: inline-flex;
+    flex-shrink: 0;
+    align-items: center;
+    gap: 0.3em;
+    /* room for the tilted corners, so the bars never read as a cut title */
+    padding-inline: 3px;
+    overflow: visible;
+  }
+  .folder__bar {
+    display: inline-block;
+    inline-size: var(--w);
+    block-size: 1.05em;
+    background-color: var(--c-ink);
+    background-image: repeating-linear-gradient(90deg, rgb(255 255 255 / 0.04) 0 2px, transparent 2px 6px);
+    clip-path: polygon(0 8%, 22% 0, 61% 6%, 100% 2%, 99% 92%, 70% 100%, 34% 94%, 1% 100%);
+    rotate: var(--tilt);
   }
   /* The lock and the stamp come from other components, so they are reached through :global() */
   .folder :global(.folder__lock) {

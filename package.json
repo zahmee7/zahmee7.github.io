@@ -19,6 +19,7 @@
     "format:check": "prettier --check .",
     "astro": "astro",
     "og": "node scripts/og.mjs",
+    "boards": "node scripts/boards.mjs",
     "films": "node scripts/films.mjs",
     "films:sample": "node scripts/sample-film.mjs && node scripts/films.mjs"
   },

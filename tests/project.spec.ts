@@ -8,7 +8,7 @@ const sorted = [...projects].sort((a, b) => a.order - b.order);
 const openProjects = sorted.filter((project) => project.mvp);
 const locked = sorted.find((project) => !project.mvp)!;
 const first = openProjects[0]!;
-const second = openProjects[1]!;
+const second = openProjects[1];
 const last = openProjects[openProjects.length - 1]!;
 
 /** The share image named in og:image: served from this build, a PNG of 1200 × 630. */
@@ -42,9 +42,13 @@ for (const lang of locales) {
         await expect(page.locator("html")).toHaveAttribute("dir", lang === "ar" ? "rtl" : "ltr");
         await expect(page).toHaveTitle(`${text.title} · ${copy.name}`);
         await expect(page.getByRole("heading", { level: 1 })).toHaveText(text.title);
-        for (const part of [text.tag, text.summary, text.context, text.did, text.result]) {
+        for (const part of [text.tag, text.summary, text.context, text.did, text.result].filter(
+          Boolean,
+        ) as string[]) {
           await expect(page.getByText(part, { exact: true })).toBeVisible();
         }
+        // the demo is a large card on page two, behind the turn under the summary
+        await page.getByRole("button", { name: copy.file.turn }).click();
         await expect(page.getByRole("link", { name: text.demoLabel })).toBeVisible();
 
         await expect(page.locator('meta[name="description"]')).toHaveAttribute("content", text.summary);
@@ -97,9 +101,12 @@ for (const lang of locales) {
       await page.goto(`/${lang}/projects/${first.id}/`);
       await expect(page.getByRole("button", { name: copy.file.prev })).toBeDisabled();
 
-      await page.getByRole("link", { name: copy.file.next }).click();
-      await expect(page).toHaveURL(new RegExp(`/${lang}/projects/${second.id}/$`));
-      await expect(page.getByRole("heading", { level: 1 })).toHaveText(second[lang].title);
+      // with a second open project, next leads to its page
+      if (second) {
+        await page.getByRole("link", { name: copy.file.next }).click();
+        await expect(page).toHaveURL(new RegExp(`/${lang}/projects/${second.id}/$`));
+        await expect(page.getByRole("heading", { level: 1 })).toHaveText(second[lang].title);
+      }
 
       await page.goto(`/${lang}/projects/${last.id}/`);
       await expect(page.getByRole("button", { name: copy.file.next })).toBeDisabled();
@@ -111,6 +118,7 @@ for (const lang of locales) {
 
     test("parts built later say Coming soon", async ({ page }) => {
       await page.goto(`/${lang}/projects/${first.id}/`);
+      await page.getByRole("button", { name: copy.file.turn }).click();
       await page.getByRole("link", { name: first[lang].downloadLabel }).click();
 
       await expect(page.locator("#toast")).toHaveText(copy.drawer.locked);

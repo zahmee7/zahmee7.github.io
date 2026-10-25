@@ -37,7 +37,10 @@ const copy = t(lang);
 </article>
 
 <style>
+  /* The open file runs wider than the rest of the site, so the story's three columns have room
+     (owner's request, 2026-10-25); its bar, body and previous / next share the width. */
   .leaf {
+    --container: 1440px;
     position: relative;
     min-block-size: 100dvh;
     padding-block-end: env(safe-area-inset-bottom);

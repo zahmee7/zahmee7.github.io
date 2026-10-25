@@ -78,7 +78,7 @@
   --fs-folder-num: clamp(1.75rem, 1.2rem + 1.6vw, 2.5rem); /* 28 → 40 px */
   --fs-folder-title: 1.25rem;                               /* 20 px */
   --fs-lead: clamp(1.0625rem, 1rem + 0.3vw, 1.25rem);       /* 17 → 20 px */
-  --fs-story: 1.125rem;                                     /* 18 px */
+  --fs-story: clamp(1.1875rem, 1.05rem + 0.45vw, 1.375rem); /* 19 → 22 px, owner 2026-10-25 */
   --fs-ui: 0.9375rem;                                       /* 15 px */
   --fs-meta: 0.8125rem;                                     /* 13 px */
   --fs-kicker: 0.75rem;                                     /* 12 px */
@@ -149,7 +149,7 @@
 }
 
 :root:lang(ar) {
-  --fs-story: 1.1875rem;       /* 19 px */
+  --fs-story: clamp(1.25rem, 1.1rem + 0.5vw, 1.5rem); /* 20 → 24 px, owner 2026-10-25 */
   --fs-ui: 1rem;               /* 16 px */
   --fs-meta: 0.875rem;         /* 14 px */
   --fs-kicker: 0.9375rem;      /* 15 px */
