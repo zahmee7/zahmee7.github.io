@@ -69,10 +69,10 @@ test.describe("launched", () => {
   // a new visitor: nothing in storage, no preview
   test.use({ storageState: { cookies: [], origins: [] } });
 
-  test("the root leads a new visitor into the drawer", async ({ page }) => {
+  test("the root opens the site in Arabic, whatever the browser's language", async ({ page }) => {
     const problems = watchConsole(page);
     await page.goto("/");
-    await expect(page).toHaveURL(/\/(ar|en)\/$/);
+    await expect(page).toHaveURL(/\/ar\/$/);
     await expect(
       page.getByRole("button", { name: /^(افتح درج المشاريع|Open the project drawer)$/ }),
     ).toBeVisible();

@@ -60,10 +60,11 @@ for (const lang of locales) {
   });
 }
 
+// The site opens in Arabic for every visitor, whatever the browser's language (owner, 2026-10-27)
 test.describe("root", () => {
   for (const [locale, expected] of [
     ["ar-SA", "/ar/"],
-    ["en-US", "/en/"],
+    ["en-US", "/ar/"],
   ] as const) {
     test.describe(locale, () => {
       test.use({ locale });

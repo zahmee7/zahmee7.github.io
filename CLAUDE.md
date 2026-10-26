@@ -55,7 +55,7 @@ Rules that keep them from conflicting:
 
 - **Astro**, latest stable (`npm create astro@latest`), static output, TypeScript `strict`.
 - **CSS**: plain CSS with custom properties from `tokens.css` plus component-scoped `<style>`. Logical properties only (`margin-inline`, `padding-block`, `inset-inline-start`, `text-align: start`). No Tailwind, no CSS-in-JS.
-- **i18n**: Astro i18n routing, locales `en` and `ar`, `prefixDefaultLocale: true`, so every page lives under `/en/` or `/ar/`. `<html lang dir>` is set per locale. The root `/` is a tiny page that sends the visitor to `/ar/` or `/en/` from `navigator.language` (with plain links as fallback).
+- **i18n**: Astro i18n routing, locales `en` and `ar`, `prefixDefaultLocale: true`, so every page lives under `/en/` or `/ar/`. `<html lang dir>` is set per locale. The root `/` is a tiny page that opens the site in Arabic, `/ar/`, for every visitor; the language switch takes them to English (owner, 2026-10-27; plain links as fallback).
 - **Motion**:
   - GSAP (core and CustomEase) for the page pull: the picked folder nudges up and a full page of paper is pulled up from the bottom of the screen over the cabinet. No Flip.
   - CSS transitions for hover, focus and press micro-interactions.
@@ -94,7 +94,7 @@ Routes:
 - `/[lang]/projects/[id]/` the opened file (one static page per project, shareable, own OG image). While a file is open on the cabinet, the address bar and tab title show this page (`pushState`), so a reload or a copied link lands here.
 - `/[lang]/demos/[id]/` the live demo
 - `/404`
-- `/` sends the visitor to `/ar/` or `/en/`. The site is launched (owner, 2026-10-25): `launched` is true and `comingSoon` false in `src/i18n/ui.ts`, so every visitor sees the whole site and search engines may index it. The "Coming soon" page (owner's request, 2026-10-16) is kept: with `comingSoon` true, every other page sends visitors to it unless this browser opened `/?preview` (`/?public` undoes it). `tests/soon.spec.ts` checks whichever state is set.
+- `/` sends every visitor to `/ar/`. The site is launched (owner, 2026-10-25): `launched` is true and `comingSoon` false in `src/i18n/ui.ts`, so every visitor sees the whole site and search engines may index it. The "Coming soon" page (owner's request, 2026-10-16) is kept: with `comingSoon` true, every other page sends visitors to it unless this browser opened `/?preview` (`/?public` undoes it). `tests/soon.spec.ts` checks whichever state is set.
 
 Only projects with `"mvp": true` are published until Phase 9 (others render as locked folders marked "Coming soon").
 
