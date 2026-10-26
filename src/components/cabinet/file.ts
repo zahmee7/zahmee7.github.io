@@ -63,7 +63,9 @@ export function createFileSheet(dialog: HTMLDialogElement, drawer: HTMLElement):
     const template = templates.find((item) => item.dataset.file === id);
     if (!template) return home.url;
     stopFilms?.();
-    body.replaceChildren(template.content.cloneNode(true));
+    // importNode makes the copy this document's own, so media elements choose and load their source here
+    // (a plain clone stays owned by the template's inert document until it is moved)
+    body.replaceChildren(document.importNode(template.content, true));
     stopFilms = setUpFilms(body);
     document.title = template.dataset.pageTitle ?? home.title;
     folioLine.textContent = template.dataset.folioText ?? "";

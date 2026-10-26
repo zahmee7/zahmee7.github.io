@@ -31,20 +31,39 @@ export function setUpFilms(root: ParentNode): () => void {
     observer.observe(frame);
     reducedMotion.addEventListener("change", update);
 
+    // A film that fails to load (a dropped connection on a phone) tries once more by itself, instead of
+    // waiting for the page to be reloaded; the browser's own controls stay there to press again.
+    let retried = false;
+    let stopped = false;
+    const retry = (): void => {
+      // only for a real failure: not a pause, not a closed file
+      const failed = full.error !== null || full.networkState === HTMLMediaElement.NETWORK_NO_SOURCE;
+      if (retried || stopped || full.hidden || !failed) return;
+      retried = true;
+      full.load();
+      full.play().catch(() => undefined);
+    };
+    full.addEventListener("error", retry);
+    full.querySelector("source:last-of-type")?.addEventListener("error", retry);
+
     const start = (): void => {
       loop.pause();
       loop.hidden = true;
       play.hidden = true;
       full.hidden = false;
       full.focus();
-      full.play().catch(() => undefined);
+      // no source chosen yet, or the last choice failed: choose again before playing
+      if (full.networkState === HTMLMediaElement.NETWORK_NO_SOURCE || full.error) full.load();
+      full.play().catch(retry);
     };
     play.addEventListener("click", start);
 
     stops.push(() => {
       observer.disconnect();
       reducedMotion.removeEventListener("change", update);
+      stopped = true;
       play.removeEventListener("click", start);
+      full.removeEventListener("error", retry);
       loop.pause();
       full.pause();
     });

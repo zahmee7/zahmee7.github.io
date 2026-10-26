@@ -24,7 +24,13 @@ const files = import.meta.glob<string>("/src/assets/films/*/*.{mp4,avif}", {
   eager: true,
 });
 const file = (name: string): string | undefined => files[`/src/assets/films/${project.id}/${name}`];
-const filmIn = (code: Locale) => ({ av1: file(`film-av1-${code}.mp4`), h264: file(`film-${code}.mp4`) });
+const filmIn = (code: Locale) => ({
+  av1: file(`film-av1-${code}.mp4`),
+  h264: file(`film-${code}.mp4`),
+  // the same film at 720 for phones (npm run films, 2026-10-26)
+  av1Phone: file(`film-av1-${code}-720.mp4`),
+  h264Phone: file(`film-${code}-720.mp4`),
+});
 // A film made in one language plays on both pages (owner's decision, 2026-10-25)
 const filmLang = filmIn(lang).h264 ? lang : (locales.find((code) => filmIn(code).h264) ?? lang);
 const film = filmIn(filmLang);
@@ -66,6 +72,10 @@ const captionsOn = filmLang !== lang;
         aria-label={copy.file.film}
         hidden
       >
+        {film.av1Phone && (
+          <source src={film.av1Phone} type='video/mp4; codecs="av01.0.05M.08"' media="(max-width: 899px)" />
+        )}
+        {film.h264Phone && <source src={film.h264Phone} type="video/mp4" media="(max-width: 899px)" />}
         {film.av1 && <source src={film.av1} type='video/mp4; codecs="av01.0.08M.08"' />}
         <source src={film.h264} type="video/mp4" />
         {tracks.map((track) => (

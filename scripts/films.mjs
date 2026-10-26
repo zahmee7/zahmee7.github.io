@@ -1,5 +1,7 @@
 // Makes the web files for each film from its masters, with the export specs in films/SCRIPTS.md:
 //   films/<id>/master-en.(mp4|mov), master-ar.(mp4|mov) → film-<lang>.mp4 (H.264) and film-av1-<lang>.mp4 (AV1)
+//   and the same at 720 for phones, film-<lang>-720.mp4 and film-av1-<lang>-720.mp4 (2026-10-26): a phone
+//   starts the film sooner on a mobile network, and its screen shows no more than 720 lines anyway
 //   A film made in one language has one master: both pages show it, with captions in the other language
 //   (Film.astro, owner's decision 2026-10-25).
 //   films/<id>/loop-master.(mp4|mov), or else a master cut at the loop scene → loop.mp4, loop-av1.mp4
@@ -18,16 +20,24 @@ const BUDGET = {
   "film-ar.mp4": 12 * MB,
   "film-av1-en.mp4": 8 * MB,
   "film-av1-ar.mp4": 8 * MB,
+  "film-en-720.mp4": 6 * MB,
+  "film-ar-720.mp4": 6 * MB,
+  "film-av1-en-720.mp4": 4 * MB,
+  "film-av1-ar-720.mp4": 4 * MB,
   "loop.mp4": 1.5 * MB,
   "loop-av1.mp4": 1 * MB,
   "poster.avif": 0.25 * MB,
 };
-const PER_MINUTE = new Set(["film-en.mp4", "film-ar.mp4", "film-av1-en.mp4", "film-av1-ar.mp4"]);
+const PER_MINUTE = new Set(Object.keys(BUDGET).filter((name) => name.startsWith("film-")));
 
 // The commands of films/SCRIPTS.md > export specs
 const FILM_H264 =
   "-c:v libx264 -preset slow -crf 22 -pix_fmt yuv420p -movflags +faststart -c:a aac -b:a 128k";
 const FILM_AV1 = "-c:v libsvtav1 -preset 6 -crf 34 -pix_fmt yuv420p -movflags +faststart -c:a aac -b:a 128k";
+const PHONE = "-vf scale=-2:720";
+const PHONE_H264 =
+  "-c:v libx264 -preset slow -crf 24 -pix_fmt yuv420p -movflags +faststart -c:a aac -b:a 96k";
+const PHONE_AV1 = "-c:v libsvtav1 -preset 6 -crf 36 -pix_fmt yuv420p -movflags +faststart -c:a aac -b:a 96k";
 const LOOP = `-t ${LOOP_SECONDS} -vf scale=1280:-2 -an -pix_fmt yuv420p -movflags +faststart`;
 const LOOP_H264 = "-c:v libx264 -crf 26";
 const LOOP_AV1 = "-c:v libsvtav1 -crf 38";
@@ -74,6 +84,8 @@ for (const project of projects) {
   for (const [lang, input] of Object.entries(masters)) {
     ffmpeg(["-i", input, ...words(FILM_H264), `${out}/film-${lang}.mp4`]);
     ffmpeg(["-i", input, ...words(FILM_AV1), `${out}/film-av1-${lang}.mp4`]);
+    ffmpeg(["-i", input, ...words(PHONE), ...words(PHONE_H264), `${out}/film-${lang}-720.mp4`]);
+    ffmpeg(["-i", input, ...words(PHONE), ...words(PHONE_AV1), `${out}/film-av1-${lang}-720.mp4`]);
   }
 
   // The loop: a text-free clip exported on its own, or a master (English first) at the start of the loop scene
@@ -94,7 +106,7 @@ for (const project of projects) {
     const ok = size <= limit;
     if (!ok) over += 1;
     console.log(
-      `  ${ok ? "ok  " : "OVER"} ${name.padEnd(16)} ${(size / MB).toFixed(2)} MB (limit ${(limit / MB).toFixed(2)})`,
+      `  ${ok ? "ok  " : "OVER"} ${name.padEnd(20)} ${(size / MB).toFixed(2)} MB (limit ${(limit / MB).toFixed(2)})`,
     );
   }
   made += 1;
