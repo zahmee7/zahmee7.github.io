@@ -12,6 +12,15 @@
         "127.0.0.1"
       ],
       "port": 4321
+    },
+    {
+      "name": "site-build",
+      "runtimeExecutable": "node",
+      "runtimeArgs": [
+        "scripts/serve.mjs",
+        "4330"
+      ],
+      "port": 4330
     }
   ]
 }
