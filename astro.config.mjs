@@ -8,6 +8,9 @@ export default defineConfig({
   site: "https://alzahmah.com",
   trailingSlash: "always",
 
+  // The styles ride in each page: no stylesheet request holds the first paint on a phone's network
+  build: { inlineStylesheets: "always" },
+
   i18n: {
     locales: ["ar", "en"],
     defaultLocale: "ar",

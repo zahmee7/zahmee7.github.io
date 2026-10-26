@@ -358,12 +358,20 @@ const id = `file-${project.id}`;
   }
   .three__tools {
     display: flex;
+    flex-wrap: wrap;
     align-items: center;
-    gap: var(--s-5);
+    gap: var(--s-3) var(--s-5);
   }
   .three__board {
     max-inline-size: calc((100dvh - 72px - 205px) * 16 / 9); /* the bar, the header, Power BI's own bar */
     margin-inline: auto;
+  }
+  /* A phone, upright or sideways: the board takes the full width and the page scrolls; held sideways, that
+     is the largest the numbers can be (2026-10-26) */
+  @media (max-width: 899px), (max-height: 520px) {
+    .three__board {
+      max-inline-size: none;
+    }
   }
 
   .file__tag {

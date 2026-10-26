@@ -148,6 +148,12 @@ const poster = kind === "powerbi" ? snapshots[`/src/assets/boards/${project.id}.
     max-inline-size: calc((100svh - 140px) * 16 / 9);
     margin-inline: auto;
   }
+  /* a phone, upright or sideways: the full width, and the page scrolls (2026-10-26) */
+  @media (max-width: 899px), (max-height: 520px) {
+    .demo-wide :global(.live--board) {
+      max-inline-size: none;
+    }
+  }
   .demo-wide .demo-sheet {
     padding: clamp(20px, 2.4vw, 36px);
   }

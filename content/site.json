@@ -58,6 +58,8 @@
       "inSite": "It runs here on the site, with sample data.",
       "title": "The live demo",
       "openPowerBI": "Open in Power BI",
+      "fullscreen": "Full screen",
+      "rotate": "Turn your phone sideways to see the dashboard larger.",
       "kinds": { "powerbi": "Power BI report", "excel-onedrive": "Excel workbook", "excel-viewer": "Excel workbook", "pdf": "PDF document" }
     },
     "footer": { "line": "Mohammed Alzahmah · Data Management & Governance Specialist", "sample": "Demos use sample data", "cardCta": "CV and contact on my digital card" },
@@ -122,6 +124,8 @@
       "inSite": "تعمل هنا داخل الموقع، ببيانات افتراضية.",
       "title": "التجربة الحية",
       "openPowerBI": "افتح في باور بي آي",
+      "fullscreen": "ملء الشاشة",
+      "rotate": "أدر جوالك أفقياً لترى اللوحة أكبر.",
       "kinds": { "powerbi": "تقرير باور بي آي", "excel-onedrive": "ملف إكسل", "excel-viewer": "ملف إكسل", "pdf": "ملف بي دي إف" }
     },
     "footer": { "line": "محمد آل زاحمة · أخصائي إدارة وحوكمة البيانات", "sample": "النسخ التجريبية ببيانات افتراضية", "cardCta": "السيرة والتواصل في بطاقتي الرقمية" },

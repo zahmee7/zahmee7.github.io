@@ -70,11 +70,19 @@ for (const lang of locales) {
         const url = linkOf(project, lang);
         const first = (project.demo as { page?: string }).page;
         const report = kind === "powerbi" && first ? `${url}&pageName=${first}` : url;
-        if (kind === "powerbi") {
-          // A report opens at once, on its first page: the visitor came here to see it (owner, 2026-10-24).
-          // Its snapshot holds the frame until the report has drawn.
+        const wide = (page.viewportSize()?.width ?? 0) >= 900;
+        if (kind === "powerbi" && wide) {
+          // On a wide screen a report opens at once, on its first page: the visitor came here to see it
+          // (owner, 2026-10-24). Its snapshot holds the frame until the report has drawn.
           await expect(frame).toHaveCount(1);
           await expect(page.locator(".live__poster")).toBeVisible();
+        } else if (kind === "powerbi") {
+          // A phone shows the snapshot and waits for the press: a report is megabytes (2026-10-26)
+          await expect(page.locator(".live__poster")).toBeVisible();
+          await expect(frame).toHaveCount(0);
+          expect(calls).toEqual([]);
+          await page.getByRole("button", { name: copy.demo.open }).click();
+          await expect(frame).toHaveCount(1);
         } else {
           // nothing from the file loads with the page
           await expect(frame).toHaveCount(0);

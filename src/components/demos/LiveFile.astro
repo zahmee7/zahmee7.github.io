@@ -6,6 +6,8 @@
 // A Power BI report can show as a board (owner's request, 2026-10-24): its snapshot fills the frame at the
 // report's own size, numbers readable at once (npm run boards), and the live report takes its place, at
 // the same size, when asked.
+// Phones (2026-10-26): the board takes the full width, a line asks to turn the phone sideways, and where
+// the browser allows it (Android), Full screen opens the board across the whole screen, turned sideways.
 import type { ImageMetadata } from "astro";
 import { Picture } from "astro:assets";
 import Icon from "../ui/Icon.astro";
@@ -74,12 +76,19 @@ const board = Boolean(poster);
       <span>{kind === "powerbi" ? copy.demo.openPowerBI : copy.demo.newTab}</span>
       <Icon name="external" />
     </a>
+    {board && (
+      <button class="link live__full" type="button" data-live-full hidden>
+        <span>{copy.demo.fullscreen}</span>
+        <Icon name="expand" />
+      </button>
+    )}
     {onSite && (
       <a class="link" href={url} download>
         <span>{copy.file.download}</span>
         <Icon name="download" />
       </a>
     )}
+    {board && <p class="live__rotate">{copy.demo.rotate}</p>}
   </figcaption>
 </figure>
 
@@ -148,10 +157,37 @@ const board = Boolean(poster);
     if (event.target instanceof HTMLElement) open(event.target, false);
   });
 
-  // The demo page opens its file at once: the visitor pressed the demo card to come here
-  for (const frame of document.querySelectorAll<HTMLElement>("[data-live-frame][data-autoload]")) {
-    open(frame, false);
+  // The demo page opens its file at once on a wide screen: the visitor came here to see it. A phone waits for
+  // the press: a report is several megabytes, too much to spend on a phone's data unasked.
+  if (matchMedia("(min-width: 900px)").matches) {
+    for (const frame of document.querySelectorAll<HTMLElement>("[data-live-frame][data-autoload]")) {
+      open(frame, false);
+    }
   }
+
+  // Full screen, where the browser allows an element to fill the screen (not on iPhone): the board opens
+  // live across the whole screen and, on a phone, turns sideways.
+  if (document.fullscreenEnabled) {
+    for (const button of document.querySelectorAll<HTMLButtonElement>("[data-live-full]"))
+      button.hidden = false;
+  }
+  document.addEventListener("click", (event) => {
+    const button = event.target instanceof Element ? event.target.closest("[data-live-full]") : null;
+    const frame = button?.closest("figure")?.querySelector<HTMLElement>("[data-live-frame]");
+    if (!frame) return;
+    open(frame, false);
+    frame
+      .requestFullscreen()
+      .then(() =>
+        (screen.orientation as ScreenOrientation & { lock?: (o: string) => Promise<void> }).lock?.(
+          "landscape",
+        ),
+      )
+      .catch(() => undefined);
+  });
+  document.addEventListener("fullscreenchange", () => {
+    if (!document.fullscreenElement) screen.orientation?.unlock?.();
+  });
 </script>
 
 <style>
@@ -280,6 +316,35 @@ const board = Boolean(poster);
     min-block-size: 40px;
   }
 
+  .live__full {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--s-2);
+    min-block-size: var(--tap);
+    padding: 0;
+    border: 0;
+    background: none;
+    font: inherit;
+    cursor: pointer;
+  }
+  .live__full[hidden] {
+    display: none;
+  }
+  /* Full screen: the frame fills the screen, the report at its own shape inside it */
+  .live__frame:fullscreen {
+    block-size: 100%;
+    max-block-size: none;
+    aspect-ratio: auto;
+    border: 0;
+    border-radius: 0;
+  }
+  .live__rotate {
+    display: none;
+    flex-basis: 100%;
+    margin: 0;
+    color: var(--c-ink-muted);
+  }
+
   @media (max-width: 899px) {
     .live[data-kind^="excel"] .live__frame,
     .live[data-kind="pdf"] .live__frame {
@@ -290,6 +355,12 @@ const board = Boolean(poster);
     }
     .live--board .live__from {
       display: none;
+    }
+  }
+  /* a phone held upright: the board reads better sideways */
+  @media (max-width: 899px) and (orientation: portrait) {
+    .live__rotate {
+      display: block;
     }
   }
 </style>
