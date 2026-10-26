@@ -108,18 +108,20 @@ for (const lang of locales) {
           .evaluateAll((items) =>
             items.map((track) => [(track as HTMLTrackElement).srclang, (track as HTMLTrackElement).default]),
           );
-        // off at first when the film already shows its lines on screen in the page's language; a film made in
-        // the other language only (the owner's own Arabic film) starts with the page's captions on
+        // no track in the film's own language: its lines are already on screen (owner, 2026-10-27). The other
+        // language waits in the menu, on at first only when it is the page's own (the owner's Arabic film)
         const sources = await full
           .locator("source")
           .evaluateAll((items) => items.map((item) => item.getAttribute("src") ?? ""));
-        const filmInLang = sources.some(
+        const other = lang === "ar" ? "en" : "ar";
+        const filmLang = sources.some(
           (src) => src.includes(`film-${lang}.`) || src.includes(`film-av1-${lang}.`),
+        )
+          ? lang
+          : other;
+        expect(tracks).toEqual(
+          [lang, other].filter((track) => track !== filmLang).map((track) => [track, track === lang]),
         );
-        expect(tracks).toEqual([
-          [lang, !filmInLang],
-          [lang === "ar" ? "en" : "ar", false],
-        ]);
         if (await canPlay(page)) await expect.poll(() => paused(page, ".film__full")).toBe(false);
       });
 

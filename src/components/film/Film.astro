@@ -40,10 +40,10 @@ const ready = Boolean(film.h264 && loop.h264 && poster);
 
 const scenes = project.film.scenes ?? [];
 const tiles = Array.from({ length: 14 }, (_, index) => (index % 7) + Math.floor(index / 7));
-// The film already shows its lines on screen, so captions start off: a track in the film's own language
-// would print every line twice. Both languages wait in the player's menu, the page's first. A film in the
-// other language starts with the page's own captions on.
-const tracks = [lang, ...locales.filter((item) => item !== lang)];
+// The film shows its lines on screen, so it carries no track in its own language: that would print every
+// line twice, and a phone set to show captions would turn it on by itself (owner, 2026-10-27). The other
+// language waits in the player's menu, and starts on when it is the page's own language.
+const tracks = [lang, ...locales.filter((item) => item !== lang)].filter((item) => item !== filmLang);
 const captionsOn = filmLang !== lang;
 ---
 
