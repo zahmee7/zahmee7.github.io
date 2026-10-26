@@ -24,7 +24,14 @@ const en = t("en");
     <script is:inline>
       (function () {
         var first = (navigator.languages && navigator.languages[0]) || navigator.language || "";
-        location.replace(first.toLowerCase().indexOf("ar") === 0 ? "/ar/" : "/en/");
+        // The move below hides where the visitor came from, so the referring site's name is kept for
+        // Microsoft Clarity (Base.astro), and the address's query (UTM tags) travels with the visitor.
+        try {
+          var from = document.referrer && new URL(document.referrer).hostname;
+          if (from && from !== location.hostname) sessionStorage.setItem("entry.referrer", from);
+        } catch (e) {}
+        var to = first.toLowerCase().indexOf("ar") === 0 ? "/ar/" : "/en/";
+        location.replace(to + location.search + location.hash);
       })();
     </script>
   </head>
