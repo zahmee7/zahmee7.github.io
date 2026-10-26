@@ -49,6 +49,35 @@ const sendToSoon = `try {
 } catch (error) {
   location.replace("/");
 }`;
+// Microsoft Clarity (heatmaps and session recordings), one project for the whole domain: this site and the
+// card at /card/ (owner's request, 2026-10-26). It runs only on the live domain, a second after the page has
+// loaded, and never in a browser the owner has excluded with ?cardpulse=off (the card's switch, same origin;
+// ?cardpulse=on undoes it). The project id is public: it ships in every page.
+const clarityId = "z3w7vdrrfc";
+const clarity = `(function (w, d, id) {
+  if (location.hostname !== "alzahmah.com") return;
+  try {
+    var q = new URLSearchParams(location.search).get("cardpulse");
+    if (q === "off") localStorage.setItem("cardpulse.off", "1");
+    if (q === "on") localStorage.removeItem("cardpulse.off");
+    if (localStorage.getItem("cardpulse.off") === "1") return;
+  } catch (e) {}
+  w.clarity = w.clarity || function () { (w.clarity.q = w.clarity.q || []).push(arguments); };
+  try {
+    // The site that sent the visitor, kept by the root before it moved them to /ar/ or /en/ (LanguageDoor.astro)
+    var from = sessionStorage.getItem("entry.referrer");
+    if (from) { sessionStorage.removeItem("entry.referrer"); w.clarity("set", "entry_referrer", from); }
+  } catch (e) {}
+  var load = function () {
+    setTimeout(function () {
+      var s = d.createElement("script");
+      s.async = true;
+      s.src = "https://www.clarity.ms/tag/" + id;
+      d.head.appendChild(s);
+    }, 1000);
+  };
+  d.readyState === "complete" ? load() : w.addEventListener("load", load);
+})(window, document, ${JSON.stringify(clarityId)});`;
 ---
 
 <!doctype html>
@@ -86,6 +115,7 @@ const sendToSoon = `try {
     <Font cssVariable="--font-thmanyah-display" preload />
     <Font cssVariable="--font-thmanyah-sans" preload />
     <Font cssVariable="--font-thmanyah-text" preload={story} />
+    {import.meta.env.PROD && <script is:inline set:html={clarity} />}
     <slot name="head" />
   </head>
   <body>
