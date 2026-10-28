@@ -42,6 +42,8 @@
       "turn": "The demo and the files",
       "turnBack": "Back to page one",
       "turnBackTwo": "Back to the demo and the files",
+      "turnDemo": "The demo",
+      "turnBackDemo": "Back to the demo",
       "pageTwo": "Try the project",
       "downloads": "Files to download"
     },
@@ -108,6 +110,8 @@
       "turn": "التجربة والملفات",
       "turnBack": "العودة إلى الصفحة الأولى",
       "turnBackTwo": "العودة إلى التجربة والملفات",
+      "turnDemo": "التجربة",
+      "turnBackDemo": "العودة إلى التجربة",
       "pageTwo": "جرّب المشروع",
       "downloads": "ملفات للتحميل"
     },

@@ -1,7 +1,7 @@
 import { test, expect, type Page } from "@playwright/test";
 import projects from "../content/projects.json" with { type: "json" };
 import site from "../content/site.json" with { type: "json" };
-import { locales, skipEntrance, watchConsole } from "./helpers";
+import { locales, skipEntrance, turnLabel, watchConsole } from "./helpers";
 
 // The open file: the page pull, closing, previous / next (DESIGN.md section 7, MOTION.md 3 to 5).
 const openProjects = projects.filter((project) => project.mvp).sort((a, b) => a.order - b.order);
@@ -15,9 +15,9 @@ async function openFile(page: Page, id: string): Promise<void> {
 }
 
 /** Turns the open file to page two, where the demo and the files are (owner, 2026-10-24). */
-async function turnToPageTwo(page: Page, lang: "ar" | "en"): Promise<void> {
+async function turnToPageTwo(page: Page, lang: "ar" | "en", project = first!): Promise<void> {
   const dialog = page.locator("dialog#file");
-  await dialog.getByRole("button", { name: site[lang].file.turn }).click();
+  await dialog.getByRole("button", { name: turnLabel(project, site[lang].file) }).click();
   await expect(dialog.locator('[data-page="2"]')).toBeVisible();
 }
 
@@ -54,7 +54,7 @@ for (const lang of locales) {
           await expect(page.locator("dialog#file").getByText(part, { exact: true })).toBeVisible();
         }
         // the demo is a large card on page two; its label also closes the film's text, so find it as the link it is
-        await turnToPageTwo(page, lang);
+        await turnToPageTwo(page, lang, project);
         await expect(page.locator("dialog#file").getByRole("link", { name: text.demoLabel })).toBeVisible();
 
         await page.getByRole("button", { name: copy.file.close }).click();
@@ -143,6 +143,10 @@ for (const lang of locales) {
     });
 
     test("parts built later say Coming soon", async ({ page }) => {
+      test.skip(
+        first!.downloads.length === 0,
+        "The first open file has nothing to download (owner, 2026-10-28).",
+      );
       await openFile(page, first!.id);
       await turnToPageTwo(page, lang);
       await page.getByRole("link", { name: first![lang].downloadLabel }).click();
@@ -151,6 +155,17 @@ for (const lang of locales) {
       await expect(toast).toHaveText(copy.drawer.locked);
       await expect(toast).toBeVisible();
       await expect(page.locator("dialog#file")).toBeVisible();
+    });
+
+    test("a file with nothing to download shows no files block", async ({ page }) => {
+      test.skip(first!.downloads.length > 0, "The first open file has files to download.");
+      await openFile(page, first!.id);
+      await turnToPageTwo(page, lang);
+
+      const pageTwo = page.locator('dialog#file [data-page="2"]');
+      await expect(pageTwo.getByRole("heading", { name: copy.file.downloads })).toHaveCount(0);
+      await expect(pageTwo.locator("a.download")).toHaveCount(0);
+      await expect(pageTwo.getByRole("link", { name: first![lang].demoLabel })).toBeVisible();
     });
 
     test("loads the story font by the time the file is open", async ({ page }) => {

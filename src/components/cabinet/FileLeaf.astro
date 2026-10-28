@@ -46,6 +46,11 @@ const reportUrl = typeof demo.url === "string" ? demo.url : demo.url?.[lang];
 const poster = live ? snapshots[`/src/assets/boards/${project.id}.png`]?.default : undefined;
 const kindName = demo.kind ? copy.demo.kinds[demo.kind] : undefined;
 const id = `file-${project.id}`;
+// A project with nothing to download shows no files block, and its page-two labels name the demo only
+// (owner's request, 2026-10-28: the dashboard template link was removed).
+const hasFiles = project.downloads.length > 0;
+const turnLabel = hasFiles ? copy.file.turn : copy.file.turnDemo;
+const turnBackTwoLabel = hasFiles ? copy.file.turnBackTwo : copy.file.turnBackDemo;
 ---
 
 <div class="file__pages" data-pages>
@@ -80,7 +85,7 @@ const id = `file-${project.id}`;
 
       <div class="file__act" data-rise style="--rise: 4;">
         <button class="btn btn--primary file__turn" type="button" data-page-to="2" aria-controls={`${id}-2`}>
-          <span>{copy.file.turn}</span>
+          <span>{turnLabel}</span>
           <Icon name="arrow" directional />
         </button>
       </div>
@@ -128,20 +133,22 @@ const id = `file-${project.id}`;
         {poster && <Stamp text={copy.demo.badge} decorative class="two__stamp" />}
       </a>
 
-      <section class="two__files" aria-labelledby={`${id}-files`} data-turn-rise style="--rise: 2;">
-        <Sub class="story__label" id={`${id}-files`}>
-          {copy.file.downloads}
-        </Sub>
-        {project.downloads.map((download) => (
-          <a class="download" href={download.file} data-soon>
-            <Icon name="download" class="download__icon" />
-            <span class="download__label">{text.downloadLabel}</span>
-            <span class="download__kind" lang="en">
-              {download.kind.toUpperCase()}
-            </span>
-          </a>
-        ))}
-      </section>
+      {hasFiles && (
+        <section class="two__files" aria-labelledby={`${id}-files`} data-turn-rise style="--rise: 2;">
+          <Sub class="story__label" id={`${id}-files`}>
+            {copy.file.downloads}
+          </Sub>
+          {project.downloads.map((download) => (
+            <a class="download" href={download.file} data-soon>
+              <Icon name="download" class="download__icon" />
+              <span class="download__label">{text.downloadLabel}</span>
+              <span class="download__kind" lang="en">
+                {download.kind.toUpperCase()}
+              </span>
+            </a>
+          ))}
+        </section>
+      )}
 
       <div class="two__back" data-turn-rise style="--rise: 3;">
         <button class="btn" type="button" data-page-to="1" aria-controls={`${id}-1`}>
@@ -166,7 +173,7 @@ const id = `file-${project.id}`;
             <Stamp text={copy.demo.badge} class="three__stamp" />
             <button class="btn" type="button" data-page-to="2" aria-controls={`${id}-2`}>
               <Icon name="arrow" class="file__back-icon" />
-              <span>{copy.file.turnBackTwo}</span>
+              <span>{turnBackTwoLabel}</span>
             </button>
           </div>
         </header>

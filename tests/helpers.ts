@@ -2,6 +2,17 @@ import type { Page } from "@playwright/test";
 
 export const locales = ["ar", "en"] as const;
 
+/**
+ * The page-one button that turns to page two: "the demo and the files", or "the demo" alone when the
+ * project has nothing to download (FileLeaf.astro, owner 2026-10-28).
+ */
+export function turnLabel(
+  project: { downloads: readonly unknown[] },
+  file: { turn: string; turnDemo: string },
+): string {
+  return project.downloads.length > 0 ? file.turn : file.turnDemo;
+}
+
 /** axe rule tags for WCAG 2.2 AA (CLAUDE.md > Accessibility). */
 export const axeTags = ["wcag2a", "wcag2aa", "wcag21a", "wcag21aa", "wcag22aa"];
 

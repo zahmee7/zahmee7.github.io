@@ -31,9 +31,7 @@
         { "start": 95, "end": 100, "en": "NDI performance dashboard · Open the sample dashboard", "ar": "لوحة أداء المؤشر الوطني للبيانات · افتح اللوحة التجريبية" }
       ]
     },
-    "downloads": [
-      { "file": "/downloads/dmo-dashboard-template.pbit", "kind": "pbit", "status": "planned" }
-    ],
+    "downloads": [],
     "en": {
       "short": "NDI dashboard",
       "title": "NDI performance dashboard",

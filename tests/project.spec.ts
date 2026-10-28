@@ -1,7 +1,7 @@
 import { test, expect, type Page } from "@playwright/test";
 import projects from "../content/projects.json" with { type: "json" };
 import site from "../content/site.json" with { type: "json" };
-import { locales, watchConsole, watchFonts } from "./helpers";
+import { locales, turnLabel, watchConsole, watchFonts } from "./helpers";
 
 // The project pages, /[lang]/projects/[id]/ (DESIGN.md > Page anatomy, MOTION.md sequence 6).
 const sorted = [...projects].sort((a, b) => a.order - b.order);
@@ -48,7 +48,7 @@ for (const lang of locales) {
           await expect(page.getByText(part, { exact: true })).toBeVisible();
         }
         // the demo is a large card on page two, behind the turn under the summary
-        await page.getByRole("button", { name: copy.file.turn }).click();
+        await page.getByRole("button", { name: turnLabel(project, copy.file) }).click();
         await expect(page.getByRole("link", { name: text.demoLabel })).toBeVisible();
 
         await expect(page.locator('meta[name="description"]')).toHaveAttribute("content", text.summary);
@@ -117,12 +117,27 @@ for (const lang of locales) {
     });
 
     test("parts built later say Coming soon", async ({ page }) => {
+      test.skip(
+        first.downloads.length === 0,
+        "The first open file has nothing to download (owner, 2026-10-28).",
+      );
       await page.goto(`/${lang}/projects/${first.id}/`);
-      await page.getByRole("button", { name: copy.file.turn }).click();
+      await page.getByRole("button", { name: turnLabel(first, copy.file) }).click();
       await page.getByRole("link", { name: first[lang].downloadLabel }).click();
 
       await expect(page.locator("#toast")).toHaveText(copy.drawer.locked);
       await expect(page).toHaveURL(new RegExp(`/${lang}/projects/${first.id}/$`));
+    });
+
+    test("a project with nothing to download shows no files block", async ({ page }) => {
+      test.skip(first.downloads.length > 0, "The first open file has files to download.");
+      await page.goto(`/${lang}/projects/${first.id}/`);
+      await page.getByRole("button", { name: copy.file.turnDemo }).click();
+
+      const pageTwo = page.locator('[data-page="2"]');
+      await expect(pageTwo.getByRole("heading", { name: copy.file.downloads })).toHaveCount(0);
+      await expect(pageTwo.locator("a.download")).toHaveCount(0);
+      await expect(pageTwo.getByRole("link", { name: first[lang].demoLabel })).toBeVisible();
     });
 
     test("loads three font files within 240 KB, the story font among them", async ({ page }) => {

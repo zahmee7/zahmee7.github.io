@@ -1,7 +1,7 @@
 import { test, expect, type Page } from "@playwright/test";
 import projects from "../content/projects.json" with { type: "json" };
 import site from "../content/site.json" with { type: "json" };
-import { locales, watchConsole, watchFonts } from "./helpers";
+import { locales, turnLabel, watchConsole, watchFonts } from "./helpers";
 
 // The demo pages, /[lang]/demos/[id]/: the project's own file in a sample version (LiveFile.astro).
 // A demo exists once content/projects.json marks it ready with a kind and a link.
@@ -110,7 +110,7 @@ for (const lang of locales) {
       test(`${project.id}: the demo card in the file opens it live on page three`, async ({ page }) => {
         await stubMicrosoft(page);
         await page.goto(`/${lang}/projects/${project.id}/`);
-        await page.getByRole("button", { name: copy.file.turn }).click();
+        await page.getByRole("button", { name: turnLabel(project, copy.file) }).click();
         // the card still links to the demo page, for a browser without scripts
         const card = page.getByRole("link", { name: text.demoLabel });
         await expect(card).toHaveAttribute("href", `/${lang}/demos/${project.id}/`);
